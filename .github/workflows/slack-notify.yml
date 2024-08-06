@@ -12,25 +12,35 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Send notification to Slack
-      env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-      run: |
-        # 메시지를 이벤트에 따라 설정합니다.
-        if [[ "${{ github.event_name }}" == "push" ]]; then
-          COMMIT_COUNT=$(echo "${{ github.event.commits | length }}")
-          MESSAGE=":rocket: *새로운 커밋이 메인 브랜치에 푸시되었습니다!*\n\n*📂 레포지토리:* ${{ github.repository }}\n*👤 작성자:* ${{ github.actor }}\n*🔢 커밋 수:* ${COMMIT_COUNT}\n*📝 커밋 메시지:* ${{ github.event.head_commit.message }}\n*🔗 [커밋 보기](${{ github.event.head_commit.url }})\n*🔍 [변경 내용 보기](${{ github.event.compare }})"
-        elif [[ "${{ github.event_name }}" == "pull_request" ]]; then
-          PR_TITLE="${{ github.event.pull_request.title }}"
-          PR_URL="${{ github.event.pull_request.html_url }}"
-          PR_USER="${{ github.event.pull_request.user.login }}"
-          PR_STATE="${{ github.event.pull_request.state }}"
-          PR_DESCRIPTION="${{ github.event.pull_request.body }}"
-          MESSAGE=":sparkles: *풀 리퀘스트가 ${PR_STATE} 되었습니다!*\n\n*📄 제목:* ${PR_TITLE}\n*👤 작성자:* ${PR_USER}\n*📂 레포지토리:* ${{ github.repository }}\n*📜 설명:* ${PR_DESCRIPTION}\n*🔗 [PR 보기](${PR_URL})"
-        else
-          MESSAGE=":warning: 알 수 없는 이벤트가 감지되었습니다: ${{ github.event_name }}"
-        fi
+      - name: Send notification to Slack
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          # GitHub 이벤트 데이터를 JSON 형태로 받아옵니다
+          EVENT_DATA=$(jq '.' <<< '${{ toJson(github.event) }}')
+          
+          # 메시지를 이벤트에 따라 설정합니다.
+          if [[ "${{ github.event_name }}" == "push" ]]; then
+            # jq를 사용하여 커밋 수 계산
+            COMMIT_COUNT=$(echo "$EVENT_DATA" | jq '.commits | length')
 
-        # Slack으로 메시지 전송
-        PAYLOAD=$(echo '{}' | jq --arg text "$MESSAGE" '{text: $text}')
-        curl -X POST -H 'Content-type: application/json' --data "$PAYLOAD" "$SLACK_WEBHOOK_URL"
+            # PR 머지 커밋인지 확인
+            if [[ "${{ github.event.head_commit.message }}" == *"Merge pull request"* ]]; then
+              MESSAGE=":rotating_light: *PR이 메인 브랜치에 머지되었습니다!*\n\n*📂 레포지토리:* ${{ github.repository }}\n*👤 머지한 사람:* ${{ github.actor }}\n*🔗 [변경 내용 보기](${{ github.event.compare }})\n\n모두 최신 상태를 유지하기 위해 메인 브랜치를 풀 하세요! :arrow_down:"
+            else
+              MESSAGE=":rocket: *새로운 커밋이 메인 브랜치에 푸시되었습니다!*\n\n*📂 레포지토리:* ${{ github.repository }}\n*👤 작성자:* ${{ github.actor }}\n*🔢 커밋 수:* ${COMMIT_COUNT}\n*📝 커밋 메시지:* ${{ github.event.head_commit.message }}\n*🔗 [커밋 보기](${{ github.event.head_commit.url }})\n*🔍 [변경 내용 보기](${{ github.event.compare }})"
+            fi
+          elif [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            PR_TITLE="${{ github.event.pull_request.title }}"
+            PR_URL="${{ github.event.pull_request.html_url }}"
+            PR_USER="${{ github.event.pull_request.user.login }}"
+            PR_STATE="${{ github.event.pull_request.state }}"
+            PR_DESCRIPTION="${{ github.event.pull_request.body }}"
+            MESSAGE=":sparkles: *풀 리퀘스트가 ${PR_STATE} 되었습니다!*\n\n*📄 제목:* ${PR_TITLE}\n*👤 작성자:* ${PR_USER}\n*📂 레포지토리:* ${{ github.repository }}\n*📜 설명:* ${PR_DESCRIPTION}\n*🔗 [PR 보기](${PR_URL})"
+          else
+            MESSAGE=":warning: 알 수 없는 이벤트가 감지되었습니다: ${{ github.event_name }}"
+          fi
+
+          # Slack으로 메시지 전송
+          PAYLOAD=$(echo '{}' | jq --arg text "$MESSAGE" '{text: $text}')
+          curl -X POST -H 'Content-type: application/json' --data "$PAYLOAD" "$SLACK_WEBHOOK_URL"
