@@ -1,0 +1,21 @@
+name: Slack Alarm Webhook
+
+on:
+  # main 브랜치에 push가 발생했을 때 (주로 merge 이벤트)
+  push:
+    branches:
+      - main
+  # Pull request가 생성되었을 때
+  pull_request:
+    types: [opened]
+
+jobs:
+  mention_notification:
+    name: Mention Notification
+    runs-on: ubuntu-latest
+    steps:
+      - uses: Laurenfrost/mention-to-slack@latest
+        with:
+          configuration-path: .github/mention-to-slack.yml
+          repo-token: ${{ secrets.GH_TOKEN }}
+          slack-webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
