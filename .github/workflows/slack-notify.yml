@@ -1,10 +1,12 @@
 name: Slack Notification on PR and Merge
+
 on:
   push:
     branches:
       - main
   pull_request:
     types: [opened, reopened]
+
 jobs:
   notify:
     runs-on: ubuntu-latest
@@ -19,83 +21,46 @@ jobs:
             COMMIT_COUNT=$(echo "$EVENT_DATA" | jq '.commits | length')
             if [[ "${{ github.event.head_commit.message }}" == *"Merge pull request"* ]]; then
               TITLE=":rotating_light: PR이 메인 브랜치에 머지되었습니다!"
-              FIELDS=$(jq -n \
-                --arg repo "${{ github.repository }}" \
-                --arg actor "${{ github.actor }}" \
-                --arg compare "${{ github.event.compare }}" \
-                '[
-                  {"type": "mrkdwn", "text": "*레포지토리:*\n$repo"},
-                  {"type": "mrkdwn", "text": "*머지한 사람:*\n$actor"},
-                  {"type": "mrkdwn", "text": "*<$compare|변경 내용 보기>*"}
-                ]')
-              FOOTER="모두 최신 상태를 유지하기 위해 메인 브랜치를 풀 하세요! :arrow_down:"
+              TEXT="*레포지토리:* ${{ github.repository }}\n*머지한 사람:* ${{ github.actor }}\n*<${{ github.event.compare }}|변경 내용 보기>*\n\n모두 최신 상태를 유지하기 위해 메인 브랜치를 풀 하세요! :arrow_down:"
             else
               TITLE=":rocket: 새로운 커밋이 메인 브랜치에 푸시되었습니다!"
-              FIELDS=$(jq -n \
-                --arg repo "${{ github.repository }}" \
-                --arg actor "${{ github.actor }}" \
-                --arg count "$COMMIT_COUNT" \
-                --arg message "${{ github.event.head_commit.message }}" \
-                --arg commit_url "${{ github.event.head_commit.url }}" \
-                --arg compare "${{ github.event.compare }}" \
-                '[
-                  {"type": "mrkdwn", "text": "*레포지토리:*\n$repo"},
-                  {"type": "mrkdwn", "text": "*작성자:*\n$actor"},
-                  {"type": "mrkdwn", "text": "*커밋 수:*\n$count"},
-                  {"type": "mrkdwn", "text": "*커밋 메시지:*\n$message"},
-                  {"type": "mrkdwn", "text": "*<$commit_url|커밋 보기>*"},
-                  {"type": "mrkdwn", "text": "*<$compare|변경 내용 보기>*"}
-                ]')
-              FOOTER=""
+              TEXT="*레포지토리:* ${{ github.repository }}\n*작성자:* ${{ github.actor }}\n*커밋 수:* ${COMMIT_COUNT}\n*커밋 메시지:* ${{ github.event.head_commit.message }}\n*<${{ github.event.head_commit.url }}|커밋 보기>*\n*<${{ github.event.compare }}|변경 내용 보기>*"
             fi
           elif [[ "${{ github.event_name }}" == "pull_request" ]]; then
             TITLE=":sparkles: 풀 리퀘스트가 ${{ github.event.pull_request.state }} 되었습니다!"
-            FIELDS=$(jq -n \
-              --arg title "${{ github.event.pull_request.title }}" \
-              --arg user "${{ github.event.pull_request.user.login }}" \
-              --arg repo "${{ github.repository }}" \
-              --arg url "${{ github.event.pull_request.html_url }}" \
-              '[
-                {"type": "mrkdwn", "text": "*제목:*\n$title"},
-                {"type": "mrkdwn", "text": "*작성자:*\n$user"},
-                {"type": "mrkdwn", "text": "*레포지토리:*\n$repo"},
-                {"type": "mrkdwn", "text": "*<$url|PR 보기>*"}
-              ]')
-            FOOTER=""
+            TEXT="*제목:* ${{ github.event.pull_request.title }}\n*작성자:* ${{ github.event.pull_request.user.login }}\n*레포지토리:* ${{ github.repository }}\n*<${{ github.event.pull_request.html_url }}|PR 보기>*"
           else
             TITLE=":warning: 알 수 없는 이벤트가 감지되었습니다: ${{ github.event_name }}"
-            FIELDS="[]"
-            FOOTER=""
+            TEXT=""
           fi
 
           PAYLOAD=$(jq -n \
             --arg title "$TITLE" \
-            --argjson fields "$FIELDS" \
-            --arg footer "$FOOTER" \
+            --arg text "$TEXT" \
             '{
               "blocks": [
                 {
-                  "type": "header",
-                  "text": {
-                    "type": "plain_text",
-                    "text": $title,
-                    "emoji": true
-                  }
-                },
-                {
                   "type": "section",
-                  "fields": $fields
-                },
-                {
-                  "type": "context",
-                  "elements": [
-                    {
-                      "type": "mrkdwn",
-                      "text": $footer
-                    }
-                  ]
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*$title*\n$text"
+                  }
                 }
               ]
             }')
 
-          curl -X POST -H 'Content-type: application/json' --data "$PAYLOAD" "$SLACK_WEBHOOK_URL"
+          echo "Sending payload to Slack:"
+          echo "$PAYLOAD"
+
+          RESPONSE=$(curl -X POST -H 'Content-type: application/json' --data "$PAYLOAD" "$SLACK_WEBHOOK_URL" -w "\n%{http_code}")
+          HTTP_STATUS=$(echo "$RESPONSE" | tail -n1)
+          BODY=$(echo "$RESPONSE" | sed '$d')
+
+          echo "Slack API Response:"
+          echo "Status Code: $HTTP_STATUS"
+          echo "Body: $BODY"
+
+          if [[ "$HTTP_STATUS" != "200" ]]; then
+            echo "Error: Failed to send message to Slack"
+            exit 1
+          fi
