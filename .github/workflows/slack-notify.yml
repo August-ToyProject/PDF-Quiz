@@ -15,39 +15,22 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         run: |
-          EVENT_DATA=$(jq '.' <<< '${{ toJson(github.event) }}')
-          
           if [[ "${{ github.event_name }}" == "push" ]]; then
-            COMMIT_COUNT=$(echo "$EVENT_DATA" | jq '.commits | length')
             if [[ "${{ github.event.head_commit.message }}" == *"Merge pull request"* ]]; then
-              TITLE=":rotating_light: PR이 메인 브랜치에 머지되었습니다!"
-              TEXT="*레포지토리:* ${{ github.repository }}\n*머지한 사람:* ${{ github.actor }}\n*<${{ github.event.compare }}|변경 내용 보기>*\n\n모두 최신 상태를 유지하기 위해 메인 브랜치를 풀 하세요! :arrow_down:"
+              TEXT=":rotating_light: PR이 메인 브랜치에 머지되었습니다!\n\n레포지토리: ${{ github.repository }}\n머지한 사람: ${{ github.actor }}\n<${{ github.event.compare }}|변경 내용 보기>\n\n모두 최신 상태를 유지하기 위해 메인 브랜치를 풀 하세요! :arrow_down:"
             else
-              TITLE=":rocket: 새로운 커밋이 메인 브랜치에 푸시되었습니다!"
-              TEXT="*레포지토리:* ${{ github.repository }}\n*작성자:* ${{ github.actor }}\n*커밋 수:* ${COMMIT_COUNT}\n*커밋 메시지:* ${{ github.event.head_commit.message }}\n*<${{ github.event.head_commit.url }}|커밋 보기>*\n*<${{ github.event.compare }}|변경 내용 보기>*"
+              TEXT=":rocket: 새로운 커밋이 메인 브랜치에 푸시되었습니다!\n\n레포지토리: ${{ github.repository }}\n작성자: ${{ github.actor }}\n커밋 메시지: ${{ github.event.head_commit.message }}\n<${{ github.event.head_commit.url }}|커밋 보기>\n<${{ github.event.compare }}|변경 내용 보기>"
             fi
           elif [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            TITLE=":sparkles: 풀 리퀘스트가 ${{ github.event.pull_request.state }} 되었습니다!"
-            TEXT="*제목:* ${{ github.event.pull_request.title }}\n*작성자:* ${{ github.event.pull_request.user.login }}\n*레포지토리:* ${{ github.repository }}\n*<${{ github.event.pull_request.html_url }}|PR 보기>*"
+            TEXT=":sparkles: 풀 리퀘스트가 ${{ github.event.pull_request.state }} 되었습니다!\n\n제목: ${{ github.event.pull_request.title }}\n작성자: ${{ github.event.pull_request.user.login }}\n레포지토리: ${{ github.repository }}\n<${{ github.event.pull_request.html_url }}|PR 보기>"
           else
-            TITLE=":warning: 알 수 없는 이벤트가 감지되었습니다: ${{ github.event_name }}"
-            TEXT=""
+            TEXT=":warning: 알 수 없는 이벤트가 감지되었습니다: ${{ github.event_name }}"
           fi
 
-          PAYLOAD=$(jq -n \
-            --arg title "$TITLE" \
-            --arg text "$TEXT" \
-            '{
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*$title*\n$text"
-                  }
-                }
-              ]
-            }')
+          # 특수 문자 이스케이프 처리
+          TEXT=$(echo "$TEXT" | sed 's/"/\\"/g')
+
+          PAYLOAD="{\"text\": \"$TEXT\"}"
 
           echo "Sending payload to Slack:"
           echo "$PAYLOAD"
