@@ -42,5 +42,5 @@ jobs:
           fi
 
           # Slack으로 메시지 전송
-          PAYLOAD=$(echo '{}' | jq --arg text "$MESSAGE" '{text: $text}')
+          PAYLOAD=$(jq -n --arg text "$MESSAGE" '{text: $text}')
           curl -X POST -H 'Content-type: application/json' --data "$PAYLOAD" "$SLACK_WEBHOOK_URL"
