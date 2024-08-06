@@ -35,8 +35,8 @@ jobs:
             PR_URL="${{ github.event.pull_request.html_url }}"
             PR_USER="${{ github.event.pull_request.user.login }}"
             PR_STATE="${{ github.event.pull_request.state }}"
-            PR_DESCRIPTION="${{ github.event.pull_request.body }}"
-            MESSAGE=":sparkles: *풀 리퀘스트가 ${PR_STATE} 되었습니다!*\n\n*📄 제목:* ${PR_TITLE}\n*👤 작성자:* ${PR_USER}\n*📂 레포지토리:* ${{ github.repository }}\n*📜 설명:* ${PR_DESCRIPTION}\n*🔗 [PR 보기](${PR_URL})"
+            # 필요한 정보만 추출하여 메시지 구성
+            MESSAGE=":sparkles: *풀 리퀘스트가 ${PR_STATE} 되었습니다!*\n\n*📄 제목:* ${PR_TITLE}\n*👤 작성자:* ${PR_USER}\n*📂 레포지토리:* ${{ github.repository }}\n*🔗 [PR 보기](${PR_URL})"
           else
             MESSAGE=":warning: 알 수 없는 이벤트가 감지되었습니다: ${{ github.event_name }}"
           fi
