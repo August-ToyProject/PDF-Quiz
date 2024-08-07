@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 
 interface InputData {
   name: string;
@@ -22,6 +24,8 @@ export default function SignUp() {
 
   const [testDB, setTestDB] = useState<InputData[]>([]);
   const [errors, setErrors] = useState<Partial<InputData>>({});
+
+  const navigate = useNavigate();
 
   // 입력 필드
   const fields = [
@@ -74,9 +78,15 @@ export default function SignUp() {
     setErrors({});
   };
 
+  //회원가입 버튼 누르면 회원가입 페이지로 이동
+  const navigateToLogin = () => {
+    navigate('/')
+}
+
   return (
     <div className="h-screen w-full flex flex-col justify-center items-center bg-white">
-      <button className="absolute top-2 right-4 p-2 text-blue-600 bg-transparent">
+      <button className="absolute top-2 right-4 p-2 text-blue-600 bg-transparent"
+              onClick={navigateToLogin}>
         Login
       </button>
       <div className="text-4xl text-blue-600 font-black mb-8">
