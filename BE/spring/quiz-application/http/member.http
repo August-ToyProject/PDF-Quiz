@@ -1,0 +1,8 @@
+# 회원가입
+POST localhost:8080/v1/sign-up
+Content-Type: application/json
+
+{
+  "email": "kyun9151@gmail.com",
+  "password": "12345678"
+}
