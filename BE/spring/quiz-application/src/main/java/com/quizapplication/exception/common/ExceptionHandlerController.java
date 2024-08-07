@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class ExceptionHandlerController {
+
     @ExceptionHandler(BusinessException.class)
     protected ResponseEntity<BusinessExceptionResponse> handleBusinessException(BusinessException e) {
         BusinessExceptionResponse response = BusinessExceptionResponse.from(e);

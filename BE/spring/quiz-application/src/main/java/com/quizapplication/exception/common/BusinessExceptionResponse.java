@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public class BusinessExceptionResponse {
+
     private final int status;
     private final String message;
 
