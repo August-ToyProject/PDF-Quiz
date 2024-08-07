@@ -21,7 +21,6 @@ public class MemberController {
     private final MemberService memberService;
 
     @Operation(summary = "회원가입", description = "이메일 형식에 따라 작성하고 비밀번호는 최소 8자 이상")
-
     @PostMapping("/sign-up")
     public MemberResponse signup(@RequestBody @Valid SignupDto signupDto) {
         return memberService.signup(signupDto);
