@@ -5,6 +5,7 @@ import com.quizapplication.dto.response.MemberResponse;
 import com.quizapplication.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,10 +20,10 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    @Operation(summary = "회원가입", description = "회원가입시 사용하는 API")
+    @Operation(summary = "회원가입", description = "이메일 형식에 따라 작성하고 비밀번호는 최소 8자 이상")
 
     @PostMapping("/sign-up")
-    public MemberResponse signup(@RequestBody SignupDto signupDto) {
+    public MemberResponse signup(@RequestBody @Valid SignupDto signupDto) {
         return memberService.signup(signupDto);
     }
 
