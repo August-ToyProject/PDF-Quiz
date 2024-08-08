@@ -1,5 +1,6 @@
 # 회원가입
-POST localhost:8080/v1/sign-up
+#POST localhost:8080/v1/sign-up
+POST https://82a6-221-138-5-248.ngrok-free.app/v1/sign-up
 Content-Type: application/json
 
 {
