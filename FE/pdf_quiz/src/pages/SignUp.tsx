@@ -22,7 +22,9 @@ export default function SignUp() {
     confirmPassword : '',
   })
 
-  const [testDB, setTestDB] = useState<InputData[]>([]);
+  const apiBaseUrl = 'https://82a6-221-138-5-248.ngrok-free.app/v1/sign-up'; 
+
+  // const [testDB, setTestDB] = useState<InputData[]>([]);
   const [errors, setErrors] = useState<Partial<InputData>>({});
 
   const navigate = useNavigate();
@@ -46,17 +48,29 @@ export default function SignUp() {
   // 유효성 검사
   const validate = (): Partial<InputData> => {
     const inputError: Partial<InputData> = {};
-    // 이름 한글 제한
+    // 이름 형식 제한
     if (!/^[가-힣]*$/.test(inputData.name)) {
       inputError.name = '이름은 한글만 입력 가능합니다.';
+    }
+    // 이름 길이 제한
+    if (inputData.name.length < 2 || inputData.name.length > 6) {
+      inputError.name = '이름은 최소 2자에서 최대 6자여야 합니다.';
     }
     // 이메일 형식 제한
     if (!/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(inputData.email)) {
       inputError.email = '유효한 이메일 주소를 입력하세요.';
     }
+    // 닉네임 길이 제한
+    if (inputData.nickname.length < 4 || inputData.nickname.length > 20) {
+      inputError.nickname = '닉네임은 최소 4자에서 최대 20자여야 합니다.';
+    }
     // 아이디 형식 제한
     if (!/^[a-zA-Z0-9]*$/.test(inputData.id)) {
       inputError.id = '아이디는 영어 또는 영어와 숫자만 가능합니다.';
+    }
+    // 아이디 길이 제한
+    if (inputData.id.length < 4 || inputData.id.length > 20) {
+      inputError.id = '아이디는 최소 4자에서 최대 20자여야 합니다.';
     }
     // 비밀번호 일치 확인
     if (inputData.password !== inputData.confirmPassword) {
@@ -66,22 +80,49 @@ export default function SignUp() {
   };
 
   // 데이터 제출
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
     }
-    setTestDB([...testDB, inputData]);
-    console.log('testDB : ', [...testDB, inputData]);
-    setErrors({});
+
+    const requestData = {
+      email: inputData.email,
+      password: inputData.password,
+    };
+  
+    try {
+      const response = await fetch(apiBaseUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestData)
+      });
+  
+      if (response.ok) {
+        console.log('회원가입 성공:', await response.json());
+        console.log('응답 상태 코드:', response.status);
+        setErrors({});
+        navigate('/'); // 회원가입 성공 후 로그인 페이지로 이동
+      } else {
+        const errorData = await response.json();
+        console.error('회원가입 실패:', errorData);
+        // setErrors({ id: '회원가입에 실패했습니다. 다시 시도해주세요.' });
+      }
+    } catch (error) {
+      console.error('네트워크 오류:', error);
+      // setErrors({ id: '네트워크 오류가 발생했습니다. 다시 시도해주세요.' });
+    }
   };
 
-  //회원가입 버튼 누르면 회원가입 페이지로 이동
+    //로그인 버튼 누르면 회원가입 페이지로 이동
   const navigateToLogin = () => {
     navigate('/')
-}
+  }
+
 
   return (
     <div className="h-screen w-full flex flex-col justify-center items-center bg-white">

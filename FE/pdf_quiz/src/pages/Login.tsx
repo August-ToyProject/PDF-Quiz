@@ -56,6 +56,11 @@ const Login = () => {
         navigate('/signup')
     }
 
+    //로그인 버튼 누르면 마이페이지 페이지로 이동
+    const navigateToMyPage = () => {
+      navigate('/mypage')
+  }
+
     return (
       <div>
         <div className="h-screen w-full flex flex-col justify-center items-center bg-white">
@@ -91,7 +96,7 @@ const Login = () => {
               <a className='bg-white cursor-pointer' onClick={navigateToSignUp}>회원가입</a>
             </div>
             <div className='w-full flex justify-center'>
-                <button className='p-2 bg-blue-600 text-white font-black rounded'type="submit">로그인</button>
+                <button className='p-2 bg-blue-600 text-white font-black rounded'type="submit" onClick={navigateToMyPage}>로그인</button>
             </div>
   
           </form>
