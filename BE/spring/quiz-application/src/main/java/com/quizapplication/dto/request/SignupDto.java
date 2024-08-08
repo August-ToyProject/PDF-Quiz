@@ -1,9 +1,10 @@
 package com.quizapplication.dto.request;
 
+import static com.quizapplication.domain.Role.*;
+
 import com.quizapplication.domain.Member;
+
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -26,6 +27,7 @@ public class SignupDto {
         return Member.builder()
                 .email(signupDto.getEmail())
                 .password(signupDto.getPassword())
+                .role(ROLE_USER)
                 .build();
     }
 
