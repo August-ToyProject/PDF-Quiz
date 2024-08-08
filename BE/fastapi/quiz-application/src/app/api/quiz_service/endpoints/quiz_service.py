@@ -1,4 +1,3 @@
-from datetime import date
 
 import asyncpg
 from src.app.api.quiz_service.service.quiz_service import generate_quiz
@@ -6,8 +5,8 @@ from src.app.api.quiz_service.shema.quiz_request import QuizRequest
 from src.packages.decorators.logging_decorator import log_decorator
 from src.packages.decorators.processing_time import execution_time_decorator
 
-from fastapi import APIRouter, Depends, HTTPException
-
+from fastapi import APIRouter, HTTPException
+from src.app.api.quiz_service.docs.quiz_service import desc_create_quiz
 router = APIRouter()
 
 # 서버 상태 체크
@@ -15,7 +14,13 @@ router = APIRouter()
 async def health_check():
     return {"message": "It's Working On quiz Service!"}
 
-@router.post("/quiz/generate-quiz")
+@router.post(
+    "/quiz/generate-quiz",
+    tags=["퀴즈 생성"],
+    name="Vecotr DB를 이용해서 퀴즈 생성",
+    description=desc_create_quiz
+    )
+
 async def create_quiz(request: QuizRequest):
     try:
         quiz = await generate_quiz(request.index_path, request.num_questions)
