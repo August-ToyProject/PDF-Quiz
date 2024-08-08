@@ -1,9 +1,18 @@
-# 회원가입
-#POST localhost:8080/v1/sign-up
-POST https://82a6-221-138-5-248.ngrok-free.app/v1/sign-up
+### 회원가입
+POST localhost:8080/v1/sign-up
 Content-Type: application/json
 
 {
-  "email": "kyun9152@gmail.com",
+  "email": "kyun9151@gmail.com",
+  "password": "12345678"
+}
+
+
+### 로그인
+POST localhost:8080/v1/login
+Content-Type: application/json
+
+{
+  "email": "kyun9151@gmail.com",
   "password": "12345678"
 }
