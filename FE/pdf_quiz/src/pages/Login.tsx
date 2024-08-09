@@ -60,6 +60,11 @@ const Login = () => {
     const navigateToMyPage = () => {
       navigate('/mypage')
   }
+    //퀴즈 페이지 테스트용 navigation 버튼
+    const navigateToQuiz = () => {
+        navigate('/quiz')
+    }
+
 
     return (
       <div>
@@ -98,7 +103,11 @@ const Login = () => {
             <div className='w-full flex justify-center'>
                 <button className='p-2 bg-blue-600 text-white font-black rounded'type="submit" onClick={navigateToMyPage}>로그인</button>
             </div>
-  
+            <div className='w-full flex justify-center'>
+                <button className='p-2 bg-white text-blue font-black rounded'
+                        type="submit"
+                        onClick={navigateToQuiz}>문제 풀러 가기</button>
+            </div>
           </form>
       
         </div>
