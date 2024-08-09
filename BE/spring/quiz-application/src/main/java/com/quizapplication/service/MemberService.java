@@ -5,4 +5,5 @@ import com.quizapplication.dto.response.MemberResponse;
 
 public interface MemberService {
     MemberResponse signup(SignupDto signupDto);
+    MemberResponse info();
 }

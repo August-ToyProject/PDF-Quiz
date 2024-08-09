@@ -72,7 +72,7 @@ public class SecurityConfig {
 
             CustomAuthenticationFilter customAuthenticationFilter =
                     new CustomAuthenticationFilter(authenticationManager, tokenProvider, redisService);
-            customAuthenticationFilter.setFilterProcessesUrl("/v1/login");
+            customAuthenticationFilter.setFilterProcessesUrl("/api/v1/login");
             customAuthenticationFilter.setAuthenticationSuccessHandler(new LoginSuccessHandler());
             customAuthenticationFilter.setAuthenticationFailureHandler(new LoginFailureHandler());
             builder.addFilter(customAuthenticationFilter)
