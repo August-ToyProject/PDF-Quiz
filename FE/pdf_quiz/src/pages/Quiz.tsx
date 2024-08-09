@@ -32,7 +32,7 @@ const Quiz = () => {
 
             <div className="h-14 flex flex-row justify-center">
                 {/* 후에 옵션이 추가될 것을 고려하여 남겨둠 / 전체 문제 및 안푼 문제 띄우기 */}
-                <div className="w-3/4 flex ustify-center items-center">
+                <div className="w-3/4 flex justify-center items-center">
                     <div className="w-2/3 left_container"> </div>
                     <div className="w-1/3 flex flex-col gap-1"> 
                         <div className="flex flex-end flex-row">
