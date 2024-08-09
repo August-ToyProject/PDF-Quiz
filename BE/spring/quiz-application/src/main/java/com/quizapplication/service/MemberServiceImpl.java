@@ -1,5 +1,6 @@
 package com.quizapplication.service;
 
+import com.quizapplication.config.security.SecurityUtil;
 import com.quizapplication.domain.Member;
 import com.quizapplication.dto.request.SignupDto;
 import com.quizapplication.dto.response.MemberResponse;
@@ -28,6 +29,11 @@ public class MemberServiceImpl implements MemberService {
         Member savedMember = memberRepository.save(SignupDto.toEntity(signupDto));
         savedMember.passwordEncoding(passwordEncoder);
         return MemberResponse.of(savedMember);
+    }
+
+    @Override
+    public MemberResponse info() {
+        return MemberResponse.of(memberRepository.findByEmail(SecurityUtil.getCurrentMemberEmail()));
     }
 
     private boolean isEmailExist(String email) {

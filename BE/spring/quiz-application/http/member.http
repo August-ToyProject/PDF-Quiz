@@ -1,5 +1,5 @@
 ### 회원가입
-POST localhost:8080/v1/sign-up
+POST localhost:8080/api/v1/sign-up
 Content-Type: application/json
 
 {
@@ -9,10 +9,16 @@ Content-Type: application/json
 
 
 ### 로그인
-POST localhost:8080/v1/login
+POST localhost:8080/api/v1/login
 Content-Type: application/json
 
 {
   "email": "kyun9151@gmail.com",
   "password": "12345678"
 }
+
+### 유저 개인정보
+GET localhost:8080/api/v1/info
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJreXVuOTE1MUBnbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9VU0VSIiwiZXhwIjoxNzIzMjA5NzU0fQ.hQzp_-P7x211ws85kw3qRld_iv1_F209psxLUFus0fMmKsChjW0cMGIKJqFUfuNccHMpHeHdBjsZwzLrZmqNrA
+

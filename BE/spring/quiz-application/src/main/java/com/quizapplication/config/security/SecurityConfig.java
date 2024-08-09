@@ -1,5 +1,8 @@
 package com.quizapplication.config.security;
 
+import com.quizapplication.config.jwt.JwtFilter;
+import com.quizapplication.config.jwt.TokenProvider;
+import com.quizapplication.config.redis.RedisService;
 import com.quizapplication.config.security.handler.LoginFailureHandler;
 import com.quizapplication.config.security.handler.LoginSuccessHandler;
 import java.util.Arrays;
@@ -24,6 +27,9 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+
+    private final TokenProvider tokenProvider;
+    private final RedisService redisService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -65,11 +71,12 @@ public class SecurityConfig {
             AuthenticationManager authenticationManager = builder.getSharedObject(AuthenticationManager.class);
 
             CustomAuthenticationFilter customAuthenticationFilter =
-                    new CustomAuthenticationFilter(authenticationManager);
-            customAuthenticationFilter.setFilterProcessesUrl("/v1/login");
+                    new CustomAuthenticationFilter(authenticationManager, tokenProvider, redisService);
+            customAuthenticationFilter.setFilterProcessesUrl("/api/v1/login");
             customAuthenticationFilter.setAuthenticationSuccessHandler(new LoginSuccessHandler());
             customAuthenticationFilter.setAuthenticationFailureHandler(new LoginFailureHandler());
-            builder.addFilter(customAuthenticationFilter);
+            builder.addFilter(customAuthenticationFilter)
+                    .addFilterBefore(new JwtFilter(tokenProvider, redisService), CustomAuthenticationFilter.class);
         }
     }
 
