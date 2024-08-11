@@ -132,7 +132,7 @@ PDF-Quiz를 통해 학생, 직장인, 자격증 준비생, 그리고 모든 학�
 - Position : 팀원
 - Github: <https://github.com/junyong1111>
 - Email : jyporse@naver.com
-- Role : Backend, AI
+- Role : Backend, AI
 
 
 4.👨🏻‍💻 최병우
