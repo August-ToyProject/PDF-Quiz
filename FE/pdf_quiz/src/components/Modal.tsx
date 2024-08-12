@@ -16,7 +16,7 @@ const Modal: React.FC<ModalProps> = ({ showModal, closeModal }) => {
                 <h2 className="text-xl font-bold mb-4">Title</h2>
                 <p className="mb-4 text-center">Description</p>
                 <button className="px-4 py-2 bg-blue-600 text-white rounded" onClick={closeModal}>
-                    Cancle
+                    Cancel
                 </button>
             </div>
         </div>
