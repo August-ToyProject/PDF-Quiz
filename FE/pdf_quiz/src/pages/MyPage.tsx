@@ -11,7 +11,7 @@ interface ListQuiz {
 
 const months = [
     { name: 'Jan', days: 31 },
-    { name: 'Feb', days: 28 }, // 윤년 처리는 생략
+    { name: 'Feb', days: 28 },
     { name: 'Mar', days: 31 },
     { name: 'Apr', days: 30 },
     { name: 'May', days: 31 },
@@ -65,7 +65,7 @@ export default function MyPage() {
         const squares = [];
         for (let i = 1; i <= days; i++) {
             squares.push(
-                <div key={i} className="w-10 h-10 m-0.5 bg-white border border-gray-400 rounded-lg flex items-center justify-center text-gray-300">
+                <div key={i} className="w-9 h-9 m-0.5 bg-white border border-gray-400 rounded-lg flex items-center justify-center text-gray-300">
                     {i}
                 </div>
             );
@@ -146,7 +146,8 @@ export default function MyPage() {
                     </div>
                     {/* 기능 미정 */}
                     <div className="absolute text-blue-600 text-xs mt-6" style={{ left: '55rem', top: '16rem' }}>기능 미정</div>
-                    <div className="mx-4 ml-4 bg-white rounded-lg w-[530px] h-[380px] p-4 border border-gray-300" style={{ marginTop: '4.8rem', right: '2rem', position: 'relative' }}>
+                    <div className="ml-4 bg-white rounded-lg w-[530px] h-[380px] p-4 border border-gray-300" style={{ marginTop: '5.5rem', right: '2rem', position: 'relative' }}>
+                    
                     </div>
                 </div>
             </div>
