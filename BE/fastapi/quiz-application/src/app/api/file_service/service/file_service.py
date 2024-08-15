@@ -30,5 +30,3 @@ async def save_pdf_to_faiss(
         
     except(Exception) as e:
         raise HTTPException(status_code=500, detail= f"{save_pdf_to_faiss.__name__} function raise exception about :{str(e)}")
-    
-    
