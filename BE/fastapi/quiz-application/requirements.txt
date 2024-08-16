@@ -26,6 +26,7 @@ langsmith==0.1.85
 
 PyMuPDF==1.24.9
 PyMuPDFb==1.24.9
+pdfplumber==0.11.3
 
 # FAISS 관련 패키지
 faiss-cpu==1.8.0.post1
