@@ -72,6 +72,10 @@ export default function SignUp() {
     if (inputData.id.length < 4 || inputData.id.length > 20) {
       inputError.id = '아이디는 최소 4자에서 최대 20자여야 합니다.';
     }
+    // 비밀번호 형식 및 길이 제한
+    if (!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(inputData.password)) {
+      inputError.password = '비밀번호는 최소 8자 이상이어야 하며, 영어와 숫자를 포함해야 합니다.';
+    }
     // 비밀번호 일치 확인
     if (inputData.password !== inputData.confirmPassword) {
       inputError.confirmPassword = '비밀번호가 일치하지 않습니다.';
