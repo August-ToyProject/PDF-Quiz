@@ -8,7 +8,8 @@ from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import FAISS
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(dotenv_path="src/.env")
+
 
 async def file_to_document(file: UploadFile) -> PyMuPDFLoader:
     try:

@@ -2,9 +2,12 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.routing import APIRouter
 from fastapi.middleware.cors import CORSMiddleware
-
 from .urls import file_controller, quiz_controller
+from dotenv import load_dotenv
+from langchain_teddynote import logging
 
+load_dotenv()
+logging.langsmith("QUIZ_GEN")
 APP = FastAPI()
 
 # APIRouter로 공통 경로 정의

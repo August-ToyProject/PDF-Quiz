@@ -15,13 +15,25 @@ async def health_check():
     return {"message": "It's Working On file Service!"}
 
 @router.post(
-    "/files/upload/pdf",
+    "/test/files/upload/pdf",
     tags=["파일 업로드"],
     name="파일을 올리면 Vecotr DB에 저장",
     description=desc_pdf_upload
     )
 @execution_time_decorator(log_path)
 @log_decorator(log_path)
+async def test_pdf_upload(
+    file: UploadFile = File(...),
+):
+    return await test_save_pdf_to_faiss(file)
+
+
+@router.post(
+    "/files/upload/pdf",
+    tags=["파일 업로드"],
+    name="파일을 올리면 Vecotr DB에 저장",
+    description=desc_pdf_upload
+    )
 async def pdf_upload(
     file: UploadFile = File(...),
 ):
