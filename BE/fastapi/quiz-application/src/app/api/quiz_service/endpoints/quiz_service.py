@@ -23,7 +23,7 @@ async def health_check():
 
 async def create_quiz(request: QuizRequest):
     try:
-        quiz = await generate_quiz(request.index_path, request.num_questions)
+        quiz = await generate_quiz(request)
         return {"quiz": quiz}
     except HTTPException as http_exc:
         raise http_exc
