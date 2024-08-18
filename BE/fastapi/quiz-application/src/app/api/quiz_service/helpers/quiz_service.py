@@ -6,6 +6,15 @@ from langchain.chains import LLMChain
 from langchain_openai import ChatOpenAI
 import asyncio
 import random
+import json
+from confluent_kafka import Producer
+
+# Kafka Producer 설정
+producer_config = {
+    'bootstrap.servers': 'localhost:9092',  # Kafka 브로커 주소
+    'client.id': 'fastapi-producer',         # 클라이언트 ID
+}
+producer = Producer(producer_config)
 
 async def load_vector(index_path: str):
     embeddings = OpenAIEmbeddings()
@@ -156,8 +165,7 @@ async def make_quiz(
 
         difficulties, weights = await get_weighted_difficulties(user_difficulty_choice)
 
-        questions = []
-        num_questions= num_questions//5
+        num_questions = num_questions // 5
         for _ in range(num_questions):
             # 가중치를 적용하여 난이도 선택
             difficulty = random.choices(difficulties, weights=weights, k=1)[0]
@@ -168,9 +176,11 @@ async def make_quiz(
                 choice_count=choice_count,
                 difficulty=difficulty
             )
-            questions.append(result.strip())
+            
+            # Kafka로 퀴즈 전송 (JSON 직렬화 후 UTF-8 인코딩, ensure_ascii=False 추가)
+            producer.produce('quiz_topic', json.dumps({'question': result.strip()}, ensure_ascii=False).encode('utf-8'))
 
-        final_result = "\n\n".join(questions)
-        return final_result
+        producer.flush()  # 모든 메시지가 전송되었는지 확인
+        return {"status": "Quizzes sent to Kafka"}
     except Exception as e:
         raise e
