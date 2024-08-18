@@ -17,6 +17,12 @@ export default function Upload({ showModal, closeModal, width = '700px', height 
     const [uploadMessage, setUploadMessage] = useState<string | null>(null);
     const [errors, setErrors] = useState<string | null>(null);
 
+    const [difficulty, setDifficulty] = useState<string>('쉬움');
+    const [quiz_cnt, setQuiz_cnt] = useState<string>('5');
+    const [option_cnt, setOption_cnt] = useState<string>('4');
+    const [timeLimitHour, setTimeLimitHour] = useState<string>('0');
+    const [timeLimitMinute, setTimeLimitMinute] = useState<string>('0');
+
     const apiBaseUrl = 'https://2afa-218-238-83-155.ngrok-free.app/api/v1/files/upload/pdf';
 
     const handleButtonClick = () => {
@@ -41,8 +47,27 @@ export default function Upload({ showModal, closeModal, width = '700px', height 
             return;
         }
 
+        // 난이도 매핑
+        let difficultyValue;
+        if (difficulty === '쉬움') {
+            difficultyValue = 1;
+        } else if (difficulty === '보통') {
+            difficultyValue = 2;
+        } else if (difficulty === '어려움') {
+            difficultyValue = 3;
+        }
+
+        const time = new Date();
+        time.setHours(parseInt(timeLimitHour, 10));
+        time.setMinutes(parseInt(timeLimitMinute, 10));
+        const created_at = time.toISOString();
+
         const formData = new FormData();
         formData.append('file', selectedFile);
+        formData.append('difficulty', String(difficultyValue));
+        formData.append('quiz_cnt', quiz_cnt);
+        formData.append('option_cnt', option_cnt);
+        formData.append('created_at', created_at);
 
         try {
             const response = await fetch(apiBaseUrl, {
@@ -110,52 +135,66 @@ export default function Upload({ showModal, closeModal, width = '700px', height 
                         )}
                     </div>
                     <div className="flex flex-col space-y-4" style={{ marginLeft: '40px' }}>
+                        {/* 난이도 */}
+                        <div className="flex items-center">
+                            <span className="mr-2 font-bold">난이도</span>
+                            <select className="p-2 border border-gray-300 rounded ml-4 " value={difficulty} onChange={(e) => setDifficulty(e.target.value)}>
+                                <option value="">쉬움</option>
+                                <option value="">보통</option>
+                                <option value="">어려움</option>
+                            </select>
+                        </div>
                         {/* 시험 문제 수 / 선지 수 선택 */}
                         <div className="flex items-center">
                             <span className="mr-2 font-bold">시험문제</span>
-                            <select className="p-2 border border-gray-300 rounded">
-                                <option value="">3</option>
-                                <option value="">5</option>
-                                <option value="">10</option>
-                                <option value="">20</option>
-                                <option value="">30</option>
+                            <select className="p-2 border border-gray-300 rounded" value={quiz_cnt} onChange={(e) => setQuiz_cnt(e.target.value)}>
+                                <option value="5">5</option>
+                                <option value="10">10</option>
+                                <option value="15">15</option>
+                                <option value="20">20</option>
+                                <option value="25">25</option>
+                                <option value="30">30</option>
+                                <option value="35">35</option>
+                                <option value="40">40</option>
+                                <option value="45">45</option>
+                                <option value="50">50</option>
                             </select>
                             <span className="ml-2 mr-2">선지</span>
-                            <select className="p-2 border border-gray-300 rounded">
-                                <option value="">3</option>
-                                <option value="">4</option>
-                                <option value="">5</option>
-                                <option value="">6</option>
-                                <option value="">7</option>
-                                <option value="">8</option>
-                                <option value="">9</option>
-                                <option value="">10</option>
+                            <select className="p-2 border border-gray-300 rounded" value={option_cnt} onChange={(e) => setOption_cnt(e.target.value)}>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
                             </select>
                         </div>
                         {/* 제한 시간 선택 */}
                         <div className="flex items-center">
                             <span className="mr-2 font-bold">제한시간</span>
-                            <select className="p-2 border border-gray-300 rounded">
-                                <option value="">0</option>
-                                <option value="">1</option>
-                                <option value="">2</option>
-                                <option value="">3</option>
-                                <option value="">4</option>
-                                <option value="">5</option>
-                                <option value="">6</option>
-                                <option value="">7</option>
-                                <option value="">8</option>
-                                <option value="">9</option>
-                                <option value="">10</option>
+                            <select className="p-2 border border-gray-300 rounded" value={timeLimitHour} onChange={(e) => setTimeLimitHour(e.target.value)}>
+                                <option value="0">0</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="8">8</option>
+                                <option value="9">9</option>
+                                <option value="10">10</option>
                             </select>
                             <span className="ml-2 mr-2">시간</span>
-                            <select className="p-2 border border-gray-300 rounded">
-                                    <option value="">0</option>
-                                    <option value="">5</option>
-                                    <option value="">10</option>
-                                    <option value="">15</option>
-                                    <option value="">30</option>
-                                    <option value="">45</option>
+                            <select className="p-2 border border-gray-300 rounded" value={timeLimitMinute} onChange={(e) => setTimeLimitMinute(e.target.value)}>
+                                    <option value="0">0</option>
+                                    <option value="5">5</option>
+                                    <option value="10">10</option>
+                                    <option value="15">15</option>
+                                    <option value="20">20</option>
+                                    <option value="25">25</option>
+                                    <option value="30">30</option>
+                                    <option value="35">35</option>
+                                    <option value="40">40</option>
+                                    <option value="45">45</option>
+                                    <option value="50">50</option>
+                                    <option value="55">55</option>
                                 </select>
                                 <span className="ml-2 mr-2">분</span>
                         </div>

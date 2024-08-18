@@ -83,7 +83,7 @@ export default function SignUp() {
     return inputError;
   };
 
-  // 데이터 제출
+  // 데이터 통신
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const validationErrors = validate();
