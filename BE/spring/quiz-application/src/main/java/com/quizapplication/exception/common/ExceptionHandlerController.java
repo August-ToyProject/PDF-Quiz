@@ -2,6 +2,7 @@ package com.quizapplication.exception.common;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -23,5 +24,10 @@ public class ExceptionHandlerController {
         ex.getBindingResult().getAllErrors()
                 .forEach(c -> errors.put(((FieldError) c).getField(), c.getDefaultMessage()));
         return ResponseEntity.badRequest().body(errors);
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<String> handleRuntimeException(RuntimeException ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred: " + ex.getMessage());
     }
 }
