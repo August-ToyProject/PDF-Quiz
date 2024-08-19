@@ -64,6 +64,10 @@ const Login = () => {
     const navigateToQuiz = () => {
         navigate('/quiz')
     }
+    //아이디 비밀번호 찾기 페이지로 이동
+    const navigateToFindIDPW = () => {
+        navigate('/findAccount')
+    }
 
 
     return (
@@ -97,7 +101,7 @@ const Login = () => {
             <p className="text-red-500 text-sm">비밀번호를 입력해주세요</p>)}
 
             <div className='w-full flex flex-row gap-7 justify-center'>
-              <a className='bg-white cursor-pointer' href='#'>아이디/비밀번호 찾기</a>
+              <a className='bg-white cursor-pointer' onClick={navigateToFindIDPW}>아이디/비밀번호 찾기</a>
               <a className='bg-white cursor-pointer' onClick={navigateToSignUp}>회원가입</a>
             </div>
             <div className='w-full flex justify-center'>
