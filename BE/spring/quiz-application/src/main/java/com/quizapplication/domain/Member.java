@@ -2,6 +2,8 @@ package com.quizapplication.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -23,11 +25,22 @@ public class Member {
     @Column(name = "member_id")
     private Long id;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
+    private String userId;
+
+    @Column(unique = true, nullable = false)
     private String email;
 
+    @Column(nullable = false)
+    private String username;
+
+    @Column(unique = true)
+    private String nickname;
+
+    @Column(nullable = false)
     private String password;
 
+    @Enumerated(EnumType.STRING)
     private Role role;
 
     public void passwordEncoding(PasswordEncoder passwordEncoder) {

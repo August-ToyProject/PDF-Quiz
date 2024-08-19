@@ -5,6 +5,7 @@ import com.quizapplication.domain.Member;
 import com.quizapplication.dto.request.SignupDto;
 import com.quizapplication.dto.response.MemberResponse;
 import com.quizapplication.exception.member.DuplicateEmailException;
+import com.quizapplication.exception.member.PasswordMismatchException;
 import com.quizapplication.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,6 +27,10 @@ public class MemberServiceImpl implements MemberService {
             throw new DuplicateEmailException();
         }
 
+        if (!checkPassword(signupDto.getPassword(), signupDto.getPasswordConfirm())) {
+            throw new PasswordMismatchException();
+        }
+
         Member savedMember = memberRepository.save(SignupDto.toEntity(signupDto));
         savedMember.passwordEncoding(passwordEncoder);
         return MemberResponse.of(savedMember);
@@ -38,5 +43,9 @@ public class MemberServiceImpl implements MemberService {
 
     private boolean isEmailExist(String email) {
         return memberRepository.existsByEmail(email);
+    }
+
+    private boolean checkPassword(String password, String passwordConfirm) {
+        return password.equals(passwordConfirm);
     }
 }
