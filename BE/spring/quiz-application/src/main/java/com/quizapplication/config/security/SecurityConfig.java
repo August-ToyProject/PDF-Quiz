@@ -39,7 +39,7 @@ public class SecurityConfig {
                 .formLogin((formLogin) -> formLogin.disable())
                 .httpBasic((httpBasic) -> httpBasic.disable())
                 .headers((e) -> e.frameOptions((a) -> a.sameOrigin()))
-                .authorizeRequests((requests) -> requests.anyRequest().permitAll())
+                .authorizeHttpRequests((requests) -> requests.anyRequest().permitAll())
                 .cors(cors -> cors.configurationSource(getCorsConfiguration()))
                 .with(new CustomFilterConfigurer(), Customizer.withDefaults());
         return http.build();
