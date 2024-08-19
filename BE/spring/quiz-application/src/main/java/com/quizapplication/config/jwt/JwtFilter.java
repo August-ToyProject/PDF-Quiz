@@ -21,7 +21,7 @@ public class JwtFilter extends OncePerRequestFilter {
     private final TokenProvider tokenProvider;
     private final RedisService redisService;
 
-    private static final List<String> EXCLUDE_URL = List.of("/", "login", "/sign-up", "/swagger-ui/**");
+    private static final List<String> EXCLUDE_URL = List.of("/", "api/v1/login", "/sign-up", "/swagger-ui/**");
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -44,7 +44,10 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        return EXCLUDE_URL.stream().anyMatch(exclude -> exclude.equalsIgnoreCase(request.getServletPath()));
+        String servletPath = request.getServletPath();
+        return EXCLUDE_URL.stream().anyMatch(exclude -> servletPath.equalsIgnoreCase(exclude) ||
+                servletPath.startsWith(exclude) ||
+                servletPath.matches(exclude));
     }
 
     private boolean isLogout(String accessToken) {
