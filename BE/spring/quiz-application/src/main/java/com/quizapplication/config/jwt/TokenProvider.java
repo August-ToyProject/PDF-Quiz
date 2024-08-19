@@ -117,6 +117,10 @@ public class TokenProvider {
         return null;
     }
 
+    public String getAccessToken(HttpServletRequest request) {
+        return request.getHeader(AUTHORIZATION_HEADER).split(" ")[1];
+    }
+
 
     // 토큰 만료 시간얻는 메소드
     private Date getTokenExpiration(long millisecond) {
@@ -125,7 +129,7 @@ public class TokenProvider {
     }
 
     // 토큰 복호화 메소드
-    private Claims getClaims(String token) {
+    public Claims getClaims(String token) {
         try {
             return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
         } catch (ExpiredJwtException e) {
