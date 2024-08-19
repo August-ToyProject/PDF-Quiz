@@ -12,6 +12,7 @@ interface ModalProps {
 
 export default function Upload({ showModal, closeModal, width = '700px', height = '440px', boxSize = '350px' }: ModalProps) {
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const [isSelectDisabled, setIsSelectDisabled] = useState(true);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [preview, setPreview] = useState<string | null>(null);
     const [uploadMessage, setUploadMessage] = useState<string | null>(null);
@@ -24,8 +25,8 @@ export default function Upload({ showModal, closeModal, width = '700px', height 
     const [timeLimitMinute, setTimeLimitMinute] = useState<string>('0');
 
     const apiBaseUrl = 'https://2afa-218-238-83-155.ngrok-free.app/api/v1/files/upload/pdf';
-
-    const handleButtonClick = () => {
+    //Drag and Drop 버튼 클릭시 파일 선택
+    const handleFileSelectClick = () => {
         if (fileInputRef.current) {
             fileInputRef.current.click();
         }
@@ -39,8 +40,16 @@ export default function Upload({ showModal, closeModal, width = '700px', height 
             setPreview(fileURL);
         }
     };
+    //PDF 파일 선택 후 버튼 클릭시 선택지 활성화
+    const handlePDFUploadClick = () => {
+        if (selectedFile) {
+            setIsSelectDisabled(false);
+        } else {
+            setErrors('Please select a file first.');
+        }
+    }
 
-    const handleUpload = async () => {
+    const handleGenerateClick = async () => {
         if (!selectedFile) {
             setErrors('Please select a PDF file to upload.');
             console.log('No file selected for upload.');
@@ -114,13 +123,14 @@ export default function Upload({ showModal, closeModal, width = '700px', height 
                         <img src={pdfLogo} alt="PDF Logo" style={{ maxWidth: '50%', maxHeight: '50%', opacity: 0.5 }} />
                         <button style={{ 
                                 marginTop: '10px', 
+                                marginBottom: '10px',
                                 textAlign: 'center',
                                 backgroundColor: 'transparent',
                                 color: '#2563EB',
                                 border: 'none',
                                 cursor: 'pointer',
                                 fontSize: '14px',
-                            }} onClick={handleButtonClick}>Drag and Drop your PDF file!</button>
+                            }} onClick={handleFileSelectClick}>Drag and Drop your PDF file!</button>
                         <input 
                             type="file" 
                             accept=".pdf" 
@@ -129,16 +139,27 @@ export default function Upload({ showModal, closeModal, width = '700px', height 
                             onChange={handleFileChange} 
                         />
                         {selectedFile && (
-                            <span style={{ marginTop: '10px', textAlign: 'center' }}>
+                            <span style={{ marginTop: '2px', marginBottom: '10px', textAlign: 'center' }}>
                                 {selectedFile.name}
                             </span>
                         )}
+                        <button className="px-4 py-2 bg-blue-600 text-white rounded" onClick={handlePDFUploadClick}>PDF 업로드</button>
+
                     </div>
+                    
                     <div className="flex flex-col space-y-4" style={{ marginLeft: '40px' }}>
+                        <div className="flex flex-col items-start mb-2">
+                            <div>* PDF 파일 업로드 후 버튼을 클릭하셔야</div>
+                            <div>선택 칸이 활성화됩니다!</div>
+
+                        </div>
                         {/* 난이도 */}
                         <div className="flex items-center">
                             <span className="mr-2 font-bold">난이도</span>
-                            <select className="p-2 border border-gray-300 rounded ml-4 " value={difficulty} onChange={(e) => setDifficulty(e.target.value)}>
+                            <select className="p-2 border border-gray-300 rounded ml-4 " 
+                            value={difficulty} 
+                            onChange={(e) => setDifficulty(e.target.value)}
+                            disabled={isSelectDisabled}>
                                 <option value="">쉬움</option>
                                 <option value="">보통</option>
                                 <option value="">어려움</option>
@@ -146,8 +167,12 @@ export default function Upload({ showModal, closeModal, width = '700px', height 
                         </div>
                         {/* 시험 문제 수 / 선지 수 선택 */}
                         <div className="flex items-center">
-                            <span className="mr-2 font-bold">시험문제</span>
-                            <select className="p-2 border border-gray-300 rounded" value={quiz_cnt} onChange={(e) => setQuiz_cnt(e.target.value)}>
+                            <span className="mr-2 font-bold">시험 문제</span>
+                            <select className="p-2 border border-gray-300 rounded" 
+                            value={quiz_cnt} 
+                            onChange={(e) => setQuiz_cnt(e.target.value)}
+                            disabled={isSelectDisabled}>
+                            
                                 <option value="5">5</option>
                                 <option value="10">10</option>
                                 <option value="15">15</option>
@@ -159,16 +184,24 @@ export default function Upload({ showModal, closeModal, width = '700px', height 
                                 <option value="45">45</option>
                                 <option value="50">50</option>
                             </select>
-                            <span className="ml-2 mr-2">선지</span>
-                            <select className="p-2 border border-gray-300 rounded" value={option_cnt} onChange={(e) => setOption_cnt(e.target.value)}>
-                                <option value="4">4</option>
-                                <option value="5">5</option>
-                            </select>
+                        </div>
+                        <div>
+                            <span className="mr-2 font-bold">선지 개수</span>
+                                <select className="p-2 border border-gray-300 rounded" 
+                                value={option_cnt} 
+                                onChange={(e) => setOption_cnt(e.target.value)}
+                                disabled={isSelectDisabled}>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                </select>
                         </div>
                         {/* 제한 시간 선택 */}
                         <div className="flex items-center">
-                            <span className="mr-2 font-bold">제한시간</span>
-                            <select className="p-2 border border-gray-300 rounded" value={timeLimitHour} onChange={(e) => setTimeLimitHour(e.target.value)}>
+                            <span className="mr-2 font-bold">제한 시간</span>
+                            <select className="p-2 border border-gray-300 rounded" 
+                            value={timeLimitHour} 
+                            onChange={(e) => setTimeLimitHour(e.target.value)}
+                            disabled={isSelectDisabled}>
                                 <option value="0">0</option>
                                 <option value="1">1</option>
                                 <option value="2">2</option>
@@ -182,7 +215,10 @@ export default function Upload({ showModal, closeModal, width = '700px', height 
                                 <option value="10">10</option>
                             </select>
                             <span className="ml-2 mr-2">시간</span>
-                            <select className="p-2 border border-gray-300 rounded" value={timeLimitMinute} onChange={(e) => setTimeLimitMinute(e.target.value)}>
+                            <select className="p-2 border border-gray-300 rounded" 
+                            value={timeLimitMinute} 
+                            onChange={(e) => setTimeLimitMinute(e.target.value)}
+                            disabled={isSelectDisabled}>
                                     <option value="0">0</option>
                                     <option value="5">5</option>
                                     <option value="10">10</option>
@@ -199,8 +235,8 @@ export default function Upload({ showModal, closeModal, width = '700px', height 
                                 <span className="ml-2 mr-2">분</span>
                         </div>
                         {/* 완료 버튼 */}
-                        <button className="px-4 py-2 bg-blue-600 text-white rounded" onClick={handleUpload}>
-                            Upload
+                        <button className="px-4 py-2 bg-blue-600 text-white rounded" onClick={handleGenerateClick}>
+                            문제 생성하기
                         </button>
                     </div>
                 </div>
@@ -212,4 +248,4 @@ export default function Upload({ showModal, closeModal, width = '700px', height 
             </div>
         </div>
     );
-};
+}
