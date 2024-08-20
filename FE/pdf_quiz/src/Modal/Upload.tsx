@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import pdfLogo from '../assets/pdf_logo.png';
+import pdfLogo from '../assets/DragFile.png';
 import closeIcon from '../assets/X.png'; 
 
 interface ModalProps {
@@ -12,7 +12,11 @@ interface ModalProps {
 
 export default function Upload({ showModal, closeModal, width = '700px', height = '440px', boxSize = '350px' }: ModalProps) {
     const fileInputRef = useRef<HTMLInputElement>(null);
+    //드래그 active 여부
+    const [isActive, setIsActive] = useState(false);
+    //PDF 파일 선택 후 버튼 클릭시 선택지 활성화
     const [isSelectDisabled, setIsSelectDisabled] = useState(true);
+    //PDF 파일 선택
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [preview, setPreview] = useState<string | null>(null);
     const [uploadMessage, setUploadMessage] = useState<string | null>(null);
@@ -25,6 +29,41 @@ export default function Upload({ showModal, closeModal, width = '700px', height 
     const [timeLimitMinute, setTimeLimitMinute] = useState<string>('0');
 
     const apiBaseUrl = 'https://2afa-218-238-83-155.ngrok-free.app/api/v1/files/upload/pdf';
+
+    const handleDragStart = (e: React.DragEvent<HTMLDivElement>) => {
+        e.preventDefault()
+        e.stopPropagation();
+        setIsActive(true);
+    }
+    const handleDragEnd = (e: React.DragEvent<HTMLDivElement>) => {
+        e.preventDefault()
+        e.stopPropagation();
+        setIsActive(false);
+    }
+
+    const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+        e.preventDefault()
+        e.stopPropagation();
+
+        if(e.dataTransfer!.files){
+            setIsActive(true)
+        }
+    
+    }
+    const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+        e.preventDefault()
+        e.stopPropagation();
+        setIsActive(false)
+
+        if(e.dataTransfer!.files){
+            const file = e.dataTransfer!.files[0]
+            if (file) {
+                setSelectedFile(file);
+                const fileURL = URL.createObjectURL(file);
+                setPreview(fileURL);
+            }
+        }
+    }
     //Drag and Drop 버튼 클릭시 파일 선택
     const handleFileSelectClick = () => {
         if (fileInputRef.current) {
@@ -119,18 +158,21 @@ export default function Upload({ showModal, closeModal, width = '700px', height 
                     <img src={closeIcon} alt="Close" onClick={closeModal} className="cursor-pointer" style={{ width: '16px', height: '16px', marginTop: '-8px' }} />
                 </div>            
                 <div className="flex flex-row items-center space-x-4">
-                    <div className="bg-white rounded-lg flex flex-col items-center justify-center" style={{ width: boxSize, height: boxSize, border: '2px dashed', borderColor: '#2563EB' }}>
-                        <img src={pdfLogo} alt="PDF Logo" style={{ maxWidth: '50%', maxHeight: '50%', opacity: 0.5 }} />
-                        <button style={{ 
-                                marginTop: '10px', 
-                                marginBottom: '10px',
+                    <div className={`rounded-lg flex flex-col items-center justify-center border-2 border-blue-600
+                    ${isActive ? 'bg-slate-200 border-3 border-dashed'  : 'bg-white border-solid' }`}
+                         style={{ width: boxSize, height: boxSize, }}
+                         onDragStart={handleDragStart}
+                         onDragLeave={handleDragEnd}
+                         onDragOver={handleDragOver}
+                         onDrop={handleDrop}>
+                        <img src={pdfLogo} alt="PDF Logo" style={{ maxWidth: '30%', maxHeight: '30%', opacity: 0.7 }} />
+                        <div className='text-blue-600 font-semibold'>Drag and Drop</div>
+                        <div className='text-xs text-blue-600 font-semibold'>Or</div>
+                        <button className='mt-1 mb-1 text-sm text-blue-600 font-semibold cursor-pointer border-1 border-gray-400'
+                        style={{ 
                                 textAlign: 'center',
                                 backgroundColor: 'transparent',
-                                color: '#2563EB',
-                                border: 'none',
-                                cursor: 'pointer',
-                                fontSize: '14px',
-                            }} onClick={handleFileSelectClick}>Drag and Drop your PDF file!</button>
+                            }} onClick={handleFileSelectClick}>Select your PDF file!</button>
                         <input 
                             type="file" 
                             accept=".pdf" 
@@ -139,11 +181,11 @@ export default function Upload({ showModal, closeModal, width = '700px', height 
                             onChange={handleFileChange} 
                         />
                         {selectedFile && (
-                            <span style={{ marginTop: '2px', marginBottom: '10px', textAlign: 'center' }}>
+                            <span className = 'mt-7 mb-3 text-sm font-semibold items-center'>
                                 {selectedFile.name}
                             </span>
                         )}
-                        <button className="px-4 py-2 bg-blue-600 text-white rounded" onClick={handlePDFUploadClick}>PDF 업로드</button>
+                        <button className="mt-3 px-4 py-2 bg-blue-600 text-white rounded" onClick={handlePDFUploadClick}>PDF 업로드</button>
 
                     </div>
                     
