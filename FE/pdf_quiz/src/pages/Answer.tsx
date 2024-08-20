@@ -1,4 +1,4 @@
-import React, { useState} from 'react';
+import { useState} from 'react';
 import AnswerExit from '../Modal/answerExit'; 
 import AnswerSave from '../Modal/answerSave'; 
 
