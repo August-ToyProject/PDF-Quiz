@@ -1,4 +1,3 @@
-import React from 'react';
 import closeIcon from '../assets/X.png'; 
 import { useNavigate } from 'react-router-dom';
 
