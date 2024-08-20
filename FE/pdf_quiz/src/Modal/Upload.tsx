@@ -64,6 +64,9 @@ export default function Upload({ showModal, closeModal, width = '700px', height 
             }
         }
     }
+
+    const formData = new FormData();
+
     //Drag and Drop 버튼 클릭시 파일 선택
     const handleFileSelectClick = () => {
         if (fileInputRef.current) {
@@ -78,44 +81,16 @@ export default function Upload({ showModal, closeModal, width = '700px', height 
             const fileURL = URL.createObjectURL(file);
             setPreview(fileURL);
         }
+
     };
     //PDF 파일 선택 후 버튼 클릭시 선택지 활성화
-    const handlePDFUploadClick = () => {
+    const handlePDFUploadClick = async () => {
         if (selectedFile) {
             setIsSelectDisabled(false);
+            formData.append('file', selectedFile);
         } else {
             setErrors('Please select a file first.');
         }
-    }
-
-    const handleGenerateClick = async () => {
-        if (!selectedFile) {
-            setErrors('Please select a PDF file to upload.');
-            console.log('No file selected for upload.');
-            return;
-        }
-
-        // 난이도 매핑
-        let difficultyValue;
-        if (difficulty === '쉬움') {
-            difficultyValue = 1;
-        } else if (difficulty === '보통') {
-            difficultyValue = 2;
-        } else if (difficulty === '어려움') {
-            difficultyValue = 3;
-        }
-
-        const time = new Date();
-        time.setHours(parseInt(timeLimitHour, 10));
-        time.setMinutes(parseInt(timeLimitMinute, 10));
-        const created_at = time.toISOString();
-
-        const formData = new FormData();
-        formData.append('file', selectedFile);
-        formData.append('difficulty', String(difficultyValue));
-        formData.append('quiz_cnt', quiz_cnt);
-        formData.append('option_cnt', option_cnt);
-        formData.append('created_at', created_at);
 
         try {
             const response = await fetch(apiBaseUrl, {
@@ -143,6 +118,63 @@ export default function Upload({ showModal, closeModal, width = '700px', height 
             setUploadMessage('An error occurred while uploading the file.');
             setErrors('Network error occurred.');
             console.error('Upload error:', error);
+        }
+    }
+
+    const handleGenerateClick = async () => {
+        if (!selectedFile) {
+            setErrors('Please select a PDF file to upload.');
+            console.log('No file selected for upload.');
+            return;
+        }
+
+        // 난이도 매핑
+        let difficultyValue;
+        if (difficulty === '쉬움') {
+            difficultyValue = 1;
+        } else if (difficulty === '보통') {
+            difficultyValue = 2;
+        } else if (difficulty === '어려움') {
+            difficultyValue = 3;
+        }
+
+        const time = new Date();
+        time.setHours(parseInt(timeLimitHour, 10));
+        time.setMinutes(parseInt(timeLimitMinute, 10));
+        const created_at = time.toISOString();
+
+        formData.append('difficulty', String(difficultyValue));
+        formData.append('quiz_cnt', quiz_cnt);
+        formData.append('option_cnt', option_cnt);
+        formData.append('created_at', created_at);
+
+        try {
+            //Todo: Url 변경 예정
+            const response = await fetch(apiBaseUrl, {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                setUploadMessage(result.message);
+                setErrors(null);
+                console.log('Generation successful:', result);
+            } else if (response.status === 400) {
+                const result = await response.json();
+                setUploadMessage(result.message);
+                setErrors('Request failed: Invalid data provided.');
+                console.log('Request failed with 400 Bad Request:', result);
+            } else {
+                const result = await response.json();
+                setUploadMessage(result.message);
+                setErrors('Request failed: Server error.');
+                console.log('Request failed with status:', response.status, result);
+            }
+        } catch (error) {
+            setUploadMessage('An error occurred while processing the request.');
+            setErrors('Network error occurred.');
+            console.error('Generation error:', error);
         }
     };
 
