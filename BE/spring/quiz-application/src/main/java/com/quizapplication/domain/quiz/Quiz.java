@@ -26,6 +26,7 @@ public class Quiz {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "quiz_id")
     private Long id;
 
     private String difficulty;
@@ -36,6 +37,8 @@ public class Quiz {
     @Column(columnDefinition = "jsonb", nullable = false)
     private String options;
 
+    @Type(JsonType.class)
+    @Column(columnDefinition = "jsonb", nullable = false)
     private String answer;
 
     private String description;
@@ -48,5 +51,12 @@ public class Quiz {
     @JoinColumn(name = "pdf_id")
     private Pdf pdf;
 
+    public void updateMember(Member member) {
+        this.member = member;
+    }
+
+    public void updatePdf(Pdf pdf) {
+        this.pdf = pdf;
+    }
 
 }

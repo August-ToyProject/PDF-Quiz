@@ -2,7 +2,11 @@ package com.quizapplication.service.notification;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.quizapplication.config.jwt.TokenProvider;
+import com.quizapplication.dto.response.quiz.QuizResponse;
 import com.quizapplication.repository.EmitterRepository;
+import com.quizapplication.repository.MemberRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,15 +21,20 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 public class NotificationService {
 
     private final EmitterRepository emitterRepository;
+    private final TokenProvider tokenProvider;
+    private final MemberRepository memberRepository;
 
-    private static final Long DEFAULT_TIMEOUT = 60L * 1000 * 60;
+    private static final Long DEFAULT_TIMEOUT = 1800000000L;
 
     /**
      * 클라이언트를 구독
-     * @param userId - 구독할 사용자의 아이디
+     * @param request - 구독할 사용자의 요청
      * @return SseEmitter - 서버에서 보낸 이벤트 Emitter
      */
-    public SseEmitter subscribe(Long userId) throws JsonProcessingException {
+    public SseEmitter subscribe(HttpServletRequest request) throws JsonProcessingException {
+        String accessToken = tokenProvider.getAccessToken(request);
+        String email = tokenProvider.getClaims(accessToken).getSubject();
+        Long userId = memberRepository.findByEmail(email).getId();
         SseEmitter emitter = createEmitter(userId);
         sendToClient(userId, "EventStream Created. [userId=" + userId + "]");
         return emitter;
@@ -35,7 +44,7 @@ public class NotificationService {
      * 서버의 이벤트를 클라이언트에게 보내는 메소드
      * 다른 서비스 로직에서 이 메소드를 사용해 데이터를 Object evnet에 넣고 전송하면 된다.
      */
-    public void notify(Long userId, Object event) throws JsonProcessingException {
+    public void notify(Long userId, QuizResponse event) throws JsonProcessingException {
         sendToClient(userId, event);
     }
 
@@ -47,7 +56,7 @@ public class NotificationService {
      */
      private void sendToClient(Long id, Object data) throws JsonProcessingException {
          SseEmitter emitter = emitterRepository.get(id);
-         String jsonData = new ObjectMapper().writeValueAsString(new Notification("한글", "bc"));
+//         log.info("data={}", data);
          log.info("Send to client. [userId={}, data={}]", id, data);
          if (emitter != null) {
              try {
