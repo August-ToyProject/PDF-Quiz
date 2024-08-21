@@ -3,6 +3,7 @@ package com.quizapplication.service.notification;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.quizapplication.config.jwt.TokenProvider;
+import com.quizapplication.dto.response.quiz.QuizResponse;
 import com.quizapplication.repository.EmitterRepository;
 import com.quizapplication.repository.MemberRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,7 +24,7 @@ public class NotificationService {
     private final TokenProvider tokenProvider;
     private final MemberRepository memberRepository;
 
-    private static final Long DEFAULT_TIMEOUT = 60L * 1000 * 60;
+    private static final Long DEFAULT_TIMEOUT = 1800000000L;
 
     /**
      * 클라이언트를 구독
@@ -43,7 +44,7 @@ public class NotificationService {
      * 서버의 이벤트를 클라이언트에게 보내는 메소드
      * 다른 서비스 로직에서 이 메소드를 사용해 데이터를 Object evnet에 넣고 전송하면 된다.
      */
-    public void notify(Long userId, Object event) throws JsonProcessingException {
+    public void notify(Long userId, QuizResponse event) throws JsonProcessingException {
         sendToClient(userId, event);
     }
 
@@ -55,7 +56,7 @@ public class NotificationService {
      */
      private void sendToClient(Long id, Object data) throws JsonProcessingException {
          SseEmitter emitter = emitterRepository.get(id);
-         String jsonData = new ObjectMapper().writeValueAsString(new Notification("한글", "bc"));
+//         log.info("data={}", data);
          log.info("Send to client. [userId={}, data={}]", id, data);
          if (emitter != null) {
              try {

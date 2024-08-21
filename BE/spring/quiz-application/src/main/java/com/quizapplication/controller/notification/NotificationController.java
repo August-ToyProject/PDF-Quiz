@@ -24,9 +24,4 @@ public class NotificationController {
         return notificationService.subscribe(request);
     }
 
-    @PostMapping("/send-data/{id}")
-    public void sendData(@PathVariable(name = "id") Long id) throws Exception {
-        notificationService.notify(id, "data");
-    }
-
 }
