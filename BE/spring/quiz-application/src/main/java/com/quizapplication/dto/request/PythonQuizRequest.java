@@ -16,11 +16,18 @@ public class PythonQuizRequest {
     @JsonProperty("num_questions")
     private Integer numQuestions;
 
+    @JsonProperty("choice_count")
+    private Integer choiceCount;
+
+    private Integer difficulty;
+
     public static PythonQuizRequest of(String email, QuizGenerateRequest request) {
         return PythonQuizRequest.builder()
                 .email(email)
                 .indexPath(request.getIndexPath())
                 .numQuestions(request.getNumQuestions())
+                .choiceCount(request.getChoiceCount())
+                .difficulty(request.getDifficulty())
                 .build();
     }
 
