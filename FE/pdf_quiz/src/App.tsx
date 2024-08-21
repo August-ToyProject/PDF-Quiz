@@ -6,6 +6,7 @@ import Quiz from './pages/Quiz.tsx';
 import Answer from './pages/Answer.tsx';
 import FindAccount from './pages/FindAccount.tsx';
 import Review from './pages/ReviewNote.tsx';
+import SSEPage from './pages/SSEPage.tsx';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path="/answer" element={<Answer/>} />
         <Route path='/findAccount' element={<FindAccount/>} />
         <Route path='/review' element={<Review/>}/>
+        <Route path='/sse' element={<SSEPage/>}/>
       </Routes>
     </BrowserRouter>
   );
