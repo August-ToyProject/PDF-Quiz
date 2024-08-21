@@ -37,6 +37,8 @@ public class Quiz {
     @Column(columnDefinition = "jsonb", nullable = false)
     private String options;
 
+    @Type(JsonType.class)
+    @Column(columnDefinition = "jsonb", nullable = false)
     private String answer;
 
     private String description;

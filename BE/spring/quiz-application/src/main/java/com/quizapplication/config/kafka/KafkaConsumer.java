@@ -55,6 +55,7 @@ public class KafkaConsumer {
         String[] strings = questionBlock.split("\n");
 
         Map<Integer, String> options = new LinkedHashMap<>();
+        Map<Integer, String> answerMap = new LinkedHashMap<>();
 
         int idx = -1;
 
@@ -62,6 +63,7 @@ public class KafkaConsumer {
             if (string.startsWith("난이도:")) {
                 idx++;
                 options = new LinkedHashMap<>();
+                answerMap = new LinkedHashMap<>();
                 String difficulty = string.substring("난이도:".length()).trim();
                 resultList.get(idx).put("difficulty", difficulty);
             }
@@ -80,7 +82,8 @@ public class KafkaConsumer {
 
             if (string.startsWith("정답:")) {
                 int answer = Integer.parseInt(string.substring("정답:".length()).trim());
-                resultList.get(idx).put("answer", answer +" "+options.get(answer));
+                answerMap.put(answer, options.get(answer));
+                resultList.get(idx).put("answer", answerMap);
             }
 
             if (string.startsWith("설명:")) {
@@ -95,11 +98,12 @@ public class KafkaConsumer {
         for (Map<String, Object> map : resultList) {
 
             String optionsJson = objectMapper.writeValueAsString(map.get("options"));
+            String answerJson = objectMapper.writeValueAsString(map.get("answer"));
 
             Quiz quiz = Quiz.builder()
                 .difficulty((String) map.get("difficulty"))
                 .question((String) map.get("question"))
-                .answer((String) map.get("answer"))
+                .answer(answerJson)
                 .description((String) map.get("description"))
                 .options(optionsJson)
                 .build();
