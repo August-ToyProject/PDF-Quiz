@@ -1,7 +1,7 @@
 package com.quizapplication.domain;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.quizapplication.domain.pdf.Pdf;
+import com.quizapplication.domain.quiz.Quiz;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -52,12 +52,19 @@ public class Member {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Pdf> files = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Quiz> problems = new ArrayList<>();
+
     public void passwordEncoding(PasswordEncoder passwordEncoder) {
         this.password = passwordEncoder.encode(password);
     }
 
     public void addPdf(Pdf pdf) {
         files.add(pdf);
+    }
+
+    public void addQuiz(Quiz quiz) {
+        problems.add(quiz);
     }
 
 }

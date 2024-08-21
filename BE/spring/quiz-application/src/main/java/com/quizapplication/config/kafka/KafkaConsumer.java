@@ -3,10 +3,14 @@ package com.quizapplication.config.kafka;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.quizapplication.config.security.SecurityUtil;
+import com.quizapplication.domain.Member;
 import com.quizapplication.domain.quiz.Quiz;
+import com.quizapplication.dto.response.quiz.QuizResponse;
+import com.quizapplication.repository.MemberRepository;
 import com.quizapplication.repository.quiz.QuizRepository;
+import com.quizapplication.service.notification.NotificationService;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,10 +26,13 @@ import java.util.Map;
 public class KafkaConsumer {
 
     private final QuizRepository quizRepository;
+    private final MemberRepository memberRepository;
+    private final NotificationService notificationService;
 
     @KafkaListener(topics = "quiz_topic")
     public void getQuiz(String kafkaMessage) {
         try {
+//            log.info("email={}",SecurityUtil.getCurrentMemberEmail()); // ?
             parseQuiz(kafkaMessage);
         } catch (Exception e) {
             log.error("Error processing Kafka message", e);
@@ -96,7 +103,8 @@ public class KafkaConsumer {
                 .description((String) map.get("description"))
                 .options(optionsJson)
                 .build();
-            quizRepository.save(quiz);
+            Quiz savedQuiz = quizRepository.save(quiz);
+            notificationService.notify(1L, QuizResponse.of(savedQuiz));
         }
     }
 }

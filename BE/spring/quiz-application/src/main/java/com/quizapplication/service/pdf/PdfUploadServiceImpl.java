@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.quizapplication.config.security.SecurityUtil;
 import com.quizapplication.domain.Member;
 import com.quizapplication.domain.pdf.Pdf;
+import com.quizapplication.dto.request.PythonQuizRequest;
+import com.quizapplication.dto.request.QuizGenerateRequest;
 import com.quizapplication.dto.response.PdfUploadResponse;
 import com.quizapplication.repository.MemberRepository;
 import com.quizapplication.repository.pdf.PdfRepository;
@@ -34,6 +36,9 @@ public class PdfUploadServiceImpl implements PdfUploadService {
 
     @Value("${python.url}")
     private String pythonServerUrl;
+
+    @Value("${python.quiz_url}")
+    private String pythonQuizUrl;
 
     private final PdfRepository pdfRepository;
     private final MemberRepository memberRepository;
@@ -79,5 +84,26 @@ public class PdfUploadServiceImpl implements PdfUploadService {
         member.addPdf(pdf);
 
         return PdfUploadResponse.of(pdfRepository.save(pdf));
+    }
+
+    @Override
+    public void generateQuiz(QuizGenerateRequest request) {
+        RestTemplate restTemplate = new RestTemplate();
+
+        URI uri = UriComponentsBuilder.fromHttpUrl(pythonQuizUrl).build().toUri();
+        HttpHeaders headers = new HttpHeaders();
+
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        PythonQuizRequest pythonQuizRequest = PythonQuizRequest.of(SecurityUtil.getCurrentMemberEmail(), request);
+
+        ResponseEntity<String> response = restTemplate.exchange(
+                uri,
+                HttpMethod.POST,
+                new HttpEntity<>(pythonQuizRequest, headers),
+                String.class
+        );
+        log.info("member={}", SecurityUtil.getCurrentMemberEmail());
+        log.info("response={}", response);
     }
 }
