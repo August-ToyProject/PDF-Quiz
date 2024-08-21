@@ -1,12 +1,3 @@
----
-name: PULL_REQUEST_TEMPLATE
-about: PR 요청 템플릿(main에 merge를 요청하기 전 사용!)
-title: ''
-labels: ''
-assignees: ''
-
----
-
 ## #️⃣ 연관된 이슈
 
 > 예시: #이슈번호, #이슈번호
