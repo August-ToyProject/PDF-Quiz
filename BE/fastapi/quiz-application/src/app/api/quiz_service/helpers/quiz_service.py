@@ -148,11 +148,17 @@ async def get_weighted_difficulties(user_choice):
         weights = [1/3, 1/3, 1/3]  # 균등한 가중치
     return difficulties, weights    
 
+import json
+import random
+
 async def make_quiz(
     llm,
     quiz_prompt,
     summary,
     keywords,
+    user_idx,
+    email,
+    index_path,
     num_questions=5,
     choice_count=4,
     user_difficulty_choice=None
@@ -177,8 +183,14 @@ async def make_quiz(
                 difficulty=difficulty
             )
             
-            # Kafka로 퀴즈 전송 (JSON 직렬화 후 UTF-8 인코딩, ensure_ascii=False 추가)
-            producer.produce('quiz_topic', json.dumps({'question': result.strip()}, ensure_ascii=False).encode('utf-8'))
+            # Kafka로 퀴즈 및 추가 정보를 전송 (JSON 직렬화 후 UTF-8 인코딩, ensure_ascii=False 추가)
+            quiz_data = {
+                'user_idx': user_idx,
+                'email': email,
+                'index_path': index_path,
+                'question': result.strip()
+            }
+            producer.produce('quiz_topic', json.dumps(quiz_data, ensure_ascii=False).encode('utf-8'))
 
         producer.flush()  # 모든 메시지가 전송되었는지 확인
         return {"status": "Quizzes sent to Kafka"}

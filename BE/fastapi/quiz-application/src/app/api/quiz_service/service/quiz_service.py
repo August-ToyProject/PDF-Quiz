@@ -37,7 +37,10 @@ async def generate_quiz(request:QuizRequest):
             keywords=keywords,
             num_questions=request.num_questions,
             choice_count=request.choice_count,
-            user_difficulty_choice=request.difficulty
+            user_difficulty_choice=request.difficulty,
+            user_idx=request.user_idx,
+            email=request.email,
+            index_path=request.index_path
         )
         return quiz
     except Exception as e:
