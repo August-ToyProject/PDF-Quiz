@@ -121,7 +121,7 @@ public class KafkaConsumer {
             Quiz saveQuiz = quizRepository.save(quiz);
             member.addQuiz(saveQuiz);
             pdf.addQuiz(saveQuiz);
-            notificationService.notify(1L, QuizResponse.of(quiz));
+            notificationService.notify(member.getId(), QuizResponse.of(quiz));
         }
     }
 }
