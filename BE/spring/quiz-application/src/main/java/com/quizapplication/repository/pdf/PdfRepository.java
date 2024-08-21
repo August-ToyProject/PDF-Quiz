@@ -4,4 +4,5 @@ import com.quizapplication.domain.pdf.Pdf;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PdfRepository extends JpaRepository<Pdf, Long> {
+    Pdf findByIndexPath(String indexPath);
 }

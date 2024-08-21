@@ -14,12 +14,16 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Pdf {
 
     @Id
@@ -36,7 +40,7 @@ public class Pdf {
 
     private String indexPath;
 
-    public void addProblem(Quiz quiz) {
+    public void addQuiz(Quiz quiz) {
         problems.add(quiz);
     }
 

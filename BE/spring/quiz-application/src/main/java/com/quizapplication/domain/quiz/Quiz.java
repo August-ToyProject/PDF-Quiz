@@ -51,5 +51,12 @@ public class Quiz {
     @JoinColumn(name = "pdf_id")
     private Pdf pdf;
 
+    public void updateMember(Member member) {
+        this.member = member;
+    }
+
+    public void updatePdf(Pdf pdf) {
+        this.pdf = pdf;
+    }
 
 }

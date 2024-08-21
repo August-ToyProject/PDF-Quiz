@@ -95,7 +95,9 @@ public class PdfUploadServiceImpl implements PdfUploadService {
 
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        PythonQuizRequest pythonQuizRequest = PythonQuizRequest.of(SecurityUtil.getCurrentMemberEmail(), request);
+        Member member = memberRepository.findByEmail(SecurityUtil.getCurrentMemberEmail());
+
+        PythonQuizRequest pythonQuizRequest = PythonQuizRequest.of(member, request);
 
         ResponseEntity<String> response = restTemplate.exchange(
                 uri,
@@ -103,7 +105,5 @@ public class PdfUploadServiceImpl implements PdfUploadService {
                 new HttpEntity<>(pythonQuizRequest, headers),
                 String.class
         );
-        log.info("member={}", SecurityUtil.getCurrentMemberEmail());
-        log.info("response={}", response);
     }
 }
