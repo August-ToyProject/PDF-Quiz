@@ -11,7 +11,7 @@ async def generate_quiz(request:QuizRequest):
     try:
         #-- vector 스토어 꺼내오기 
         vector_store = await load_vector(request.index_path)
-        docs = vector_store.similarity_search("", k=min(request.num_questions * 2, 10))
+        docs = vector_store.similarity_search("", k=min(request.num_questions * 5, 10))
         
         #-- 문서 요약
         llm, summary = await summarize_document(
@@ -31,6 +31,7 @@ async def generate_quiz(request:QuizRequest):
         
         #-- 퀴즈 chain and make quiz
         quiz = await make_quiz(
+            document=docs,
             llm=llm,
             quiz_prompt=quiz_prompt,
             summary=summary,

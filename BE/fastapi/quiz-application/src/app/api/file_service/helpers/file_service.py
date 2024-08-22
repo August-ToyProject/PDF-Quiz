@@ -34,7 +34,7 @@ async def file_to_document(file: UploadFile) -> PyMuPDFLoader:
 async def chunk_text(
     documents, 
     chunk_size=512, 
-    overlap=50
+    overlap=200
     ) -> CharacterTextSplitter:
     try:
         text_splitter = CharacterTextSplitter(chunk_size=chunk_size, chunk_overlap=overlap)
