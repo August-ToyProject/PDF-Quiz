@@ -4,10 +4,28 @@ import Timer from '../Hooks/Timer';
 import OMR from '../Hooks/OMR';
 import SubmitCheck from '../Modal/Submit';
 
+import ClientSSE from '../Hooks/useSSE';
+
 const Quiz = () => {
     const [showModal, setShowModal] = useState(false); // 모달
     const openModal = () => setShowModal(true);
     const closeModal = () => setShowModal(false);
+
+    const QuizData = () => {
+        const { data, error } = ClientSSE(); 
+    
+        return (
+            <div>
+                <h3>Quiz Data</h3>
+                {error && <div>Error: {error.message}</div>}
+                {data ? (
+                    <pre>{JSON.stringify(data, null, 2)}</pre>
+                ) : (
+                    <div>Loading...</div>
+                )}
+            </div>
+        );
+    };
 
     return (
         //퀴즈 내용
@@ -56,7 +74,7 @@ const Quiz = () => {
             </div>
 
             <div className="h-4/5 flex flex-row pt-2">
-                <div className="w-4/5 flex justify-center items-center">문제</div>
+                <div className="w-4/5 flex justify-center items-center"><QuizData/></div>
                 <div className="w-1/5 flex pl-5"><OMR/></div>
             </div>
             <div className="flex-grow flex flex-row justify-center">
