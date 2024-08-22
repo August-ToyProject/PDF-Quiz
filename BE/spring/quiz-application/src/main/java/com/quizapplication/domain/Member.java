@@ -1,5 +1,7 @@
 package com.quizapplication.domain;
 
+import com.quizapplication.domain.common.BaseTimeEntity;
+import com.quizapplication.domain.exam.Exam;
 import com.quizapplication.domain.pdf.Pdf;
 import com.quizapplication.domain.quiz.Quiz;
 import jakarta.persistence.CascadeType;
@@ -24,7 +26,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Member {
+public class Member extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -55,6 +57,9 @@ public class Member {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Quiz> problems = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Exam> exams = new ArrayList<>();
+
     public void passwordEncoding(PasswordEncoder passwordEncoder) {
         this.password = passwordEncoder.encode(password);
     }
@@ -65,6 +70,10 @@ public class Member {
 
     public void addQuiz(Quiz quiz) {
         problems.add(quiz);
+    }
+
+    public void addExam(Exam exam) {
+        exams.add(exam);
     }
 
 }
