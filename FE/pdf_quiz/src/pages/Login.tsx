@@ -18,6 +18,52 @@ const Login = () => {
     
     const navigate = useNavigate()
 
+    //아이디, 비밀번호 빈 값 유효성 검사
+    const validate = (): Partial<loginData> => {
+      const inputError: Partial<loginData> = {};
+      if (id === '') {
+          inputError.id = '아이디를 입력해주세요'
+      }
+      if (password === '') {
+          inputError.password = '비밀번호를 입력해주세요'
+      }
+      return inputError
+  }
+    //로그인 버튼 클릭시 실행
+
+    const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        const validationErrors = validate()
+        setErrors(validationErrors)
+
+        try {
+          //URL 변경 예정
+          const response = await fetch('http://localhost:8000/api/v1/auth/login', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(inputData)
+          })
+          if (!response.ok) {
+            throw new Error('로그인에 실패했습니다')
+          }
+          const data = await response.json()
+          const accesstoken = data.accesstoken
+
+
+          //accesstoken 저장
+          localStorage.setItem('accesstoken', accesstoken)
+
+          navigate('/mypage')
+        } catch (error) {
+          console.error('Error during login:, ', error)
+
+    }
+  }
+
+  
+
     //아이디, 비밀번호 입력값 업데이트
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const {name, value} = e.target
@@ -29,27 +75,7 @@ const Login = () => {
             setInputData(prev => ({...prev, password: value}))
         }
     }
-    //아이디, 비밀번호 빈 값 유효성 검사
-    const validate = (): Partial<loginData> => {
-        const inputError: Partial<loginData> = {};
-        if (id === '') {
-            inputError.id = '아이디를 입력해주세요'
-        }
-        if (password === '') {
-            inputError.password = '비밀번호를 입력해주세요'
-        }
-        return inputError
-    }
 
-    //로그인 버튼 클릭시 실행
-    const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
-        const validationErrors = validate()
-        setErrors(validationErrors)
-
-        console.log(inputData)
-    }
-    
 
     //회원가입 버튼 누르면 회원가입 페이지로 이동
     const navigateToSignUp = () => {
@@ -68,6 +94,7 @@ const Login = () => {
     const navigateToFindIDPW = () => {
         navigate('/findAccount')
     }
+
 
 
     return (

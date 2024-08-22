@@ -1,33 +1,41 @@
+import {EventSourcePolyfill } from 'event-source-polyfill';
+
 import { useEffect, useState } from "react";
 
 interface SSEData {
     id: number;
+    event?: string;
     message?: string;
-    data: string;
+    data: object;
 
 }
 
 const ClientSSE = () => {
 
-    const [data, setData] = useState<SSEData[]>([]);
+    const [data] = useState<SSEData[]>([]);
     const [error, setError] = useState<Error | null>(null);
     
     useEffect(() => {
 
         //userID 1번으로 SSE 연결
         const userId = 1;
-        const eventSource = new EventSource(`/api/v1/notification/subscribe/${userId}`);
+        const eventSource = new EventSourcePolyfill(`/api/v1/notification/subscribe/${userId}`,{
+            headers: {
+                "Authorization": "Bearer " + localStorage.getItem('accesstoken')
+
+        },
+        //라이브러리 디폴트 타임아웃 - 45초 (45000ms) 인 것을 임의로 조정
+        heartbeatTimeout: 12000000,
+        withCredentials: true,
+            
+    });
        
      
     
         // sse 라는 이름의 이벤트 수신
-        eventSource.addEventListener("sse", function(event) {
+        eventSource.addEventListener("sse", function() {
             try {
-                //parsedData - SSEData 타입으로 파싱
-                const parsedData = JSON.parse(event.data) as SSEData;
-                // 이전 데이터의 배열에 새로운 데이터를 추가
-                setData((prevData) => [...prevData, parsedData]);
-                console.log("Event data:", parsedData)
+                console.log("Event data:", data)
             } catch (error) {
                 console.error(error)
                 setError(error as Error)
@@ -58,8 +66,8 @@ const ClientSSE = () => {
         return () => {
             eventSource.close();
         }
-    }, []);
-    //pre 태그 - preformatted text (텍스트 원본 그대로 출력)
+    }, [data]); 
+    
     return {data, error};
     
 
