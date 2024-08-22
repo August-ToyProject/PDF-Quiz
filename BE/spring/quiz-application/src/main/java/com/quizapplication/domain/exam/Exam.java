@@ -1,11 +1,10 @@
-package com.quizapplication.domain.pdf;
+package com.quizapplication.domain.exam;
 
 import com.quizapplication.domain.Member;
 import com.quizapplication.domain.common.BaseTimeEntity;
-import com.quizapplication.domain.exam.Exam;
-import com.quizapplication.domain.quiz.Quiz;
-import jakarta.persistence.CascadeType;
+import com.quizapplication.domain.pdf.Pdf;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -13,10 +12,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.Duration;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,27 +24,26 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Pdf extends BaseTimeEntity {
+public class Exam extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "pdf_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @OneToMany(mappedBy = "pdf", cascade = CascadeType.ALL)
-    private List<Quiz> problems = new ArrayList<>();
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pdf_id")
+    private Pdf pdf;
 
-    @OneToOne(mappedBy = "pdf", cascade = CascadeType.ALL)
-    private Exam exam;
+    private String title;
 
-    private String indexPath;
+    @Convert(converter = DurationConverter.class)
+    private Duration setTime;
 
-    public void addQuiz(Quiz quiz) {
-        problems.add(quiz);
-    }
+    @Convert(converter = DurationConverter.class)
+    private Duration spentTime;
 
 }
