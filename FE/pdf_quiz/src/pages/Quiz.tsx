@@ -1,13 +1,49 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import timerImage from '../assets/timer.png';
 import Timer from '../Hooks/Timer';
 import OMR from '../Hooks/OMR';
 import SubmitCheck from '../Modal/Submit';
 
+import ClientSSE from '../Hooks/useSSE';
+
 const Quiz = () => {
     const [showModal, setShowModal] = useState(false); // 모달
+    const [isScreenSmall, setIsScreenSmall] = useState(false); // 화면 크기 상태
+
     const openModal = () => setShowModal(true);
     const closeModal = () => setShowModal(false);
+
+    const handleResize = () => {
+        // 화면 크기가 860px 이하인지 확인
+        setIsScreenSmall(window.innerWidth < 860);
+    };
+
+    useEffect(() => {
+        // 컴포넌트가 마운트될 때 이벤트 리스너 추가
+        window.addEventListener('resize', handleResize);
+        handleResize(); // 초기 확인
+
+        // 컴포넌트가 언마운트될 때 이벤트 리스너 제거
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+
+    const QuizData = () => {
+        const { data, error } = ClientSSE(); 
+    
+        return (
+            <div>
+                <h3>Quiz Data</h3>
+                {error && <div>Error: {error.message}</div>}
+                {data ? (
+                    <pre>{JSON.stringify(data, null, 2)}</pre>
+                ) : (
+                    <div>Loading...</div>
+                )}
+            </div>
+        );
+    };
 
     return (
         //퀴즈 내용
@@ -17,19 +53,24 @@ const Quiz = () => {
         //제출버튼
 
         //modal 에서 props로 받아야할 내용: 1) 사용자가 입력한 제목, 문제 개수, 선지 개수
-        <div className="h-screen w-full bg-white flex flex-col">
+        <div className="h-screen w-full bg-white flex flex-col overflow-x-hidden min-w-[860px]">
+            {isScreenSmall && (
+                <div className="bg-red-500 text-white text-center p-2">
+                    이 크기보다 더 줄이시면 최적화된 화면을 보기 어렵습니다.
+                </div>
+            )}
             <div className="h-16 flex flex-row justify-center">
                 {/* 사용자가 입력한 제목 or pdf 파일 제목 그대로 받아와서 띄워주기 */}
                 <div className="w-4/5 flex flex-start items-center bg-gray-100 pl-10">Quiz Title</div>
                 {/* 사용자가 입력한 시간  */}
-                <div className="w-1/5 flex flex-row gap-4 justify-center items-center">
-                    <img src={timerImage} alt="clock" className="w-8 h-8"/>  
+                <div className="w-1/5 max-lg:w-[25%] min-w-0 flex flex-row gap-4 justify-center items-center text-center">
+                    <img src={timerImage} alt="clock" className="w-8 h-8 max-lg:w-6 max-lg:h-6"/>  
                     <div className="flex flex-col justify-center items-center">
-                        <div className="flex flex-row gap-2">
+                        <div className="flex flex-row gap-2 max-lg:text-sm ">
                             <div>제한 시간 </div>
                             <div>00:01:00</div>
                         </div>
-                        <div className="flex flex-row gap-2">
+                        <div className="flex flex-row gap-2 max-lg:text-sm">
                             <div>남은 시간 </div>
                             <div><Timer/></div>
                         </div>
@@ -52,19 +93,26 @@ const Quiz = () => {
                     </div>
 
                 </div>
-                <div className="w-1/5 flex justify-center items-center text-lg bg-blue-200">답안 OMR</div>
+                <div className="w-1/5 max-lg:w-[25%] min-w-0 flex justify-center items-center text-lg bg-blue-200 max-lg:text-m">답안 OMR</div>
             </div>
 
             <div className="h-4/5 flex flex-row pt-2">
-                <div className="w-4/5 flex justify-center items-center">문제</div>
-                <div className="w-1/5 flex pl-5"><OMR/></div>
+                <div className="w-4/5 flex-shrink flex-grow flex justify-center items-center overflow-auto">
+                        <QuizData/>
+                    </div>
+                    {/* OMR 부분이 항상 보이도록 유지 */}
+                    <div className="w-1/5 max-lg:w-[25%] min-w-0 overflow-scroll">
+                        <OMR/>
+                    </div>
+                {/* <div className="w-4/5 md:flex-shrink flex-grow flex justify-center items-center"><QuizData/></div>
+                <div className="w-1/5 min-w-[150px] pl-3 flex-shrink-0 overflow-scroll max-lg:overflow-scroll"><OMR/></div> */}
             </div>
             <div className="flex-grow flex flex-row justify-center">
-                <div className="w-4/5 flex justify-center items-center bg-gray-100">
+                <div className="w-4/5 flex-grow flex justify-center items-center bg-gray-100">
                     <button className="rounded-3xl bg-white border-black" >다음</button>
                 </div>
-                <div className="w-1/5 flex justify-center items-center">
-                    <button className="w-full h-full bg-blue-600 text-white text-xl"
+                <div className="w-1/5 max-lg:w-[25%] min-w-0 flex justify-center items-center">
+                    <button className="w-full h-full text-lg flex justify-center items-center bg-blue-600 text-white "
                             onClick={openModal}>제출하기</button>
                 </div>
             </div>
