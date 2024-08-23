@@ -1,6 +1,7 @@
 package com.quizapplication.domain.quiz;
 
 import com.quizapplication.domain.Member;
+import com.quizapplication.domain.common.BaseTimeEntity;
 import com.quizapplication.domain.pdf.Pdf;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.Column;
@@ -22,7 +23,7 @@ import org.hibernate.annotations.Type;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Quiz {
+public class Quiz extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
