@@ -30,14 +30,17 @@ async def load_vector(index_path: str):
 async def summarize_document(
     docs, 
     model_name="gpt-4o-mini",
-    temperature = 0.5
+    temperature = 0
     ):
     try:
         llm = ChatOpenAI(
             model_name=model_name, 
             temperature=temperature
             )
-        chain = load_summarize_chain(llm, chain_type="map_reduce")
+        chain = load_summarize_chain(
+            llm, 
+            chain_type="map_reduce"
+            )
         summary = await chain.arun(docs)
         return llm, summary
     except Exception as e:
@@ -76,12 +79,19 @@ async def get_keyword_from_summary(
 async def create_prompt_template():
     try:
         return PromptTemplate(
-            input_variables=["summary", "keywords", "num_questions", "choice_count", "difficulty"],
+            input_variables=["pre_problem", "document", "summary", "keywords", "num_questions", "choice_count", "difficulty"],
             template="""
-            다음 요약과 키워드를 바탕으로 중요한 개념에 대한 객관식 문제 5개를 만드세요:
+            당신은 가장 뛰어난 퀴즈 생성에 대해 전문 지식을 가지고 있는 퀴즈 생성자입니다. 아래 조건을 보고 퀴즈를 만들어주세요.
             
+            다음 문서와 문서 요약 그리고 키워드를 바탕으로 중요한 개념에 대한 객관식 문제 5개를 만드세요 
+            다만 이전 문제와 중복되는 문제는 절대 사용하지 마시고 문제 보기는 1~{choice_count}까지 다양하게 해주세요:
+            
+            이전 문제 : {pre_problem}
+            
+            문서: {document}
+
             요약: {summary}
-            
+
             키워드: {keywords}
             
             1. {choice_count}개의 선택지(1부터 {choice_count}까지 번호 매김)와 하나의 정답을 포함해야 합니다.
@@ -107,7 +117,7 @@ async def create_prompt_template():
             2) 최대한 많은 데이터를 수집하는 것
             3) 가장 빠른 컴퓨터를 만드는 것
             정답: 1
-            설명: 요약에서 언급된 대로, AI의 주요 목표는 인간의 지능을 모방하고 인간과 유사한 방식으로 문제를 해결하는 것입니다.
+            설명: 문서에서 언급된 대로, AI의 주요 목표는 인간의 지능을 모방하고 인간과 유사한 방식으로 문제를 해결하는 것입니다.
 
             4개 선택지 예시:
             난이도: 보통
@@ -117,7 +127,7 @@ async def create_prompt_template():
             3) 오직 이미지 처리에만 사용된다
             4) 컴퓨터 하드웨어의 성능을 향상시킨다
             정답: 1
-            설명: 키워드에서 언급된 대로, 머신러닝은 데이터로부터 학습하여 성능을 향상시키는 알고리즘을 연구합니다.
+            설명: 문서에서 언급된 대로, 머신러닝은 데이터로부터 학습하여 성능을 향상시키는 알고리즘을 연구합니다.
 
             5개 선택지 예시:
             난이도: 어려움
@@ -128,7 +138,7 @@ async def create_prompt_template():
             4) 항상 소량의 데이터만으로 학습할 수 있다
             5) 컴퓨터 비전 분야에만 적용된다
             정답: 2
-            설명: 요약에 언급된 대로, 딥러닝은 다층 신경망을 사용하여 복잡한 패턴을 학습하고 추상화할 수 있는 머신러닝의 한 기법입니다.
+            설명: 문서에서 언급된 대로, 딥러닝은 다층 신경망을 사용하여 복잡한 패턴을 학습하고 추상화할 수 있는 머신러닝의 한 기법입니다.
 
             위 예시들을 참고하여 5개의 문제를 생성하세요. 각 문제는 서로 다른 개념을 다뤄야 합니다.
             """
@@ -154,6 +164,7 @@ import random
 async def make_quiz(
     llm,
     quiz_prompt,
+    document,
     summary,
     keywords,
     user_idx,
@@ -172,11 +183,14 @@ async def make_quiz(
         difficulties, weights = await get_weighted_difficulties(user_difficulty_choice)
 
         num_questions = num_questions // 5
+        pre_problem = []
         for _ in range(num_questions):
             # 가중치를 적용하여 난이도 선택
             difficulty = random.choices(difficulties, weights=weights, k=1)[0]
             
             result = await quiz_chain.arun(
+                document=document,
+                pre_problem=pre_problem,
                 summary=summary,
                 keywords=keywords,
                 choice_count=choice_count,
@@ -190,6 +204,7 @@ async def make_quiz(
                 'index_path': index_path,
                 'question': result.strip()
             }
+            pre_problem.append(result)
             producer.produce('quiz_topic', json.dumps(quiz_data, ensure_ascii=False).encode('utf-8'))
 
         producer.flush()  # 모든 메시지가 전송되었는지 확인
