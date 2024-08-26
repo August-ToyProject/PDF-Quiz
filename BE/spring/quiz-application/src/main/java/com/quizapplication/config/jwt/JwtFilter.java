@@ -21,7 +21,8 @@ public class JwtFilter extends OncePerRequestFilter {
     private final TokenProvider tokenProvider;
     private final RedisService redisService;
 
-    private static final List<String> EXCLUDE_URL = List.of("/api/v1/login", "/api/v1/sign-up", "/swagger-ui");
+    private static final List<String> EXCLUDE_URL = List.of("/api/v1/login", "/api/v1/sign-up", "/swagger-ui",
+            "/api/v1/find-user", "/api/v1/find-pwd");
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
