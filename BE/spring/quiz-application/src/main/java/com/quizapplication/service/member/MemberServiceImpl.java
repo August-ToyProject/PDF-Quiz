@@ -1,4 +1,4 @@
-package com.quizapplication.service;
+package com.quizapplication.service.member;
 
 import com.quizapplication.config.jwt.TokenProvider;
 import com.quizapplication.config.redis.RedisService;
@@ -6,6 +6,7 @@ import com.quizapplication.config.security.SecurityUtil;
 import com.quizapplication.domain.Member;
 import com.quizapplication.dto.request.SignupDto;
 import com.quizapplication.dto.response.MemberResponse;
+import com.quizapplication.dto.response.UserIdResponse;
 import com.quizapplication.exception.member.DuplicateEmailException;
 import com.quizapplication.exception.member.PasswordMismatchException;
 import com.quizapplication.repository.MemberRepository;
@@ -58,6 +59,12 @@ public class MemberServiceImpl implements MemberService {
             redisService.setValues(accessToken, "logout", Duration.ofMillis(accessTokenExpirationMillis));
         }
 
+    }
+
+    @Override
+    public UserIdResponse findUserId(String email) {
+        Member member = memberRepository.findByEmail(email);
+        return UserIdResponse.of(member);
     }
 
     private boolean isEmailExist(String email) {

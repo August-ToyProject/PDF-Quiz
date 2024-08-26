@@ -29,3 +29,6 @@ Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJreXVuOTE1MUBnbWFpbC5jb20iL
 ### 로그아웃
 PATCH localhost:8080/api/v1/logout
 Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJreXVuOTE1MUBnbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9VU0VSIiwiZXhwIjoxNzI0MDU2NTQzfQ.fItcs6-2yd4qwkZcfwyxE_-z3ErISwAauZEHWT_sZUOfkuDFhr9-TlAogMqsZju9RtOHZcpJ0SQKVN8GI2Sa_Q
+
+### 아이디 찾기
+GET localhost:8080/api/v1/find-user?email=kyun9151@gmail.com
