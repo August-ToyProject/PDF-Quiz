@@ -64,6 +64,10 @@ public class Member extends BaseTimeEntity {
         this.password = passwordEncoder.encode(password);
     }
 
+    public void updatePassword(PasswordEncoder passwordEncoder, String password) {
+        this.password = passwordEncoder.encode(password);
+    }
+
     public void addPdf(Pdf pdf) {
         files.add(pdf);
     }

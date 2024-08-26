@@ -4,6 +4,7 @@ import com.quizapplication.config.jwt.TokenProvider;
 import com.quizapplication.config.redis.RedisService;
 import com.quizapplication.config.security.SecurityUtil;
 import com.quizapplication.domain.Member;
+import com.quizapplication.dto.request.ResetPwdRequest;
 import com.quizapplication.dto.request.SignupDto;
 import com.quizapplication.dto.response.MemberResponse;
 import com.quizapplication.dto.response.UserIdResponse;
@@ -65,6 +66,18 @@ public class MemberServiceImpl implements MemberService {
     public UserIdResponse findUserId(String email) {
         Member member = memberRepository.findByEmail(email);
         return UserIdResponse.of(member);
+    }
+
+    @Transactional
+    @Override
+    public void resetPassword(String email, ResetPwdRequest request) {
+
+        if (!checkPassword(request.getPassword(), request.getPasswordConfirm())) {
+            throw new PasswordMismatchException();
+        }
+
+        Member member = memberRepository.findByEmail(email);
+        member.updatePassword(passwordEncoder, request.getPassword());
     }
 
     private boolean isEmailExist(String email) {
