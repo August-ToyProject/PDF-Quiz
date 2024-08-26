@@ -22,6 +22,9 @@ public class JwtFilter extends OncePerRequestFilter {
     private final RedisService redisService;
 
     private static final List<String> EXCLUDE_URL = List.of("/api/v1/login", "/api/v1/sign-up", "/swagger-ui",
+            "/v3/api-docs",
+            "/swagger-resources",
+            "/webjars",
             "/api/v1/find-user", "/api/v1/find-pwd");
 
     @Override
