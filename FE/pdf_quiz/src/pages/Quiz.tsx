@@ -3,12 +3,16 @@ import timerImage from '../assets/timer.png';
 import Timer from '../Hooks/Timer';
 import OMR from '../Hooks/OMR';
 import SubmitCheck from '../Modal/Submit';
+import QuizData from './QuizData'
 
-import ClientSSE from '../Hooks/useSSE';
 
 const Quiz = () => {
     const [showModal, setShowModal] = useState(false); // 모달
     const [isScreenSmall, setIsScreenSmall] = useState(false); // 화면 크기 상태
+    const [page, setPage] = useState(1); // 페이지 상태 추가
+    const [totalPages, setTotalPages] = useState(1); // 전체 페이지 수 상태 추가
+    const itemsPerPage = 5;
+
 
     const openModal = () => setShowModal(true);
     const closeModal = () => setShowModal(false);
@@ -29,21 +33,21 @@ const Quiz = () => {
         };
     }, []);
 
-    const QuizData = () => {
-        const { data, error } = ClientSSE(); 
-    
-        return (
-            <div>
-                <h3>Quiz Data</h3>
-                {error && <div>Error: {error.message}</div>}
-                {data ? (
-                    <pre>{JSON.stringify(data, null, 2)}</pre>
-                ) : (
-                    <div>Loading...</div>
-                )}
-            </div>
-        );
+    const handleNextPage = () => {
+        if (page < totalPages) setPage((prevPage) => prevPage + 1)
+        if (page === totalPages) {
+            alert('마지막 페이지입니다.');
+        }
     };
+
+    const handlePrevPage = () => {
+       if (page > 1) setPage((prevPage) => prevPage - 1);
+       if (page === 1) {
+        alert('첫 페이지입니다.');
+       }
+    };
+
+
 
     return (
         //퀴즈 내용
@@ -97,19 +101,28 @@ const Quiz = () => {
             </div>
 
             <div className="h-4/5 flex flex-row pt-2">
-                <div className="w-4/5 flex-shrink flex-grow flex justify-center items-center overflow-auto">
-                        <QuizData/>
+                <div className="w-4/5 flex-shrink flex-grow flex  overflow-auto">
+                    <QuizData page={page} itemsPerPage={itemsPerPage} setPage={setPage} setTotalPages={setTotalPages} /> {/* 페이지 관련 props 전달 */}
                     </div>
                     {/* OMR 부분이 항상 보이도록 유지 */}
                     <div className="w-1/5 max-lg:w-[25%] min-w-0 overflow-scroll">
                         <OMR/>
                     </div>
-                {/* <div className="w-4/5 md:flex-shrink flex-grow flex justify-center items-center"><QuizData/></div>
-                <div className="w-1/5 min-w-[150px] pl-3 flex-shrink-0 overflow-scroll max-lg:overflow-scroll"><OMR/></div> */}
+
             </div>
             <div className="flex-grow flex flex-row justify-center">
-                <div className="w-4/5 flex-grow flex justify-center items-center bg-gray-100">
-                    <button className="rounded-3xl bg-white border-black" >다음</button>
+                <div className="w-4/5 flex-grow flex justify-center gap-5 items-center bg-gray-100">
+                    <button
+                        className="rounded-3xl bg-white border-black"
+                        onClick={handlePrevPage}>
+                        이전
+                    </button>
+                    <div>{page}/{totalPages}</div>
+                    <button
+                        className="rounded-3xl bg-white border-black"
+                        onClick={handleNextPage}>
+                        다음
+                    </button>
                 </div>
                 <div className="w-1/5 max-lg:w-[25%] min-w-0 flex justify-center items-center">
                     <button className="w-full h-full text-lg flex justify-center items-center bg-blue-600 text-white "
