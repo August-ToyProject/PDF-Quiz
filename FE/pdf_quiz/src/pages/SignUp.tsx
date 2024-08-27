@@ -22,7 +22,7 @@ export default function SignUp() {
     confirmPassword : '',
   })
 
-  const apiBaseUrl = 'https://82a6-221-138-5-248.ngrok-free.app/v1/sign-up'; 
+  const apiBaseUrl = 'http://43.201.129.54:8080/api/v1/sign-up'; 
 
   // const [testDB, setTestDB] = useState<InputData[]>([]);
   const [errors, setErrors] = useState<Partial<InputData>>({});
@@ -91,12 +91,16 @@ export default function SignUp() {
       setErrors(validationErrors);
       return;
     }
-
+    
     const requestData = {
+      userId: inputData.id,
       email: inputData.email,
+      username: inputData.name,
+      nickname: inputData.nickname,
       password: inputData.password,
+      passwordConfirm: inputData.confirmPassword
     };
-  
+    
     try {
       const response = await fetch(apiBaseUrl, {
         method: 'POST',
@@ -126,7 +130,6 @@ export default function SignUp() {
   const navigateToLogin = () => {
     navigate('/')
   }
-
 
   return (
     <div className="h-screen w-full flex flex-col justify-center items-center bg-white">

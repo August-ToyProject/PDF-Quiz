@@ -35,15 +35,21 @@ const Login = () => {
         e.preventDefault()
         const validationErrors = validate()
         setErrors(validationErrors)
-
+        
+        
+        const requestData = {
+          email: inputData.id,
+          password: inputData.password,
+        };
+        
         try {
           //URL 변경 예정
-          const response = await fetch('http://localhost:8000/api/v1/auth/login', {
+          const response = await fetch('http://43.201.129.54:8080/api/v1/login', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
             },
-            body: JSON.stringify(inputData)
+            body: JSON.stringify(requestData)
           })
           if (!response.ok) {
             throw new Error('로그인에 실패했습니다')
@@ -55,7 +61,7 @@ const Login = () => {
           //accesstoken 저장
           localStorage.setItem('accesstoken', accesstoken)
 
-          navigate('/mypage')
+          navigateToMyPage()
         } catch (error) {
           console.error('Error during login:, ', error)
 
@@ -132,7 +138,7 @@ const Login = () => {
               <a className='bg-white cursor-pointer' onClick={navigateToSignUp}>회원가입</a>
             </div>
             <div className='w-full flex justify-center'>
-                <button className='p-2 bg-blue-600 text-white font-black rounded'type="submit" onClick={navigateToMyPage}>로그인</button>
+                <button className='p-2 bg-blue-600 text-white font-black rounded'type="submit">로그인</button>
             </div>
             <div className='w-full flex justify-center'>
                 <button className='p-2 bg-white text-blue font-black rounded'
