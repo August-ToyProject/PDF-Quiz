@@ -234,9 +234,9 @@ export default function Upload({ showModal, closeModal, width = '700px', height 
                             value={difficulty} 
                             onChange={(e) => setDifficulty(e.target.value)}
                             disabled={isSelectDisabled}>
-                                <option value="">쉬움</option>
-                                <option value="">보통</option>
-                                <option value="">어려움</option>
+                                <option value="쉬움">쉬움</option>
+                                <option value="보통">보통</option>
+                                <option value="어려움">어려움</option>
                             </select>
                         </div>
                         {/* 시험 문제 수 / 선지 수 선택 */}
