@@ -1,91 +1,168 @@
 import UseQuery from "../Hooks/UseQuery";
+import { useState } from "react";
+import UserIDInfo from "../Modal/findID";
+
 export default function FindAccount() {
+  const query = UseQuery();
+  const activeTab = query.get("tab") || "id";
 
-    const query = UseQuery();
-    const activeTab = query.get('tab') || 'id'
+  interface InputData {
+    name: string;
+    email: string;
+  }
 
-    //Todo 비밀번호 재설정하기 링크 누를 시 - 비밀번호 재설정 페이지로 이동
+  const [name, setName] = useState<InputData["name"]>();
+  const [email, setEmail] = useState<InputData["email"]>();
 
+  const [showModal, setShowModal] = useState(false); // 모달
+  const [userData, setUserData] = useState<{ userId: string } | null>(null); // 사용자 데이터 상태
 
-    return (
-        <div className="h-screen w-full flex flex-col gap-5 justify-center items-center bg-white">
-            <nav className="w-4/5 flex items-start">
-                <ul className="flex flex-row gap-5">
-                    <li>
-                        <a className={`p-2 text-xl ${activeTab === 'id' ? 'text-blue-600' : 'text-gray-600'} font-semibold `} href='?tab=id'>아이디 찾기</a>
-                    </li> 
-                    <li>
-                        <a className={`p-2 text-xl ${activeTab === 'password' ? 'text-blue-600' : 'text-gray-600'} font-semibold `} href='?tab=password'>비밀번호 찾기</a>
-                    </li>
-                </ul>
+  const openModal = () => setShowModal(true);
+  const closeModal = () => setShowModal(false);
 
-            </nav>
-            <div className="w-4/5 border-2 p-7 border-gray-200 rounded-2xl">
-                {activeTab === 'id' && (
-                    <div className="w-full flex gap-3 flex-col items-center">
-                        
-                        <label className="w-3/5 flex flex-row justify-center gap-2 items-center">
-                            <span className="w-1/5">이름</span>
-                            <input 
-                            type="text" 
-                            className="w-full p-3 border border-gray-300 rounded-3xl" 
-                            name='name' />
-                        </label>
-                        <label className="w-3/5 flex flex-row justify-center gap-2 items-center">
-                            <span className="w-1/5">이메일</span>
-                            <input 
-                            type="text" 
-                            className="w-full p-3 border border-gray-300 rounded-3xl" 
-                            name="email"/>
-                        </label>
-                        <div className='w-full flex justify-center'>
-                            <button className='p-3 bg-blue-600 text-white font-black rounded-3xl'type="submit">아이디 찾기</button>
-                        </div>
-                    </div>
-                    
+  //Todo 비밀번호 재설정하기 링크 누를 시 - 비밀번호 재설정 페이지로 이동
+  const findID = async () => {
+    try {
+      const response = await fetch(
+        `http://43.201.129.54:8080/api/v1/find-user?email=${email}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-                )}
-                {activeTab === 'password' && (
-                    <div className="w-full flex gap-3 flex-col">
-                        <div>
-                            <p> ✅ 비밀번호의 경우 암호화 저장되어 분실 시 찾아드릴 수 없는 정보입니다.</p>
-                            <p> ✅ 본인 확인 후 비밀번호를 재설정 할 수 있습니다.</p>
-                        </div>
-                        <label className="w-full flex flex-row justify-center gap-2 items-center">
-                            <span className="w-1/5">이름</span>
-                            <input 
-                            type="text" 
-                            className="w-full p-3 border border-gray-300 rounded-3xl" 
-                            name='name' />
-                        </label>
-                        <label className="w-full flex flex-row justify-center gap-2 items-center">
-                            <span className="w-1/5">아이디</span>
-                            <input 
-                            type="text" 
-                            className="w-full p-3 border border-gray-300 rounded-3xl" 
-                            name='id' />
-                        </label>
-                        
-                        <label className="w-full flex flex-row justify-center gap-2 items-center">
-                            <span className="w-1/5">이메일</span>
-                            <input type="text" 
-                                className="w-full p-3 border border-gray-300 rounded-3xl" 
-                                name="email"
-                            />
-                        </label>
-                        <div className='w-full flex justify-center'>
-                            <button className='p-3 bg-blue-600 text-white font-black rounded-3xl'type="submit">비밀번호 재설정하기</button>
-                        </div>
-                    </div>
-                )}
+      const data = await response.json();
+      setUserData(data);
+    } catch (error) {
+      console.error("Error during login:, ", error);
+    }
+  };
 
+  const handleSubmit = (e: React.FormEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    if (activeTab === "id") {
+      findID();
+      openModal();
+    }
+  };
 
+  return (
+    <div className="h-screen w-full flex flex-col gap-5 justify-center items-center bg-white">
+      <nav className="w-4/5 flex items-start">
+        <ul className="flex flex-row gap-5">
+          <li>
+            <a
+              className={`p-2 text-xl ${
+                activeTab === "id" ? "text-blue-600" : "text-gray-600"
+              } font-semibold `}
+              href="?tab=id"
+            >
+              아이디 찾기
+            </a>
+          </li>
+          <li>
+            <a
+              className={`p-2 text-xl ${
+                activeTab === "password" ? "text-blue-600" : "text-gray-600"
+              } font-semibold `}
+              href="?tab=password"
+            >
+              비밀번호 찾기
+            </a>
+          </li>
+        </ul>
+      </nav>
+      <div className="w-4/5 border-2 p-7 border-gray-200 rounded-2xl">
+        {activeTab === "id" && (
+          <div className="w-full flex gap-3 flex-col items-center">
+            <label className="w-3/5 flex flex-row justify-center gap-2 items-center">
+              <span className="w-1/5">이름</span>
+              <input
+                type="text"
+                className="w-full p-3 border border-gray-300 rounded-3xl"
+                name="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </label>
+            <label className="w-3/5 flex flex-row justify-center gap-2 items-center">
+              <span className="w-1/5">이메일</span>
+              <input
+                type="text"
+                className="w-full p-3 border border-gray-300 rounded-3xl"
+                name="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </label>
+            <div className="w-full flex justify-center">
+              <button
+                className="p-3 bg-blue-600 text-white font-black rounded-3xl"
+                type="submit"
+                onClick={handleSubmit}
+              >
+                아이디 찾기
+              </button>
             </div>
+            {userData?.userId && (
+              <UserIDInfo
+                showModal={showModal}
+                closeModal={closeModal}
+                name={name || ""}
+                userId={userData.userId}
+              />
+            )}
+          </div>
+        )}
 
-           
+        {activeTab === "password" && (
+          <div className="w-full flex gap-3 flex-col">
+            <div>
+              <p>
+                {" "}
+                ✅ 비밀번호의 경우 암호화 저장되어 분실 시 찾아드릴 수 없는
+                정보입니다.
+              </p>
+              <p> ✅ 본인 확인 후 비밀번호를 재설정 할 수 있습니다.</p>
+            </div>
+            <label className="w-full flex flex-row justify-center gap-2 items-center">
+              <span className="w-1/5">이름</span>
+              <input
+                type="text"
+                className="w-full p-3 border border-gray-300 rounded-3xl"
+                name="name"
+              />
+            </label>
+            <label className="w-full flex flex-row justify-center gap-2 items-center">
+              <span className="w-1/5">아이디</span>
+              <input
+                type="text"
+                className="w-full p-3 border border-gray-300 rounded-3xl"
+                name="id"
+              />
+            </label>
 
-        </div>
-
-    )
-
+            <label className="w-full flex flex-row justify-center gap-2 items-center">
+              <span className="w-1/5">이메일</span>
+              <input
+                type="text"
+                className="w-full p-3 border border-gray-300 rounded-3xl"
+                name="email"
+              />
+            </label>
+            <div className="w-full flex justify-center">
+              <button
+                className="p-3 bg-blue-600 text-white font-black rounded-3xl"
+                type="submit"
+              >
+                비밀번호 재설정하기
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }
