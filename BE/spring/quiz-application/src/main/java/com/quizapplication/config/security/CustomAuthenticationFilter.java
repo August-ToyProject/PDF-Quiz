@@ -38,7 +38,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
         LoginRequestDto loginReq = new ObjectMapper().readValue(req.getInputStream(), LoginRequestDto.class);
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-                loginReq.getEmail(), loginReq.getPassword());
+                loginReq.getUserId(), loginReq.getPassword());
         Authentication authentication = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
         SecurityContextHolder.getContextHolderStrategy().getContext().setAuthentication(authentication);
         return authentication;
