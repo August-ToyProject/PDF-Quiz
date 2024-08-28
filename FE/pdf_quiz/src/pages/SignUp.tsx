@@ -98,21 +98,12 @@ export default function SignUp() {
     };
     
     try {
-      const response =  await signupUser(requestData);
-  
-      if (response.ok) {
-        console.log('회원가입 성공:', await response.json());
-        console.log('응답 상태 코드:', response.status);
+      await signupUser(requestData);
         setErrors({});
+        console.log('회원가입이 성공적으로 완료되었습니다.');
         navigate('/'); // 회원가입 성공 후 로그인 페이지로 이동
-      } else {
-        const errorData = await response.json();
-        console.error('회원가입 실패:', errorData);
-        // setErrors({ id: '회원가입에 실패했습니다. 다시 시도해주세요.' });
-      }
     } catch (error) {
       console.error('네트워크 오류:', error);
-      // setErrors({ id: '네트워크 오류가 발생했습니다. 다시 시도해주세요.' });
     }
   };
 

@@ -49,15 +49,15 @@ export default function MyPage() {
     useEffect(() => {
         const fetchData = async() => {
             try{
-                // 유저 닉네임
-                const userInfo = await fetchUserNickname();
-                setUser(userInfo);
-                // 퀴즈 리스트
-                const quizData = await fetchQuizzes();
-                setQuiz(quizData);
-                // 폴더
-                const folderData = await fetchFolders();
-                setFolders(folderData);
+                // // 유저 닉네임
+                // const userInfo = await fetchUserNickname();
+                // setUser(userInfo);
+                // // 퀴즈 리스트
+                // const quizData = await fetchQuizzes();
+                // setQuiz(quizData);
+                // // 폴더
+                // const folderData = await fetchFolders();
+                // setFolders(folderData);
 
             }catch(error){
                 console.log("데이터를 가져오는데 실패했습니다.", error);
@@ -70,12 +70,13 @@ export default function MyPage() {
     const handleLogout = async () => {
         try {
             await logoutUser();
-            localStorage.removeItem('token');
+            localStorage.removeItem('accesstoken');
+            console.log('로그아웃이 성공적으로 완료되었습니다.');
             navigate('/');
-        }catch(error){
+        } catch (error) {
             console.log('로그아웃 중 오류가 발생했습니다.', error);
         }
-    }  
+    };
 
     // 캘린더
     const createCalendarSquares = (days: number) => {

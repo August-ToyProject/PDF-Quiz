@@ -2,13 +2,17 @@ import { apiRequest } from './ApiClient';
 
 // 마이페이지 프로필 닉네임
 export const fetchUserNickname = async () => {
-    return apiRequest(`/api/user`);
+    return apiRequest(`/user`);
 };
 
 // 로그아웃
 export const logoutUser = async () => {
-    return apiRequest(`/api/logout`, {
-        method: 'POST',
+    const token = localStorage.getItem('accesstoken');
+    return apiRequest(`/logout`, {
+        method: 'PATCH',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+        },
     });
 }
 
@@ -21,7 +25,7 @@ export const signupUser = async (requestData: {
     password: string;
     passwordConfirm: string;
 }) => {
-    return apiRequest(`/api/signup`, {
+    return apiRequest(`/sign-up`, {
         method: 'POST',
         body: JSON.stringify(requestData),
         headers: {'Content-Type': 'application/json'},
