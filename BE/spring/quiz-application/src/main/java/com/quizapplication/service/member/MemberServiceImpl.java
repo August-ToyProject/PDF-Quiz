@@ -4,6 +4,7 @@ import com.quizapplication.config.jwt.TokenProvider;
 import com.quizapplication.config.redis.RedisService;
 import com.quizapplication.config.security.SecurityUtil;
 import com.quizapplication.domain.Member;
+import com.quizapplication.dto.request.EditUserInfoDto;
 import com.quizapplication.dto.request.ResetPwdRequest;
 import com.quizapplication.dto.request.SignupDto;
 import com.quizapplication.dto.response.MemberResponse;
@@ -47,6 +48,14 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public MemberResponse info() {
         return MemberResponse.of(memberRepository.findByEmail(SecurityUtil.getCurrentMemberEmail()));
+    }
+
+    @Override
+    @Transactional
+    public MemberResponse editInfo(EditUserInfoDto request) {
+        Member member = memberRepository.findByEmail(SecurityUtil.getCurrentMemberEmail());
+        member.editMember(request.getUserId(), request.getEmail(), request.getUsername(), request.getNickname());
+        return MemberResponse.of(member);
     }
 
     @Override

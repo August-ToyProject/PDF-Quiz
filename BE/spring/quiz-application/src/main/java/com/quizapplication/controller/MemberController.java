@@ -1,5 +1,6 @@
 package com.quizapplication.controller;
 
+import com.quizapplication.dto.request.EditUserInfoDto;
 import com.quizapplication.dto.request.ResetPwdRequest;
 import com.quizapplication.dto.request.SignupDto;
 import com.quizapplication.dto.response.MemberResponse;
@@ -38,6 +39,12 @@ public class MemberController {
     @GetMapping("/info")
     public ResponseEntity<MemberResponse> info() {
         return ResponseEntity.status(HttpStatus.OK).body(memberService.info());
+    }
+
+    @Operation(summary = "개인정보 수정", description = "아이디, 이메일, 이름, 닉네임을 수정(Validation 체크)")
+    @PutMapping("/info")
+    public ResponseEntity<MemberResponse> editInfo(@RequestBody @Valid EditUserInfoDto request) {
+        return ResponseEntity.status(HttpStatus.OK).body(memberService.editInfo(request));
     }
 
     @PatchMapping("/logout")
