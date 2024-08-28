@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import { signupUser } from '../api/ApiUser';
 
 interface InputData {
   name: string;
@@ -22,11 +22,7 @@ export default function SignUp() {
     confirmPassword : '',
   })
 
-  const apiBaseUrl = 'http://43.201.129.54:8080/api/v1/sign-up'; 
-
-  // const [testDB, setTestDB] = useState<InputData[]>([]);
   const [errors, setErrors] = useState<Partial<InputData>>({});
-
   const navigate = useNavigate();
 
   // 입력 필드
@@ -102,13 +98,7 @@ export default function SignUp() {
     };
     
     try {
-      const response = await fetch(apiBaseUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(requestData)
-      });
+      const response =  await signupUser(requestData);
   
       if (response.ok) {
         console.log('회원가입 성공:', await response.json());
