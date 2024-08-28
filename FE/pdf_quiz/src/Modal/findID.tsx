@@ -18,8 +18,7 @@ const UserIDInfo = ({ showModal, closeModal, name, userId }: ModalProps) => {
     showModal && (
       <div
         className={
-          "w-1/2 h-1/4 bg-gray-100 flex flex-col items-center justify-center border border-black rounded-xl z-200 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 " +
-          (showModal ? "block" : "hidden")
+          "w-1/2 h-1/4 bg-gray-100 flex flex-col items-center justify-center border border-black rounded-xl z-200 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 "
         }
       >
         <div className="flex flex-col items-center mb-5">
