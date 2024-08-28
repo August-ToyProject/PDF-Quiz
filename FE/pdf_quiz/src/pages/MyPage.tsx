@@ -2,6 +2,10 @@ import { useState, useEffect } from 'react';
 import Upload from '../Modal/Upload';
 import { useNavigate } from 'react-router-dom';
 import FolderList from '../components/folderList';
+import { fetchFolders } from '../api/ApiFolder';
+import { fetchUserNickname, logoutUser } from '../api/ApiUser';
+import { fetchQuizzes } from '../api/ApiQuiz';
+
 
 interface ListQuiz {
     id: number;
@@ -36,80 +40,38 @@ export default function MyPage() {
     const [selectedMonth, setSelectedMonth] = useState<number | null>(null);  
     const [folders, setFolders] = useState<{id:number; name:string; isEditing:boolean}[]>([]);
     const [selectedFolderId, setSelectedFolderId] = useState<number | null>(null);
-    const [showFolderModal, setShowFolderModal] = useState(false);
     const [user, setUser] = useState<User | null>(null);
     const openModal = () => setShowModal(true);
     const closeModal = () => setShowModal(false);
 
     const navigate = useNavigate();
-    const ngrokUrl = "https://";
 
-    // useEffect(() => {
-    //     const fetchData = async() => {
-    //         try{
-    //             // 유저 정보
-    //             const userInfoResponse = await fetch(`${ngrokUrl}/api`, {
-    //                 method: 'GET',
-    //                 credentials: 'include',
-    //             });
-    //             const userInfo = await userInfoResponse.json();
-    //             setUser(userInfo);
-
-    //             // 퀴즈 데이터
-    //             const quizResponse = await fetch(`${ngrokUrl}/api`, {
-    //                 method: 'GET',
-    //                 credentials: 'include',
-    //             });
-    //             const quizData: ListQuiz[] = await quizResponse.json();
-    //             setQuiz(quizData);
-    //             // 폴더 데이터
-    //             // const folderResponse = await fetch(`${ngrokUrl}/api`,{
-    //             //     method: 'GET',
-    //             //     credentials: 'include',
-    //             // });
-    //             // const folderData = await folderResponse.json();
-    //             // setFolders(folderData);
-
-    //         }catch(error){
-    //             console.log("데이터를 가져오는데 실패했습니다.", error);
-    //         };
-    //     }
-    //     fetchData();
-    // }, []);
-
-    // 리스트 하드코딩
     useEffect(() => {
-        const fetchData = async () => {
-            const data : ListQuiz[] = [
-                { id: 1, title: 'PDF퀴즈 제목 1', date: '2023-08-01', folderId: null },
-                { id: 2, title: 'PDF퀴즈 제목 2', date: '2023-08-02', folderId: null },
-                { id: 3, title: 'PDF퀴즈 제목 3', date: '2023-08-03', folderId: null },
-                { id: 4, title: 'PDF퀴즈 제목 4', date: '2023-08-04', folderId: null },
-                { id: 5, title: 'PDF퀴즈 제목 5', date: '2023-08-05', folderId: null },
-                { id: 6, title: 'PDF퀴즈 제목 6', date: '2023-08-06', folderId: null },
-                { id: 7, title: 'PDF퀴즈 제목 7', date: '2023-08-07', folderId: null },
-                { id: 8, title: 'PDF퀴즈 제목 8', date: '2023-08-08', folderId: null },
-                { id: 9, title: 'PDF퀴즈 제목 9', date: '2023-08-09', folderId: null },
-                { id: 10, title: 'PDF퀴즈 제목 10', date: '2023-08-10', folderId: null },
-                { id: 11, title: 'PDF퀴즈 제목 11', date: '2023-08-11', folderId: null },
-            ];
-            setQuiz(data);
-        };
+        const fetchData = async() => {
+            try{
+                // 유저 닉네임
+                const userInfo = await fetchUserNickname();
+                setUser(userInfo);
+                // 퀴즈 리스트
+                const quizData = await fetchQuizzes();
+                setQuiz(quizData);
+                // 폴더
+                const folderData = await fetchFolders();
+                setFolders(folderData);
 
+            }catch(error){
+                console.log("데이터를 가져오는데 실패했습니다.", error);
+            };
+        }
         fetchData();
     }, []);
 
     // 로그아웃
     const handleLogout = async () => {
         try {
-            const response = await fetch(`${ngrokUrl}/api`, {
-                method: 'POST',
-                credentials: 'include',
-            });
-            if(response.ok){
-                localStorage.removeItem('token');
-                navigate('/');
-            }
+            await logoutUser();
+            localStorage.removeItem('token');
+            navigate('/');
         }catch(error){
             console.log('로그아웃 중 오류가 발생했습니다.', error);
         }

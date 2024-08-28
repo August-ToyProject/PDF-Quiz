@@ -1,9 +1,8 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import folder from '../assets/folder2.png';
 import FolderModal from '../Modal/folderModal';
 import searchIcon from '../assets/search.png'; 
-import { fetchFolders, createFolder, updateFolderName, deleteFolder } from '../api/ApiFolder';
-import { fetchQuizzes, deleteQuiz, moveQuizToFolder } from '../api/ApiQuiz';
+import {deleteFolder, createFolder, updateFolderName, moveQuizToFolder, fetchFolderQuizzes} from '../api/ApiFolder';
 
 interface ListQuiz {
     id: number;
@@ -44,63 +43,31 @@ const FolderList: React.FC<FolderListProps> = ({
     const [selectedQuizId, setSelectedQuizId] = useState<number | null>(null);
     const [dropdownOpen, setDropdownOpen] = useState<{ [key: number]: boolean }>({});
 
-    useEffect(() => {
-        const loadQuizzes = async () => {
-            try {
-                const quizData = await fetchQuizzes();
-                setQuiz(quizData);
-            } catch (error) {
-                console.log('Failed to fetch quizzes:', error);
-            }
-        };
-
-        const loadFolders = async () => {
-            try {
-                const folderData = await fetchFolders();
-                setFolders(folderData);
-            } catch (error) {
-                console.log('Failed to fetch folders:', error);
-            }
-        };
-
-        loadQuizzes();
-        loadFolders();
-    }, [setQuiz, setFolders]);
-
     const toggleDropdown = (quizId: number) => {
         setDropdownOpen(prev => ({
             ...prev,
             [quizId]: !prev[quizId]
         }));
     };
-    // 폴더 데이터 API
-    // const handleFolderClick = async (folderId: number | null) => {
-    //     setSelectedFolderId(folderId);
-    //     try{
-    //         const response = await fetch(`${ngrokUrl}/api`, {
-    //             method: 'GET',
-    //             credentials: 'include',
-    //         });
-    //         const data = await response.json();
-    //         setQuiz(data);
-    //     }catch(error){
-    //         console.log("폴더 데이터를 가져오는데 실패했습니다.", error);
-    //     }
-    // }
+    const handleFolderClick = async (folderId: number | null) => {
+        setSelectedFolderId(folderId);
+        try{
+            const data = await fetchFolderQuizzes(folderId);
+            setQuiz(data);
+        }catch(error){
+            console.log("폴더 데이터를 가져오는데 실패했습니다.", error);
+        }
+    }
 
     const handleDeleteQuiz = async(quizId: number) =>{
         try{
-            await deleteQuiz(quizId);
-            setQuiz(prevQuiz => prevQuiz.filter(q => q.id !== quizId))
+            await deleteFolder(quizId);
+            setQuiz(prevQuiz => prevQuiz.filter(q => q.id != quizId))
         }catch(error){
             console.log("퀴즈 삭제에 실패하였습니다.", error);
         }
     }
 
-    // 폴더 선택 핸들러
-    const handleFolderClick = (folderId: number | null) => {
-        setSelectedFolderId(folderId); // 선택한 폴더 ID를 설정합니다.
-    };
 
     // 검색창
     const handleSearchClick = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -125,16 +92,12 @@ const FolderList: React.FC<FolderListProps> = ({
     ) => {
         switch(action) { 
             case 'add' : // 폴더 생성
-                // API테스트
-                // try {
-                //     const newFolder = await createFolder('새 폴더 이름');
-                //     setFolders(prevFolders => [...prevFolders, { ...newFolder, isEditing: true }]);
-                // } catch (error) {
-                //     console.log('Failed to create folder:', error);
-                // }
-                // break;
-                const newFolder = {id: Date.now(), name: '', isEditing: true};
-                setFolders(prevFolders => [...prevFolders, newFolder]);
+                try{
+                    const newFolder = await createFolder(newName || '');
+                    setFolders(prevFolders => [...prevFolders, newFolder]);
+                }catch(error){
+                    console.error("폴더 생성 중 오류 발생:", error);
+                }
                 break;
             case 'editName' : // 폴더 이름 편집 상태로 전환
                 setFolders(prevFolders =>
@@ -144,27 +107,19 @@ const FolderList: React.FC<FolderListProps> = ({
                 );
                 break;
             case 'saveName' : // 폴더 이름 저장
-                // API테스트
-                // if (id && newName) {
-                //     try {
-                //         await updateFolderName(id, newName);
-                //         setFolders(prevFolders =>
-                //             prevFolders.map(folder =>
-                //                 folder.id === id 
-                //                     ? {...folder, isEditing: false, name: newName.trim() || 'Untitled Folder'} : folder
-                //             )
-                //         );
-                //     } catch (error) {
-                //         console.log('Failed to update folder name:', error);
-                //     }
-                // }
-                // break;
-                setFolders(prevFolders =>
-                    prevFolders.map(folder =>
-                        folder.id === id 
-                            ? {...folder, isEditing: false, name: folder.name.trim() || 'Untitled Folder'} : folder
-                    )
-                );
+                if(id && newName){
+                    try{
+                        await updateFolderName(id, newName);
+                        setFolders(prevFolders =>
+                            prevFolders.map(folder =>
+                                folder.id === id 
+                                    ? {...folder, isEditing: false, name: newName} : folder
+                            )
+                        );
+                    }catch(error){
+                        console.error("폴더 이름 수정 중 오류 발생:", error);
+                    }
+                }
                 break;
             case 'keyPress' : // 엔터 입력 처리
                 if(event?.key === 'Enter'){
@@ -194,33 +149,19 @@ const FolderList: React.FC<FolderListProps> = ({
         setSelectedQuizId(null);
     };
 
-    const handleFolderConfirm = (folderId: number | null) => {
+    const handleFolderConfirm = async (folderId: number | null) => {
         // API테스트
-        // if(selectedQuizId !== null && folderId !== null){
-        //     try{
-        //         await fetch(`${ngrokUrl}/api`, {
-        //             method: 'POST',
-        //             headers: {
-        //                 'Content-Type' : 'application/json'
-        //             },
-        //             body: JSON.stringify({quizId:selectedQuizId, folderId}),
-        //             credentials: 'include',
-        //         });
-        //         setQuiz(prevQuiz => 
-        //             prevQuiz.map(q => 
-        //                 q.id === selectedQuizId ? { ...q, folderId } : q
-        //             )
-        //         );
-        //     }catch(error){
-        //         console.log("퀴즈를 폴더로 이동하는데 실패하였습니다.", error);
-        //     }
-        // }
-        if (selectedQuizId !== null && folderId !== null) {
-            setQuiz(prevQuiz => 
-                prevQuiz.map(q => 
-                    q.id === selectedQuizId ? { ...q, folderId } : q
-                )
-            );
+        if(selectedQuizId !== null && folderId !== null){
+            try{
+                await moveQuizToFolder(selectedQuizId, folderId);
+                setQuiz(prevQuiz => 
+                    prevQuiz.map(q => 
+                        q.id === selectedQuizId ? { ...q, folderId } : q
+                    )
+                );
+            }catch(error){
+                console.log("퀴즈를 폴더로 이동하는데 실패하였습니다.", error);
+            }
         }
         closeFolderModal();
     };
