@@ -1,4 +1,5 @@
 import React, { useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import pdfLogo from "../assets/DragFile.png";
 import closeIcon from "../assets/X.png";
 
@@ -28,11 +29,17 @@ export default function Upload({
   const [uploadMessage, setUploadMessage] = useState<string | null>(null);
   const [errors, setErrors] = useState<string | null>(null);
 
+  const [path, setPath] = useState<string>("");
   const [difficulty, setDifficulty] = useState<string>("쉬움");
   const [quiz_cnt, setQuiz_cnt] = useState<string>("5");
   const [option_cnt, setOption_cnt] = useState<string>("4");
   const [timeLimitHour, setTimeLimitHour] = useState<string>("0");
   const [timeLimitMinute, setTimeLimitMinute] = useState<string>("0");
+
+  const navigate = useNavigate();
+  const navigateToQuiz = () => {
+    navigate("/quiz");
+  };
 
   const handleDragStart = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -109,6 +116,10 @@ export default function Upload({
         setUploadMessage(result.message);
         setErrors(null);
         console.log("Upload successful:", result);
+
+        const indexPath = result.indexPath;
+        setPath(indexPath); // indexPath를 state에 저장
+        console.log("indexPath:", indexPath);
       } else if (response.status === 400) {
         const result = await response.json();
         setUploadMessage(result.message);
@@ -147,23 +158,47 @@ export default function Upload({
     const time = new Date();
     time.setHours(parseInt(timeLimitHour, 10));
     time.setMinutes(parseInt(timeLimitMinute, 10));
-    const created_at = time.toISOString();
-
+    // const created_at = time.toISOString();
+    formData.append("index_path", path);
+    formData.append("num_questions", quiz_cnt);
+    formData.append("choice_count", option_cnt);
     formData.append("difficulty", String(difficultyValue));
-    formData.append("quiz_cnt", quiz_cnt);
-    formData.append("option_cnt", option_cnt);
-    formData.append("created_at", created_at);
+
+    console.log(formData);
+
+    function formDataToJSON(formData: FormData) {
+      const obj: any = {};
+      formData.forEach((value, key) => {
+        if (!isNaN(value as any)) {
+          obj[key] = Number(value);
+        } else {
+          obj[key] = value;
+        }
+      });
+      return JSON.stringify(obj);
+    }
+
+    const requestData = formDataToJSON(formData);
 
     try {
-      //Todo: Url 변경 예정
-      const response = await fetch(apiBaseUrl, {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch(
+        "http://43.201.129.54:8080/api/v1/quiz/generate-quiz",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accesstoken")}`,
+            "Content-type": "application/json",
+          },
+          body: requestData,
+        }
+      );
 
       if (response.ok) {
-        const result = await response.json();
-        setUploadMessage(result.message);
+        const result = await response.text();
+        navigateToQuiz();
+        // const result = await response.json();
+        // setUploadMessage(result.message);
+        console.log(result);
         setErrors(null);
         console.log("Generation successful:", result);
       } else if (response.status === 400) {
