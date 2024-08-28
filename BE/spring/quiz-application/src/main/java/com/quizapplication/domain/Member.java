@@ -80,4 +80,10 @@ public class Member extends BaseTimeEntity {
         exams.add(exam);
     }
 
+    public void editMember(String userId, String email, String username, String nickname) {
+        this.userId = userId;
+        this.email = email;
+        this.username = username;
+        this.nickname = nickname;
+    }
 }

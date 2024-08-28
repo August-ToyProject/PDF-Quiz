@@ -1,5 +1,6 @@
 package com.quizapplication.service.member;
 
+import com.quizapplication.dto.request.EditUserInfoDto;
 import com.quizapplication.dto.request.ResetPwdRequest;
 import com.quizapplication.dto.request.SignupDto;
 import com.quizapplication.dto.response.MemberResponse;
@@ -9,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 public interface MemberService {
     MemberResponse signup(SignupDto signupDto);
     MemberResponse info();
+    MemberResponse editInfo(EditUserInfoDto request);
     void logout(HttpServletRequest request);
     UserIdResponse findUserId(String email);
     void resetPassword(String email, ResetPwdRequest resetPwdRequest);
