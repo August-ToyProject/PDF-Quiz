@@ -78,6 +78,16 @@ export default function MyPage() {
         }
     };
 
+    const handleInfo = () => {
+        const token = localStorage.getItem('accesstoken');
+        if (token) {
+            navigate(`/info`);
+        } else {
+            console.log('토큰이 없습니다. 로그인 페이지로 이동해야 합니다.');
+            navigate('/login');
+        }
+    }
+
     // 캘린더
     const createCalendarSquares = (days: number) => {
         const squares = [];
@@ -107,7 +117,12 @@ export default function MyPage() {
                     <div className="mt-2 p-4 border border-gray-300 rounded-lg h-24">
                         <div className='text-center'>{user?.nickname || '닉네임'}</div>
                         <div className="flex justify-center space-x-4 mt-4">
-                            <button className="px-2 py-1 bg-gray-50 border border-gray-300 text-xs text-gray-500 rounded-lg">내 정보</button>
+                            <button 
+                                className="px-2 py-1 bg-gray-50 border border-gray-300 text-xs text-gray-500 rounded-lg"
+                                onClick={handleInfo}
+                             >
+                                내 정보
+                            </button>
                             <button 
                                 className="px-2 py-1 bg-gray-50 border border-gray-300 text-xs text-gray-500 rounded-lg"
                                 onClick={handleLogout}>
