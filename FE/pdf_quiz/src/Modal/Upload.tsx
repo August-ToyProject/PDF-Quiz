@@ -2,6 +2,7 @@ import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import pdfLogo from "../assets/DragFile.png";
 import closeIcon from "../assets/X.png";
+import { EventSourcePolyfill } from "event-source-polyfill";
 
 interface ModalProps {
   showModal: boolean;
@@ -181,6 +182,20 @@ export default function Upload({
     const requestData = formDataToJSON(formData);
 
     try {
+      // const eventSource = new EventSourcePolyfill(
+      //   `http://43.201.129.54:8080/api/v1/notifications/subscribe`,
+      //   {
+      //     headers: {
+      //       Authorization: "Bearer " + localStorage.getItem("accesstoken"),
+      //     },
+      //     //라이브러리 디폴트 타임아웃 - 45초 (45000ms) 인 것을 임의로 조정
+      //     heartbeatTimeout: 12000000,
+      //     withCredentials: true,
+      //   }
+      // );
+      // if (eventSource) {
+      // }
+      navigateToQuiz();
       const response = await fetch(
         "http://43.201.129.54:8080/api/v1/quiz/generate-quiz",
         {
@@ -195,7 +210,6 @@ export default function Upload({
 
       if (response.ok) {
         const result = await response.text();
-        navigateToQuiz();
         // const result = await response.json();
         // setUploadMessage(result.message);
         console.log(result);
