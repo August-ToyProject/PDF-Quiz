@@ -170,6 +170,15 @@ public class MemberServiceImpl implements MemberService {
         folderRepository.delete(folderRepository.findByIdAndMemberId(folderId, memberId));
     }
 
+    @Override
+    @Transactional
+    public FolderResponse updateFolder(Long folderId, FolderCreateRequest request) {
+        Long memberId = memberRepository.findByEmail(SecurityUtil.getCurrentMemberEmail()).getId();
+        Folder folder = folderRepository.findByIdAndMemberId(folderId, memberId);
+        folder.updateFolderName(request.getFolderName());
+        return FolderResponse.of(folder);
+    }
+
     private boolean isEmailExist(String email) {
         return memberRepository.existsByEmail(email);
     }

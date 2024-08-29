@@ -21,4 +21,5 @@ public interface MemberService {
     List<FolderResponse> folderInfo();
     FolderResponse createFolder(FolderCreateRequest request);
     void deleteFolder(Long folderId);
+    FolderResponse updateFolder(Long folderId, FolderCreateRequest request);
 }

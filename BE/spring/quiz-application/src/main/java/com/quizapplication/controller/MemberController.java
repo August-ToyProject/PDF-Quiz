@@ -77,15 +77,24 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.OK).body(memberService.folderInfo());
     }
 
+    @Operation(summary = "폴더 생성", description = "마이페이지에서 폴더 생성")
     @PostMapping("/exam-info")
     public ResponseEntity<FolderResponse> createFolder(@RequestBody FolderCreateRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(memberService.createFolder(request));
     }
 
+    @Operation(summary = "폴더 삭제", description = "마이페이지에서 생성한 폴더 id를 기준으로 삭제")
     @DeleteMapping("/exam-info")
     public ResponseEntity createFolder(@RequestParam("folderId") Long folderId) {
         memberService.deleteFolder(folderId);
         return ResponseEntity.status(HttpStatus.OK).body("Folder deleted successfully");
+    }
+
+    @Operation(summary = "폴더 변경", description = "마이페이지에서 생성한 폴더 id를 기준으로 변경")
+    @PutMapping("/exam-info")
+    public ResponseEntity<FolderResponse> updateFolder(@RequestParam("folderId") Long folderId,
+                                                       @RequestBody FolderCreateRequest request) {
+        return ResponseEntity.status(HttpStatus.OK).body(memberService.updateFolder(folderId, request));
     }
 
 }

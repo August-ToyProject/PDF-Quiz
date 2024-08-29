@@ -46,4 +46,8 @@ public class Folder extends BaseTimeEntity {
         exams.add(exam);
     }
 
+    public void updateFolderName(String folderName) {
+        this.folderName = folderName;
+    }
+
 }
