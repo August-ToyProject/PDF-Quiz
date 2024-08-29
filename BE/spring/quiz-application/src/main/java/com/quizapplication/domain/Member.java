@@ -2,6 +2,7 @@ package com.quizapplication.domain;
 
 import com.quizapplication.domain.common.BaseTimeEntity;
 import com.quizapplication.domain.exam.Exam;
+import com.quizapplication.domain.folder.Folder;
 import com.quizapplication.domain.pdf.Pdf;
 import com.quizapplication.domain.quiz.Quiz;
 import jakarta.persistence.CascadeType;
@@ -60,6 +61,9 @@ public class Member extends BaseTimeEntity {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Exam> exams = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Folder> folders = new ArrayList<>();
+
     public void passwordEncoding(PasswordEncoder passwordEncoder) {
         this.password = passwordEncoder.encode(password);
     }
@@ -78,6 +82,9 @@ public class Member extends BaseTimeEntity {
 
     public void addExam(Exam exam) {
         exams.add(exam);
+    }
+    public void addFolder(Folder folder) {
+        folders.add(folder);
     }
 
     public void editMember(String userId, String email, String username, String nickname) {
