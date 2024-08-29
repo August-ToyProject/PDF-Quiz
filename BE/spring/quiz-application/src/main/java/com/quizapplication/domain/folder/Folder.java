@@ -32,6 +32,9 @@ public class Folder extends BaseTimeEntity {
     @Column(name = "folder_id")
     private Long id;
 
+    @Column(nullable = false)
+    private String folderName;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;

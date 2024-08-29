@@ -93,4 +93,8 @@ public class Member extends BaseTimeEntity {
         this.username = username;
         this.nickname = nickname;
     }
+
+    public void removeFolder(Folder folder) {
+        folders.remove(folder);
+    }
 }
