@@ -1,4 +1,5 @@
 from langchain.chains.summarize import load_summarize_chain
+from langchain_anthropic import ChatAnthropic
 from langchain_community.vectorstores import FAISS
 from langchain_openai import OpenAIEmbeddings
 from langchain.prompts import PromptTemplate
@@ -49,9 +50,11 @@ async def summarize_document(
 async def get_keyword_from_summary(
     llm,
     summary,
-    n=5
+    num_questions=5,
+    num_keywords =2
 ):
     try:
+        total_keyword = num_questions * num_keywords
         keyword_prompt = PromptTemplate(
             input_variables=["summary", "n"],
             template="""
@@ -70,8 +73,19 @@ async def get_keyword_from_summary(
         키워드 (중요도 순):"""
         )
         keyword_chain = LLMChain(llm=llm, prompt=keyword_prompt)
-        keywords = await keyword_chain.arun(summary=summary, n=n)
-        return keywords.strip()
+        keywords = await keyword_chain.arun(summary=summary, n=total_keyword)
+        keyword_list = [kw.strip() for kw in keywords.split(',')]
+        
+        num_groups = num_questions//5
+        
+        ret = []
+        start = 0
+        for _ in range(num_groups):
+            end = start + (5*num_keywords)
+            ret .append(keyword_list[start:end])
+            start =  end
+        
+        return ret
     except Exception as e:
         raise e
 
@@ -79,14 +93,12 @@ async def get_keyword_from_summary(
 async def create_prompt_template():
     try:
         return PromptTemplate(
-            input_variables=["pre_problem", "document", "summary", "keywords", "num_questions", "choice_count", "difficulty"],
+            input_variables=["document", "summary", "keywords", "num_questions", "choice_count", "difficulty"],
             template="""
             당신은 가장 뛰어난 퀴즈 생성에 대해 전문 지식을 가지고 있는 퀴즈 생성자입니다. 아래 조건을 보고 퀴즈를 만들어주세요.
             
-            다음 문서와 문서 요약 그리고 키워드를 바탕으로 중요한 개념에 대한 객관식 문제 5개를 만드세요 
-            다만 이전 문제와 중복되는 문제는 절대 사용하지 마시고 문제 보기는 1~{choice_count}까지 다양하게 해주세요:
-            
-            이전 문제 : {pre_problem}
+            다음 문서와 문서, 요약 그리고 키워드를 바탕으로 중요한 개념에 대한 객관식 문제 5개를 만드세요 
+            문제 보기는 1~{choice_count}까지 다양하게 해주세요:
             
             문서: {document}
 
@@ -162,7 +174,6 @@ import json
 import random
 
 async def make_quiz(
-    llm,
     quiz_prompt,
     document,
     summary,
@@ -175,27 +186,27 @@ async def make_quiz(
     user_difficulty_choice=None
 ):
     try:
-        quiz_chain = LLMChain(
-            llm=llm, 
-            prompt=quiz_prompt
-        )
-
         difficulties, weights = await get_weighted_difficulties(user_difficulty_choice)
-
         num_questions = num_questions // 5
-        pre_problem = []
-        for _ in range(num_questions):
+        for i in range(num_questions):
             # 가중치를 적용하여 난이도 선택
             difficulty = random.choices(difficulties, weights=weights, k=1)[0]
             
+            openai_llm = ChatOpenAI(model_name="gpt-4o-mini", temperature=0)
+            quiz_chain = LLMChain(
+                llm=openai_llm, 
+                prompt=quiz_prompt
+            )
+            
             result = await quiz_chain.arun(
                 document=document,
-                pre_problem=pre_problem,
                 summary=summary,
-                keywords=keywords,
+                keywords=', '.join(keywords[i]),
                 choice_count=choice_count,
                 difficulty=difficulty
             )
+            # '정규화, 데이터베이스 설계, 중복 제거, 데이터 무결성, 손실 없는 분해, 기능적 종속성, 이상 현상, 학생, 과정 성과, 관계'
+            # '데이터 무결성 강화, 데이터 구조, 관계 분해, 데이터 관리, 데이터 품질, 데이터 일관성, 설계 원칙, 데이터베이스 최적화, 데이터 분석, 정보 손실'
             
             # Kafka로 퀴즈 및 추가 정보를 전송 (JSON 직렬화 후 UTF-8 인코딩, ensure_ascii=False 추가)
             quiz_data = {
@@ -204,7 +215,6 @@ async def make_quiz(
                 'index_path': index_path,
                 'question': result.strip()
             }
-            pre_problem.append(result)
             producer.produce('quiz_topic', json.dumps(quiz_data, ensure_ascii=False).encode('utf-8'))
 
         producer.flush()  # 모든 메시지가 전송되었는지 확인
