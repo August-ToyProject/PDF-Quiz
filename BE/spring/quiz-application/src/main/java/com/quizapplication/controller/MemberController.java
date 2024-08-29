@@ -3,6 +3,8 @@ package com.quizapplication.controller;
 import com.quizapplication.dto.request.EditUserInfoDto;
 import com.quizapplication.dto.request.ResetPwdRequest;
 import com.quizapplication.dto.request.SignupDto;
+import com.quizapplication.dto.request.folder.FolderCreateRequest;
+import com.quizapplication.dto.response.FolderResponse;
 import com.quizapplication.dto.response.MemberResponse;
 import com.quizapplication.dto.response.UserIdResponse;
 import com.quizapplication.service.member.MemberService;
@@ -10,9 +12,11 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -66,4 +70,31 @@ public class MemberController {
         memberService.resetPassword(email, request);
         return ResponseEntity.status(HttpStatus.OK).body("Password reset successfully");
     }
+
+    @Operation(summary = "생성한 폴더", description = "마이페이지에서 생성한 폴더 정보들 반환")
+    @GetMapping("/exam-info")
+    public ResponseEntity<List<FolderResponse>> folderInfo() {
+        return ResponseEntity.status(HttpStatus.OK).body(memberService.folderInfo());
+    }
+
+    @Operation(summary = "폴더 생성", description = "마이페이지에서 폴더 생성")
+    @PostMapping("/exam-info")
+    public ResponseEntity<FolderResponse> createFolder(@RequestBody FolderCreateRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(memberService.createFolder(request));
+    }
+
+    @Operation(summary = "폴더 삭제", description = "마이페이지에서 생성한 폴더 id를 기준으로 삭제")
+    @DeleteMapping("/exam-info")
+    public ResponseEntity createFolder(@RequestParam("folderId") Long folderId) {
+        memberService.deleteFolder(folderId);
+        return ResponseEntity.status(HttpStatus.OK).body("Folder deleted successfully");
+    }
+
+    @Operation(summary = "폴더 변경", description = "마이페이지에서 생성한 폴더 id를 기준으로 변경")
+    @PutMapping("/exam-info")
+    public ResponseEntity<FolderResponse> updateFolder(@RequestParam("folderId") Long folderId,
+                                                       @RequestBody FolderCreateRequest request) {
+        return ResponseEntity.status(HttpStatus.OK).body(memberService.updateFolder(folderId, request));
+    }
+
 }
