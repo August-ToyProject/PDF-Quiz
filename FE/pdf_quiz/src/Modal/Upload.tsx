@@ -182,20 +182,20 @@ export default function Upload({
     const requestData = formDataToJSON(formData);
 
     try {
-      const eventSource = new EventSourcePolyfill(
-        `http://43.201.129.54:8080/api/v1/notifications/subscribe`,
-        {
-          headers: {
-            Authorization: "Bearer " + localStorage.getItem("accesstoken"),
-          },
-          //라이브러리 디폴트 타임아웃 - 45초 (45000ms) 인 것을 임의로 조정
-          heartbeatTimeout: 12000000,
-          withCredentials: true,
-        }
-      );
-      if (eventSource) {
-        navigateToQuiz();
-      }
+      // const eventSource = new EventSourcePolyfill(
+      //   `http://43.201.129.54:8080/api/v1/notifications/subscribe`,
+      //   {
+      //     headers: {
+      //       Authorization: "Bearer " + localStorage.getItem("accesstoken"),
+      //     },
+      //     //라이브러리 디폴트 타임아웃 - 45초 (45000ms) 인 것을 임의로 조정
+      //     heartbeatTimeout: 12000000,
+      //     withCredentials: true,
+      //   }
+      // );
+      // if (eventSource) {
+      // }
+      navigateToQuiz();
       const response = await fetch(
         "http://43.201.129.54:8080/api/v1/quiz/generate-quiz",
         {
