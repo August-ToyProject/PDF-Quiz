@@ -61,9 +61,10 @@ const Login = () => {
       //accesstoken 저장
       if (accessToken) {
         localStorage.setItem("accesstoken", accessToken);
+        navigateToMyPage();
+      }else{
+        alert('아이디 또는 비밀번호가 틀렸습니다.');
       }
-
-      navigateToMyPage();
     } catch (error) {
       console.error("Error during login:, ", error);
     }
