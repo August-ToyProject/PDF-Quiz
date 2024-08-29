@@ -16,14 +16,15 @@ async def generate_quiz(request:QuizRequest):
         #-- 문서 요약
         llm, summary = await summarize_document(
             docs,
-            temperature = 0.5
+            temperature = 0.1
             )
         
         #-- 중요 키워드 추출
         keywords = await get_keyword_from_summary(
             llm,
             summary,
-            n=request.num_questions * 10
+            num_questions=request.num_questions,
+            num_keywords=2
         )
         
         #-- 퀴즈 생성
@@ -32,7 +33,6 @@ async def generate_quiz(request:QuizRequest):
         #-- 퀴즈 chain and make quiz
         quiz = await make_quiz(
             document=docs,
-            llm=llm,
             quiz_prompt=quiz_prompt,
             summary=summary,
             keywords=keywords,
