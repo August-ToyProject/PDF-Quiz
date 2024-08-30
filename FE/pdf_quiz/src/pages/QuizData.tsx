@@ -13,7 +13,7 @@ interface QuizDataProps {
   difficulty: string;
   question: string;
   options: { [key: string]: string };
-  answer: string;
+  answer: { [key: string]: string }; // 수정된 타입
   description: string;
   slice: (startIndex: number, endIndex: number) => QuizDataProps;
 }
@@ -40,21 +40,32 @@ const QuizData = ({
         withCredentials: true,
       }
     );
-    eventSource.onmessage = (response) => {
+    eventSource.addEventListener("sse", (event) => {
       try {
-        const parsedData: QuizDataProps = JSON.parse(response.data);
-        console.log("Parsed data: ", parsedData);
+        const data = JSON.parse(event.data);
+        console.log("Received data: ", data);
 
-        // Add the newly received data to the state
-        setFetchedData((prevData) => [...prevData, parsedData]);
-        setTotalPages((prevTotal) =>
-          Math.ceil((prevData.length + 1) / itemsPerPage)
-        );
+        if (typeof data.options === "string") {
+          data.options = JSON.parse(data.options);
+        }
+        if (typeof data.answer === "string") {
+          data.answer = JSON.parse(data.answer);
+        }
+
+        // 상태 업데이트
+        setFetchedData((prevData) => {
+          // 새로운 데이터 추가
+          const updatedData = [...prevData, data];
+
+          // 총 페이지 수 계산
+          setTotalPages(Math.ceil(updatedData.length / itemsPerPage));
+
+          return updatedData;
+        });
       } catch (err) {
-        setError("Error parsing data");
         console.error("Parsing error: ", err);
       }
-    };
+    });
 
     // Error handling for SSE
     eventSource.onerror = (err) => {
@@ -71,16 +82,49 @@ const QuizData = ({
 
   const startIndex = (page - 1) * itemsPerPage;
   const currentItems = fetchedData.slice(startIndex, startIndex + itemsPerPage);
-  console.log("Current items to display:", currentItems); // Log current items
+
+  const leftItems = currentItems.slice(0, 3); // 첫 번째 컬럼에 표시할 3개의 문제
+  const rightItems = currentItems.slice(3); // 두 번째 컬럼에 표시할 나머지 문제들
 
   return (
-    <div>
+    <div className="grid grid-cols-2 gap-4 divide-x divide-gray-400">
       {error && <div>{error}</div>}
-      <ul>
-        {currentItems.map((item, index) => (
-          <li key={index}>{item.question}</li>
+      {/* 왼쪽 컬럼 */}
+      <ul className="flex-1 flex-col space-y-4 pl-4">
+        {leftItems.map((item, index) => (
+          <li key={index}>
+            <div>
+              {startIndex + index + 1}. {item.question}
+            </div>
+            <ul className="pl-5 space-y-2 mt-3">
+              {Object.entries(item.options).map(([key, value]) => (
+                <li key={key}>
+                  ({key}) {value}
+                </li>
+              ))}
+            </ul>
+          </li>
         ))}
       </ul>
+
+      {/* 오른쪽 컬럼 */}
+      <ul className="flex-1 flex-col space-y-4 pl-4">
+        {rightItems.map((item, index) => (
+          <li key={index}>
+            <div>
+              {startIndex + index + 4}. {item.question}
+            </div>
+            <ul className="pl-5 space-y-2 mt-3">
+              {Object.entries(item.options).map(([key, value]) => (
+                <li key={key}>
+                  ({key}) {value}
+                </li>
+              ))}
+            </ul>
+          </li>
+        ))}
+      </ul>
+
       <Pagination
         activePage={page}
         itemsCountPerPage={itemsPerPage}
