@@ -2,7 +2,6 @@ import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import pdfLogo from "../assets/DragFile.png";
 import closeIcon from "../assets/X.png";
-import { EventSourcePolyfill } from "event-source-polyfill";
 
 interface ModalProps {
   showModal: boolean;
