@@ -104,6 +104,8 @@ public class KafkaConsumer {
 
         }
 
+        List<Quiz> quizList = new ArrayList<>();
+
         for (Map<String, Object> map : resultList) {
 
             String optionsJson = objectMapper.writeValueAsString(map.get("options"));
@@ -118,10 +120,11 @@ public class KafkaConsumer {
                 .member(member)
                 .pdf(pdf)
                 .build();
-            Quiz saveQuiz = quizRepository.save(quiz);
-            member.addQuiz(saveQuiz);
-            pdf.addQuiz(saveQuiz);
+            quizList.add(quiz);
+            member.addQuiz(quiz);
+            pdf.addQuiz(quiz);
             notificationService.notify(member.getId(), QuizResponse.of(quiz));
         }
+        quizRepository.saveAll(quizList);
     }
 }
