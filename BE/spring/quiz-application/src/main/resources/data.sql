@@ -1,0 +1,1 @@
+SET TIMEZONE TO 'Asia/Seoul';
