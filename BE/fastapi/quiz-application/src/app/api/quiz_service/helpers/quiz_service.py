@@ -72,8 +72,16 @@ async def get_keyword_from_summary(
 
         키워드 (중요도 순):"""
         )
-        keyword_chain = LLMChain(llm=llm, prompt=keyword_prompt)
-        keywords = await keyword_chain.arun(summary=summary, n=total_keyword)
+        
+        input_data = {
+            "summary":summary,
+            "n":total_keyword
+            }
+        keyword_chain = (
+            keyword_prompt | llm
+        )
+        
+        keywords = keyword_chain.invoke(input_data).content
         keyword_list = [kw.strip() for kw in keywords.split(',')]
         
         num_groups = num_questions//5
@@ -93,16 +101,13 @@ async def get_keyword_from_summary(
 async def create_prompt_template():
     try:
         return PromptTemplate(
-            input_variables=["document", "summary", "keywords", "num_questions", "choice_count", "difficulty"],
+            input_variables=["document", "keywords", "num_questions", "choice_count", "difficulty"],
             template="""
             당신은 가장 뛰어난 퀴즈 생성에 대해 전문 지식을 가지고 있는 퀴즈 생성자입니다. 아래 조건을 보고 퀴즈를 만들어주세요.
-            
-            다음 문서와 문서, 요약 그리고 키워드를 바탕으로 중요한 개념에 대한 객관식 문제 5개를 만드세요 
+            다음 문서에서 키워드에 해당하는 중요한 개념을 바탕으로 객관식 문제 5개를 만드세요 
             문제 보기는 1~{choice_count}까지 다양하게 해주세요:
             
             문서: {document}
-
-            요약: {summary}
 
             키워드: {keywords}
             
@@ -112,6 +117,7 @@ async def create_prompt_template():
             4. 다음 형식을 사용하세요:
 
             난이도: [쉬움/보통/어려움]
+            키워드: [문제 생성을 위해 사용한 키워드]
             문제: [문제 내용]
             1) [선택지 1]
             2) [선택지 2]
@@ -174,8 +180,7 @@ import json
 import random
 
 async def make_quiz(
-    quiz_prompt,
-    document,
+    retriever,
     summary,
     keywords,
     user_idx,
@@ -192,22 +197,21 @@ async def make_quiz(
             # 가중치를 적용하여 난이도 선택
             difficulty = random.choices(difficulties, weights=weights, k=1)[0]
             
-            openai_llm = ChatOpenAI(model_name="gpt-4o-mini", temperature=0)
-            quiz_chain = LLMChain(
-                llm=openai_llm, 
-                prompt=quiz_prompt
-            )
+            openai_llm = ChatOpenAI(model_name="gpt-4o-mini", temperature=0)    
+            quiz_prompt = await create_prompt_template() 
             
-            result = await quiz_chain.arun(
-                document=document,
-                summary=summary,
-                keywords=', '.join(keywords[i]),
-                choice_count=choice_count,
-                difficulty=difficulty
-            )
-            # '정규화, 데이터베이스 설계, 중복 제거, 데이터 무결성, 손실 없는 분해, 기능적 종속성, 이상 현상, 학생, 과정 성과, 관계'
-            # '데이터 무결성 강화, 데이터 구조, 관계 분해, 데이터 관리, 데이터 품질, 데이터 일관성, 설계 원칙, 데이터베이스 최적화, 데이터 분석, 정보 손실'
+            input_data = {
+                "document": retriever,
+                "keywords": ', '.join(keywords[i]),
+                "choice_count": choice_count,
+                "difficulty": difficulty
+            }
             
+            quiz_chain = (
+                quiz_prompt | openai_llm
+                )
+            result= quiz_chain.invoke(input_data).content
+
             # Kafka로 퀴즈 및 추가 정보를 전송 (JSON 직렬화 후 UTF-8 인코딩, ensure_ascii=False 추가)
             quiz_data = {
                 'user_idx': user_idx,
