@@ -1,5 +1,6 @@
 package com.quizapplication.controller.exam;
 
+import com.quizapplication.dto.response.FolderResponse;
 import com.quizapplication.dto.response.exam.ExamResponse;
 import com.quizapplication.service.exam.ExamService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -10,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,6 +28,13 @@ public class ExamController {
     @GetMapping("/exams-main")
     public ResponseEntity<List<ExamResponse>> getExams() {
         return ResponseEntity.ok().body(examService.getExams());
+    }
+
+    @Operation(summary = "시험 폴더 변경", description = "마이페이지에서 시험 id와 폴더 id를 기준으로 변경")
+    @PutMapping("/exams")
+    public ResponseEntity<FolderResponse> updateExam(@RequestParam("examId") Long examId,
+                                                     @RequestParam("folderId") Long folderId) {
+        return ResponseEntity.ok().body(examService.updateExam(examId, folderId));
     }
 
     @Operation(summary = "시험 삭제", description = "마이페이지에서 시험 id를 기준으로 삭제")

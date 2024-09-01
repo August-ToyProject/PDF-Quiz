@@ -58,15 +58,15 @@ Content-Type: application/json
 ### 폴더정보
 GET localhost:8080/api/v1/exam-info
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJreXVuOTE1MUBnbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9VU0VSIiwiZXhwIjoxNzI1MDAxMjk0fQ.mBzTVHISkIcsu6WwBq1C99n8bX239fCdo8aYIrWM6cBJt4VHalCEHRsP8xf297mAlkWCfjpsYCXhQvY3zHUErQ
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJreXVuOTE1MUBnbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9VU0VSIiwiZXhwIjoxNzI1MTkzNjUzfQ.RuK7chpF-wldRMVQ4m1zALRdA_d3qdFn5HgR2AYsWItd0V8CiXq_MdVplGM80anchVhsuxdt7TfOfLQUgnYHQg
 
 ### 폴더생성
 POST localhost:8080/api/v1/exam-info
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJreXVuOTE1MUBnbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9VU0VSIiwiZXhwIjoxNzI1MDAxMjk0fQ.mBzTVHISkIcsu6WwBq1C99n8bX239fCdo8aYIrWM6cBJt4VHalCEHRsP8xf297mAlkWCfjpsYCXhQvY3zHUErQ
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJreXVuOTE1MUBnbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9VU0VSIiwiZXhwIjoxNzI1MTkzNjUzfQ.RuK7chpF-wldRMVQ4m1zALRdA_d3qdFn5HgR2AYsWItd0V8CiXq_MdVplGM80anchVhsuxdt7TfOfLQUgnYHQg
 
 {
-  "folderName": "시험4"
+  "folderName": "폴더2"
 }
 
 ### 폴더삭제
@@ -85,8 +85,12 @@ Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJreXVuOTE1MUBnbWFpbC5jb20iL
 
 ### 푼 문제
 GET localhost:8080/api/v1/exams-main
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJreXVuOTE1MUBnbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9VU0VSIiwiZXhwIjoxNzI1MTg4NTMzfQ.EDDOax2yHQLEJUj3ZeWm-WBb-feGoQ_xAZJQ173ciHHKtqxRhxguYvLXtT_qwgf1DcCgD6tHbQFKTFNXizlBZw
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJreXVuOTE1MUBnbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9VU0VSIiwiZXhwIjoxNzI1MTkzNDAzfQ.nr6cHISIG1q1Rn7gvJBzuonNCgd_KaHGq8PE7QNvvKdYz3JQYt_MxMYrsTiJXXVfcyvjegTyXIZrZqsO3GshJA
 
 ### 시험지 삭제
 DELETE localhost:8080/api/v1/exams?examId=1
 Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJreXVuOTE1MUBnbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9VU0VSIiwiZXhwIjoxNzI1MTg4NTMzfQ.EDDOax2yHQLEJUj3ZeWm-WBb-feGoQ_xAZJQ173ciHHKtqxRhxguYvLXtT_qwgf1DcCgD6tHbQFKTFNXizlBZw
+
+### 시험지 폴더 이동
+PUT localhost:8080/api/v1/exams?examId=2&folderId=2
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJreXVuOTE1MUBnbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9VU0VSIiwiZXhwIjoxNzI1MTkzNjUzfQ.RuK7chpF-wldRMVQ4m1zALRdA_d3qdFn5HgR2AYsWItd0V8CiXq_MdVplGM80anchVhsuxdt7TfOfLQUgnYHQg
