@@ -20,7 +20,7 @@ public class ExamServiceImpl implements ExamService {
     public List<ExamResponse> getExams() {
         Long memberId = memberRepository.findByEmail(SecurityUtil.getCurrentMemberEmail()).getId();
         return examRepository.findByMemberId(memberId).stream()
-            .map(exam -> ExamResponse.of(exam.getTitle(), exam.getCreatedDate()))
+            .map(exam -> ExamResponse.of(exam.getId(), exam.getTitle(), exam.getCreatedDate()))
             .collect(Collectors.toList());
     }
 
