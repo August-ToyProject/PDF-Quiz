@@ -5,4 +5,5 @@ import java.util.List;
 
 public interface ExamService {
     List<ExamResponse> getExams();
+    void deleteExam(Long examId);
 }

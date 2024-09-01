@@ -85,7 +85,7 @@ public class MemberController {
 
     @Operation(summary = "폴더 삭제", description = "마이페이지에서 생성한 폴더 id를 기준으로 삭제")
     @DeleteMapping("/exam-info")
-    public ResponseEntity createFolder(@RequestParam("folderId") Long folderId) {
+    public ResponseEntity deleteFolder(@RequestParam("folderId") Long folderId) {
         memberService.deleteFolder(folderId);
         return ResponseEntity.status(HttpStatus.OK).body("Folder deleted successfully");
     }
