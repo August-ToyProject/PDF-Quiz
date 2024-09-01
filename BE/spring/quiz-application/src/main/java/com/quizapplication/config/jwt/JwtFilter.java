@@ -31,6 +31,13 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
+        if (request.getHeader("Authorization") == null) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("Token is missing or empty");
+            response.getWriter().flush();
+            return;
+        }
+
         if (shouldNotFilter(request)) {
             filterChain.doFilter(request, response);
             return;
