@@ -3,7 +3,9 @@ const apiUrl = import.meta.env.VITE_NGROK_URL;
 
 // 마이페이지 프로필 닉네임
 export const fetchUserNickname = async () => {
-    return apiRequest(`/user`);
+    return apiRequest(`/info`, {
+        method: 'GET',
+    })
 };
 
 // 로그아웃

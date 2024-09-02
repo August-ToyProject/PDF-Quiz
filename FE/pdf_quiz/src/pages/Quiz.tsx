@@ -13,7 +13,6 @@ const Quiz = () => {
     const [totalPages, setTotalPages] = useState(1); // 전체 페이지 수 상태 추가
     const itemsPerPage = 5;
 
-
     const openModal = () => setShowModal(true);
     const closeModal = () => setShowModal(false);
 

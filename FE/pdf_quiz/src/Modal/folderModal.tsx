@@ -1,18 +1,35 @@
 import React, {useState} from 'react';
+import { moveQuizToFolder } from '../api/ApiQuiz';
 
+interface ListQuiz {
+    id: number;
+    title: string;
+    examDate: string;
+    folderId: number | null;
+}
 
 interface FolderModalProps {
     folders: { id: number; name: string }[];
     onClose: () => void;
-    onConfirm: (folderId: number | null) => void;
+    selectedQuizId: number | null;
+    setQuiz: React.Dispatch<React.SetStateAction<ListQuiz[]>>;
 }
 
-const FolderModal: React.FC<FolderModalProps> = ({ folders, onClose, onConfirm }) => {
+const FolderModal: React.FC<FolderModalProps> = ({ folders, onClose, selectedQuizId, setQuiz }) => {
     const [selectedFolderId, setSelectedFolderId] = useState<number | null>(null);
 
-    const handleConfirm = () => {
-        onConfirm(selectedFolderId);
-        onClose();
+    const handleMoveQuizToFolder = async () => {
+        if (selectedQuizId !== null && selectedFolderId !== null) {
+            try {
+                await moveQuizToFolder(selectedQuizId, selectedFolderId);
+                setQuiz(prevQuiz => prevQuiz.map(q => 
+                    q.id === selectedQuizId ? { ...q, folderId: selectedFolderId } : q
+                ));
+                onClose();
+            } catch (error) {
+                console.log("폴더로 이동하는 데 실패했습니다.", error);
+            }
+        }
     };
 
     return (
@@ -43,7 +60,7 @@ const FolderModal: React.FC<FolderModalProps> = ({ folders, onClose, onConfirm }
                         취소
                     </button>
                     <button 
-                        onClick={handleConfirm}
+                        onClick={handleMoveQuizToFolder}
                         className="px-4 py-2 bg-blue-600 text-white rounded-lg"
                         disabled={selectedFolderId === null}
                     >
