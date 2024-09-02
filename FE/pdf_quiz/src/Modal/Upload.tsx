@@ -1,7 +1,8 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import pdfLogo from "../assets/DragFile.png";
 import closeIcon from "../assets/X.png";
+import { useQuizContext } from "../context/QuizContext";
 
 interface ModalProps {
   showModal: boolean;
@@ -30,13 +31,38 @@ export default function Upload({
   const [errors, setErrors] = useState<string | null>(null);
 
   const [path, setPath] = useState<string>("");
-  const [difficulty, setDifficulty] = useState<string>("쉬움");
-  const [quiz_cnt, setQuiz_cnt] = useState<string>("5");
-  const [option_cnt, setOption_cnt] = useState<string>("4");
-  const [timeLimitHour, setTimeLimitHour] = useState<string>("0");
-  const [timeLimitMinute, setTimeLimitMinute] = useState<string>("0");
+
+  const {
+    difficulty,
+    setDifficulty,
+    quizCount,
+    setQuizCount,
+    optionCount,
+    setOptionCount,
+    timeLimitHour,
+    setTimeLimitHour,
+    timeLimitMinute,
+    setTimeLimitMinute,
+  } = useQuizContext();
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!showModal) {
+      // 초기값으로 되돌리기
+      setDifficulty("쉬움");
+      setQuizCount(10);
+      setOptionCount(5);
+      setTimeLimitHour("1");
+      setTimeLimitMinute("0");
+      setSelectedFile(null);
+      setPreview(null);
+      setUploadMessage(null);
+      setErrors(null);
+      setPath("");
+    }
+  }, [showModal]);
+
   const navigateToQuiz = () => {
     navigate("/quiz");
   };
@@ -160,11 +186,9 @@ export default function Upload({
     time.setMinutes(parseInt(timeLimitMinute, 10));
     // const created_at = time.toISOString();
     formData.append("index_path", path);
-    formData.append("num_questions", quiz_cnt);
-    formData.append("choice_count", option_cnt);
+    formData.append("num_questions", quizCount.toString());
+    formData.append("choice_count", optionCount.toString());
     formData.append("difficulty", String(difficultyValue));
-
-    console.log(formData);
 
     function formDataToJSON(formData: FormData) {
       const obj: any = {};
@@ -181,19 +205,6 @@ export default function Upload({
     const requestData = formDataToJSON(formData);
 
     try {
-      // const eventSource = new EventSourcePolyfill(
-      //   `http://43.201.129.54:8080/api/v1/notifications/subscribe`,
-      //   {
-      //     headers: {
-      //       Authorization: "Bearer " + localStorage.getItem("accesstoken"),
-      //     },
-      //     //라이브러리 디폴트 타임아웃 - 45초 (45000ms) 인 것을 임의로 조정
-      //     heartbeatTimeout: 12000000,
-      //     withCredentials: true,
-      //   }
-      // );
-      // if (eventSource) {
-      // }
       navigateToQuiz();
       const response = await fetch(
         "http://43.201.129.54:8080/api/v1/quiz/generate-quiz",
@@ -209,8 +220,6 @@ export default function Upload({
 
       if (response.ok) {
         const result = await response.text();
-        // const result = await response.json();
-        // setUploadMessage(result.message);
         console.log(result);
         setErrors(null);
         console.log("Generation successful:", result);
@@ -327,8 +336,8 @@ export default function Upload({
               <span className="mr-2 font-bold">시험 문제</span>
               <select
                 className="p-2 border border-gray-300 rounded"
-                value={quiz_cnt}
-                onChange={(e) => setQuiz_cnt(e.target.value)}
+                value={quizCount}
+                onChange={(e) => setQuizCount(parseInt(e.target.value))}
                 disabled={isSelectDisabled}
               >
                 <option value="5">5</option>
@@ -347,8 +356,8 @@ export default function Upload({
               <span className="mr-2 font-bold">선지 개수</span>
               <select
                 className="p-2 border border-gray-300 rounded"
-                value={option_cnt}
-                onChange={(e) => setOption_cnt(e.target.value)}
+                value={optionCount}
+                onChange={(e) => setOptionCount(parseInt(e.target.value))}
                 disabled={isSelectDisabled}
               >
                 <option value="4">4</option>
