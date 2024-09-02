@@ -3,15 +3,13 @@ console.log('API URL:', apiUrl);
 
 export const apiRequest = async (endpoint: string, options: RequestInit = {}) => {
     const token = localStorage.getItem('accesstoken');
-    console.log('Using token:', token);
+    // console.log('Using token:', token);
 
-    // 기본 헤더 설정
     const defaultHeaders = {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`
     };
 
-    // 옵션에서 제공된 헤더와 기본 헤더 병합
     const headers = {
         ...defaultHeaders,
         ...options.headers
