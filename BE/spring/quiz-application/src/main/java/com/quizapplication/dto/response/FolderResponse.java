@@ -8,10 +8,12 @@ import lombok.Getter;
 @Builder
 public class FolderResponse {
 
+    private Long folderId;
     private String folderName;
 
     public static FolderResponse of(Folder folder) {
         return FolderResponse.builder()
+                .folderId(folder.getId())
                 .folderName(folder.getFolderName())
                 .build();
     }

@@ -60,7 +60,7 @@ public class NotificationService {
          log.info("Send to client. [userId={}, data={}]", id, data);
          if (emitter != null) {
              try {
-                 emitter.send(SseEmitter.event().id(String.valueOf(id)).name("sse").data(data));
+                 emitter.send(SseEmitter.event().id(String.valueOf(id)).name("sse"));
              } catch (IOException e) {
                  emitterRepository.deleteById(id);
                  emitter.completeWithError(e);

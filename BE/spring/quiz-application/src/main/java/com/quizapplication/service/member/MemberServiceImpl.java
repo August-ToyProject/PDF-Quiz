@@ -7,7 +7,9 @@ import com.quizapplication.config.redis.RedisService;
 import com.quizapplication.config.security.SecurityUtil;
 import com.quizapplication.domain.Member;
 import com.quizapplication.domain.Role;
+import com.quizapplication.domain.exam.Exam;
 import com.quizapplication.domain.folder.Folder;
+import com.quizapplication.domain.pdf.Pdf;
 import com.quizapplication.dto.request.EditUserInfoDto;
 import com.quizapplication.dto.request.ResetPwdRequest;
 import com.quizapplication.dto.request.SignupDto;
@@ -18,7 +20,9 @@ import com.quizapplication.dto.response.UserIdResponse;
 import com.quizapplication.exception.member.DuplicateEmailException;
 import com.quizapplication.exception.member.PasswordMismatchException;
 import com.quizapplication.repository.MemberRepository;
+import com.quizapplication.repository.exam.ExamRepository;
 import com.quizapplication.repository.folder.FolderRepository;
+import com.quizapplication.repository.pdf.PdfRepository;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.Duration;
@@ -37,6 +41,8 @@ public class MemberServiceImpl implements MemberService {
     private final TokenProvider tokenProvider;
     private final MemberRepository memberRepository;
     private final FolderRepository folderRepository;
+    private final PdfRepository pdfRepository;
+    private final ExamRepository examRepository;
     private final PasswordEncoder passwordEncoder;
 
     @PostConstruct
@@ -49,6 +55,44 @@ public class MemberServiceImpl implements MemberService {
                 .role(ROLE_USER)
                 .password(passwordEncoder.encode("12345678"))
                 .build();
+
+        Pdf pdf1 = Pdf.builder()
+                .member(member1)
+                .indexPath("pdf1")
+                .build();
+
+        Pdf pdf2 = Pdf.builder()
+                .member(member1)
+                .indexPath("pdf2")
+                .build();
+
+        Pdf pdf3 = Pdf.builder()
+                .member(member1)
+                .indexPath("pdf3")
+                .build();
+
+        Exam exam1 = Exam.builder()
+                .title("exam1")
+                .pdf(pdf1)
+                .member(member1)
+                .setTime(Duration.ofMinutes(30))
+                .spentTime(Duration.ofMinutes(20))
+                .build();
+        Exam exam2 = Exam.builder()
+                .title("exam2")
+                .pdf(pdf2)
+                .member(member1)
+                .setTime(Duration.ofMinutes(30))
+                .spentTime(Duration.ofMinutes(20))
+                .build();
+        Exam exam3 = Exam.builder()
+                .title("exam3")
+                .pdf(pdf3)
+                .member(member1)
+                .setTime(Duration.ofMinutes(30))
+                .spentTime(Duration.ofMinutes(20))
+                .build();
+
         Member member2 = Member.builder()
                 .userId("kyun9152")
                 .email("kyun9152@gmail.com")
@@ -66,6 +110,46 @@ public class MemberServiceImpl implements MemberService {
                 .role(ROLE_USER)
                 .password(passwordEncoder.encode("12345678"))
                 .build();
+
+        Pdf pdf4 = Pdf.builder()
+                .member(member3)
+                .indexPath("pdf1")
+                .build();
+
+        Pdf pdf5 = Pdf.builder()
+                .member(member1)
+                .indexPath("pdf2")
+                .build();
+
+        Pdf pdf6 = Pdf.builder()
+                .member(member3)
+                .indexPath("pdf3")
+                .build();
+
+        Exam exam4 = Exam.builder()
+                .title("exam1")
+                .pdf(pdf4)
+                .member(member3)
+                .setTime(Duration.ofMinutes(30))
+                .spentTime(Duration.ofMinutes(20))
+                .build();
+        Exam exam5 = Exam.builder()
+                .title("exam2")
+                .pdf(pdf5)
+                .member(member3)
+                .setTime(Duration.ofMinutes(30))
+                .spentTime(Duration.ofMinutes(20))
+                .build();
+        Exam exam6 = Exam.builder()
+                .title("exam3")
+                .pdf(pdf6)
+                .member(member3)
+                .setTime(Duration.ofMinutes(30))
+                .spentTime(Duration.ofMinutes(20))
+                .build();
+
+
+
         Member member4 = Member.builder()
                 .userId("kyun9154")
                 .email("kyun9154@gmail.com")
@@ -75,6 +159,8 @@ public class MemberServiceImpl implements MemberService {
                 .password(passwordEncoder.encode("12345678"))
                 .build();
         memberRepository.saveAll(List.of(member1, member2, member3, member4));
+        pdfRepository.saveAll(List.of(pdf1, pdf2, pdf3, pdf4, pdf5, pdf6));
+        examRepository.saveAll(List.of(exam1, exam2, exam3, exam4, exam5, exam6));
 
     }
     @Override

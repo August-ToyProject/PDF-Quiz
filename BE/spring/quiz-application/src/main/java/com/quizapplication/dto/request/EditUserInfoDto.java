@@ -29,7 +29,6 @@ public class EditUserInfoDto {
     private String username;
 
     @Schema(description = "닉네임", defaultValue = "hodumaru")
-    @Pattern(regexp = "^[A-Za-z0-9]+$", message = "닉네임은 영어와 숫자만 포함")
     @Size(min = 4, max = 20, message = "닉네임은 4자 이상 20자 이하입니다.")
     @NotBlank(message = "닉네임을 입력해주세요.")
     private String nickname;
