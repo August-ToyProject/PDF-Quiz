@@ -237,6 +237,13 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    public FolderResponse getFolder(Long folderId) {
+        Long memberId = memberRepository.findByEmail(SecurityUtil.getCurrentMemberEmail()).getId();
+        Folder folder = folderRepository.findByIdAndMemberId(folderId, memberId);
+        return FolderResponse.of(folder);
+    }
+
+    @Override
     @Transactional
     public FolderResponse createFolder(FolderCreateRequest request) {
         Member member = memberRepository.findByEmail(SecurityUtil.getCurrentMemberEmail());

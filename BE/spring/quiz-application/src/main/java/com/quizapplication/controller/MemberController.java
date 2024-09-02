@@ -72,26 +72,32 @@ public class MemberController {
     }
 
     @Operation(summary = "생성한 폴더", description = "마이페이지에서 생성한 폴더 정보들 반환")
-    @GetMapping("/exam-info")
+    @GetMapping("/folders")
     public ResponseEntity<List<FolderResponse>> folderInfo() {
         return ResponseEntity.status(HttpStatus.OK).body(memberService.folderInfo());
     }
 
+    @Operation(summary = "폴더 정보 조회", description = "마이페이지에서 생성한 폴더 id를 기준으로 조회")
+    @GetMapping("/folder-info")
+    public ResponseEntity<FolderResponse> getFolder(@RequestParam("folderId") Long folderId) {
+        return ResponseEntity.status(HttpStatus.OK).body(memberService.getFolder(folderId));
+    }
+
     @Operation(summary = "폴더 생성", description = "마이페이지에서 폴더 생성")
-    @PostMapping("/exam-info")
+    @PostMapping("/folders")
     public ResponseEntity<FolderResponse> createFolder(@RequestBody FolderCreateRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(memberService.createFolder(request));
     }
 
     @Operation(summary = "폴더 삭제", description = "마이페이지에서 생성한 폴더 id를 기준으로 삭제")
-    @DeleteMapping("/exam-info")
+    @DeleteMapping("/folders")
     public ResponseEntity deleteFolder(@RequestParam("folderId") Long folderId) {
         memberService.deleteFolder(folderId);
         return ResponseEntity.status(HttpStatus.OK).body("Folder deleted successfully");
     }
 
     @Operation(summary = "폴더 변경", description = "마이페이지에서 생성한 폴더 id를 기준으로 변경")
-    @PutMapping("/exam-info")
+    @PutMapping("/folders")
     public ResponseEntity<FolderResponse> updateFolder(@RequestParam("folderId") Long folderId,
                                                        @RequestBody FolderCreateRequest request) {
         return ResponseEntity.status(HttpStatus.OK).body(memberService.updateFolder(folderId, request));
