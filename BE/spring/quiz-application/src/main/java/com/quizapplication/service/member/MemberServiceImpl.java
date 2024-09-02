@@ -117,11 +117,39 @@ public class MemberServiceImpl implements MemberService {
                 .build();
 
         Pdf pdf5 = Pdf.builder()
-                .member(member1)
+                .member(member3)
                 .indexPath("pdf2")
                 .build();
 
         Pdf pdf6 = Pdf.builder()
+                .member(member3)
+                .indexPath("pdf3")
+                .build();
+        Pdf pdf7 = Pdf.builder()
+                .member(member3)
+                .indexPath("pdf3")
+                .build();
+        Pdf pdf8 = Pdf.builder()
+                .member(member3)
+                .indexPath("pdf3")
+                .build();
+        Pdf pdf9 = Pdf.builder()
+                .member(member3)
+                .indexPath("pdf3")
+                .build();
+        Pdf pdf10 = Pdf.builder()
+                .member(member3)
+                .indexPath("pdf3")
+                .build();
+        Pdf pdf11 = Pdf.builder()
+                .member(member3)
+                .indexPath("pdf3")
+                .build();
+        Pdf pdf12 = Pdf.builder()
+                .member(member3)
+                .indexPath("pdf3")
+                .build();
+        Pdf pdf13 = Pdf.builder()
                 .member(member3)
                 .indexPath("pdf3")
                 .build();
@@ -147,7 +175,58 @@ public class MemberServiceImpl implements MemberService {
                 .setTime(Duration.ofMinutes(30))
                 .spentTime(Duration.ofMinutes(20))
                 .build();
+        Exam exam7 = Exam.builder()
+                .title("exam3")
+                .pdf(pdf7)
+                .member(member3)
+                .setTime(Duration.ofMinutes(30))
+                .spentTime(Duration.ofMinutes(20))
+                .build();
+        Exam exam8 = Exam.builder()
+                .title("exam3")
+                .pdf(pdf8)
+                .member(member3)
+                .setTime(Duration.ofMinutes(30))
+                .spentTime(Duration.ofMinutes(20))
+                .build();
 
+        Exam exam9 = Exam.builder()
+                .title("exam3")
+                .pdf(pdf9)
+                .member(member3)
+                .setTime(Duration.ofMinutes(30))
+                .spentTime(Duration.ofMinutes(20))
+                .build();
+        Exam exam10 = Exam.builder()
+                .title("exam3")
+                .pdf(pdf10)
+                .member(member3)
+                .setTime(Duration.ofMinutes(30))
+                .spentTime(Duration.ofMinutes(20))
+                .build();
+        Exam exam11 = Exam.builder()
+                .title("exam3")
+                .pdf(pdf11)
+                .member(member3)
+                .setTime(Duration.ofMinutes(30))
+                .spentTime(Duration.ofMinutes(20))
+                .build();
+
+        Exam exam12 = Exam.builder()
+                .title("exam3")
+                .pdf(pdf12)
+                .member(member3)
+                .setTime(Duration.ofMinutes(30))
+                .spentTime(Duration.ofMinutes(20))
+                .build();
+
+        Exam exam13 = Exam.builder()
+                .title("exam3")
+                .pdf(pdf13)
+                .member(member3)
+                .setTime(Duration.ofMinutes(30))
+                .spentTime(Duration.ofMinutes(20))
+                .build();
 
 
         Member member4 = Member.builder()
@@ -159,8 +238,8 @@ public class MemberServiceImpl implements MemberService {
                 .password(passwordEncoder.encode("12345678"))
                 .build();
         memberRepository.saveAll(List.of(member1, member2, member3, member4));
-        pdfRepository.saveAll(List.of(pdf1, pdf2, pdf3, pdf4, pdf5, pdf6));
-        examRepository.saveAll(List.of(exam1, exam2, exam3, exam4, exam5, exam6));
+        pdfRepository.saveAll(List.of(pdf1, pdf2, pdf3, pdf4, pdf5, pdf6, pdf7, pdf8, pdf9, pdf10, pdf11, pdf12, pdf13));
+        examRepository.saveAll(List.of(exam1, exam2, exam3, exam4, exam5, exam6, exam7, exam8, exam9, exam10, exam11, exam12, exam13));
 
     }
     @Override
