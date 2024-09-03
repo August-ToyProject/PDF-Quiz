@@ -24,7 +24,7 @@ public class NotificationService {
     private final TokenProvider tokenProvider;
     private final MemberRepository memberRepository;
 
-    private static final Long DEFAULT_TIMEOUT = 1800000000L;
+    private static final Long DEFAULT_TIMEOUT = 180000L;
 
     /**
      * 클라이언트를 구독
