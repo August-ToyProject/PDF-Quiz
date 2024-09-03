@@ -69,7 +69,6 @@ const QuizData = ({
 
     // Error handling for SSE
     eventSource.onerror = (err) => {
-      setError("Error receiving data from server");
       console.error("EventSource error: ", err);
       eventSource.close();
     };
