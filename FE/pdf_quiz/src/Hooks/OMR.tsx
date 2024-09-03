@@ -1,4 +1,3 @@
-import { useState } from "react";
 import UserAnswers from "./userAnswers";
 
 interface OMRProps {
@@ -7,12 +6,6 @@ interface OMRProps {
 }
 
 const OMR = ({ quizCount, optionCount }: OMRProps) => {
-  //OMR logic
-  //사용자가 원하는 문제 수 (서버에서 받아올 값이 없어 초기값 5로 설정)
-  const [problems, setProblems] = useState<number>(30);
-  //사용자가 원하는 옵션 수 (서버에서 받아올 값이 없어 초기값 4로 설정)
-  const [options, setOptions] = useState<number>(5);
-
   const choiceSymbols = ["①", "②", "③", "④", "⑤"];
 
   //선택된 옵션에 대해서는 색을 칠한다.
