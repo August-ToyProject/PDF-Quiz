@@ -53,8 +53,8 @@ export default function Upload({
       setDifficulty("쉬움");
       setQuizCount(10);
       setOptionCount(5);
-      setTimeLimitHour("1");
-      setTimeLimitMinute("0");
+      setTimeLimitHour(1);
+      setTimeLimitMinute(0);
       setSelectedFile(null);
       setPreview(null);
       setUploadMessage(null);
@@ -182,9 +182,8 @@ export default function Upload({
     }
 
     const time = new Date();
-    time.setHours(parseInt(timeLimitHour, 10));
-    time.setMinutes(parseInt(timeLimitMinute, 10));
-    // const created_at = time.toISOString();
+    time.setHours(timeLimitHour, 10);
+    time.setMinutes(timeLimitMinute, 10);
     formData.append("index_path", path);
     formData.append("num_questions", quizCount.toString());
     formData.append("choice_count", optionCount.toString());
@@ -370,7 +369,7 @@ export default function Upload({
               <select
                 className="p-2 border border-gray-300 rounded"
                 value={timeLimitHour}
-                onChange={(e) => setTimeLimitHour(e.target.value)}
+                onChange={(e) => setTimeLimitHour(parseInt(e.target.value))}
                 disabled={isSelectDisabled}
               >
                 <option value="0">0</option>
@@ -389,7 +388,7 @@ export default function Upload({
               <select
                 className="p-2 border border-gray-300 rounded"
                 value={timeLimitMinute}
-                onChange={(e) => setTimeLimitMinute(e.target.value)}
+                onChange={(e) => setTimeLimitMinute(parseInt(e.target.value))}
                 disabled={isSelectDisabled}
               >
                 <option value="0">0</option>
