@@ -3,6 +3,8 @@ import { QuizItem } from '../pages/Answer';
 
 // 폴더별 퀴즈 리스트 가져오기
 export const fetchFolderQuizzes = async (folderId: number | null) => {
+    //👇 타입스크립트 에러 방지용 추후 해당 변수가 필요 여부에 따라 삭제 또는 수정해주세요
+    console.log(folderId)
     return apiRequest(`/exam-info`);
 };
 // 마이페이지 퀴즈 리스트 가져오기

@@ -62,7 +62,7 @@ export default function InfoPage() {
             promises.push(
                 updateInfo(userData)
                     .catch(error => {
-                        console.log('정보 수정에 실패하였습니다.');
+                        console.log(`정보 수정에 실패하였습니다. error : ${error}`);
                         throw new Error('정보 수정에 실패하였습니다.');
                     })
             );
@@ -70,7 +70,7 @@ export default function InfoPage() {
                 promises.push(
                     updatePassword(userData.email, {password, passwordConfirm})
                         .catch(error => {
-                            console.log('비밀번호 수정에 실패하였습니다.');
+                            console.log(`비밀번호 수정에 실패하였습니다. error : ${error}`);
                             throw new Error('비밀번호 수정에 실패했습니다.');
                         }) 
                 )
@@ -87,12 +87,13 @@ export default function InfoPage() {
         }
     }
 
-    const [UserInfo, setInputData] = useState<UserInfo>({
-        userId : '',
-        username : '',
-        email : '',
-        nickname : '',
-      })
+    //👇 타입스크립트 에러 방지용 추후 해당 변수가 필요 여부에 따라 삭제 또는 수정해주세요
+    // const [UserInfo, setInputData] = useState<UserInfo>({
+    //     userId : '',
+    //     username : '',
+    //     email : '',
+    //     nickname : '',
+    //   })
 
     // 유효성 검사
     const validate = (): Partial<UserInfo> => {

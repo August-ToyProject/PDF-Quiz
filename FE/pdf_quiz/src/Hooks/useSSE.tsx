@@ -38,7 +38,8 @@ const ClientSSE = () => {
     });
 
     // 기본 이벤트 수신
-    eventSource.onmessage = function (event) {
+    //👇 타입스크립트 에러 방지용 추후 해당 변수가 필요 여부에 따라 삭제 또는 수정해주세요
+    eventSource.onmessage = function (event : MessageEvent) {
       console.log("Default message received: ", event);
       console.log("Message data: ", event.data);
     };

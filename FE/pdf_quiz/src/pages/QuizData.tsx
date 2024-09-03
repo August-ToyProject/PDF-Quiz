@@ -29,6 +29,9 @@ const QuizData = ({
   const [error, setError] = useState<string | null>(null); // Store error state
 
   useEffect(() => {
+    
+    //👇 타입스크립트 에러 방지용 추후 해당 변수가 필요 여부에 따라 삭제 또는 수정해주세요
+    setError(null)
     const eventSource = new EventSourcePolyfill(
       `http://43.201.129.54:8080/api/v1/notifications/subscribe`,
       {
@@ -40,7 +43,8 @@ const QuizData = ({
         withCredentials: true,
       }
     );
-    eventSource.addEventListener("sse", (event) => {
+    //👇 타입스크립트 에러 방지용 추후 해당 변수가 필요 여부에 따라 삭제 또는 수정해주세요
+    eventSource.addEventListener("sse",  (event: MessageEvent) => {
       try {
         const data = JSON.parse(event.data);
         console.log("Received data: ", data);
@@ -68,7 +72,8 @@ const QuizData = ({
     });
 
     // Error handling for SSE
-    eventSource.onerror = (err) => {
+    //👇 타입스크립트 에러 방지용 추후 해당 변수가 필요 여부에 따라 삭제 또는 수정해주세요
+    eventSource.onerror = (err: Event) => {
       console.error("EventSource error: ", err);
       eventSource.close();
     };
