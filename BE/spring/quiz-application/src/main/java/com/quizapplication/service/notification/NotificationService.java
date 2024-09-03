@@ -36,7 +36,6 @@ public class NotificationService {
         String email = tokenProvider.getClaims(accessToken).getSubject();
         Long userId = memberRepository.findByEmail(email).getId();
         SseEmitter emitter = createEmitter(userId);
-        sendToClient(userId, "EventStream Created. [userId=" + userId + "]");
         return emitter;
     }
 
@@ -60,7 +59,7 @@ public class NotificationService {
          log.info("Send to client. [userId={}, data={}]", id, data);
          if (emitter != null) {
              try {
-                 emitter.send(SseEmitter.event().id(String.valueOf(id)).name("sse"));
+                 emitter.send(SseEmitter.event().id(String.valueOf(id)).name("sse").data(data));
              } catch (IOException e) {
                  emitterRepository.deleteById(id);
                  emitter.completeWithError(e);

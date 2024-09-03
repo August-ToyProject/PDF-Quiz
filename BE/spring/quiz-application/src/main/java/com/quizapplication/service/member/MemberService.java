@@ -19,6 +19,7 @@ public interface MemberService {
     void resetPassword(String email, ResetPwdRequest resetPwdRequest);
 
     List<FolderResponse> folderInfo();
+    FolderResponse getFolder(Long folderId);
     FolderResponse createFolder(FolderCreateRequest request);
     void deleteFolder(Long folderId);
     FolderResponse updateFolder(Long folderId, FolderCreateRequest request);

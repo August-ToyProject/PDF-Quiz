@@ -51,4 +51,7 @@ public class Exam extends BaseTimeEntity {
     @Convert(converter = DurationConverter.class)
     private Duration spentTime;
 
+    public void updateFolder(Folder folder) {
+        this.folder = folder;
+    }
 }
