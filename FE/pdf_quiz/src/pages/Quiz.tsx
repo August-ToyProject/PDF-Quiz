@@ -13,7 +13,8 @@ const Quiz = () => {
   const [totalPages, setTotalPages] = useState(1); // 전체 페이지 수 상태 추가
   const itemsPerPage = 5;
 
-  const { quizCount, optionCount } = useQuizContext();
+  const { quizCount, optionCount, timeLimitHour, timeLimitMinute } =
+    useQuizContext();
 
   const openModal = () => setShowModal(true);
   const closeModal = () => setShowModal(false);
@@ -77,12 +78,15 @@ const Quiz = () => {
           <div className="flex flex-col justify-center items-center">
             <div className="flex flex-row gap-2 max-lg:text-sm ">
               <div>제한 시간 </div>
-              <div>00:01:00</div>
+              <div>
+                {timeLimitHour.toString().padStart(2, "0")}:
+                {timeLimitMinute.toString().padStart(2, "0")}:00
+              </div>
             </div>
             <div className="flex flex-row gap-2 max-lg:text-sm">
               <div>남은 시간 </div>
               <div>
-                <Timer />
+                <Timer hour={timeLimitHour} minute={timeLimitMinute} />
               </div>
             </div>
           </div>
@@ -95,7 +99,7 @@ const Quiz = () => {
           <div className="w-2/3 left_container"> </div>
           <div className="w-1/3 flex flex-col gap-1">
             <div className="flex flex-end flex-row">
-              <div>전체 문제 </div>
+              <div>전체 문제: {quizCount}개 </div>
             </div>
             <div className="flex flex-end flex-row">
               <div>안 푼 문제 </div>
