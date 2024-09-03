@@ -5,6 +5,7 @@ import OMR from "../Hooks/OMR";
 import SubmitCheck from "../Modal/Submit";
 import QuizData from "./QuizData";
 import { useQuizContext } from "../context/QuizContext";
+import UserAnswers from "../Hooks/userAnswers";
 
 const Quiz = () => {
   const [showModal, setShowModal] = useState(false); // 모달
@@ -15,6 +16,7 @@ const Quiz = () => {
 
   const { quizCount, optionCount, timeLimitHour, timeLimitMinute } =
     useQuizContext();
+  const { answerList, handleOptionClick, uncompletedCount } = UserAnswers();
 
   const openModal = () => setShowModal(true);
   const closeModal = () => setShowModal(false);
@@ -50,13 +52,6 @@ const Quiz = () => {
   };
 
   return (
-    //퀴즈 내용
-
-    //퀴즈 정답 입력칸 - 모달에서 넘어온 문제 개수 및 n지 선다 종류로
-    //제한시간
-    //제출버튼
-
-    //modal 에서 props로 받아야할 내용: 1) 사용자가 입력한 제목, 문제 개수, 선지 개수
     <div className="h-screen w-full bg-white flex flex-col overflow-x-hidden min-w-[860px]">
       {isScreenSmall && (
         <div className="bg-red-500 text-white text-center p-2">
@@ -123,7 +118,12 @@ const Quiz = () => {
         </div>
         {/* OMR 부분이 항상 보이도록 유지 */}
         <div className="w-1/5 max-lg:w-[25%] min-w-0 overflow-scroll">
-          <OMR quizCount={quizCount} optionCount={optionCount} />
+          <OMR
+            quizCount={quizCount}
+            optionCount={optionCount}
+            answerList={answerList}
+            handleOptionClick={handleOptionClick}
+          />
         </div>
       </div>
       <div className="flex-grow flex flex-row justify-center">
@@ -153,7 +153,12 @@ const Quiz = () => {
           </button>
         </div>
       </div>
-      <SubmitCheck showModal={showModal} closeModal={closeModal} />
+      <SubmitCheck
+        showModal={showModal}
+        closeModal={closeModal}
+        answerList={answerList}
+        uncompletedCount={uncompletedCount}
+      />
     </div>
   );
 };
