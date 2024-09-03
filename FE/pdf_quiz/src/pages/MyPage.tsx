@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import Upload from '../Modal/Upload';
 import { useNavigate } from 'react-router-dom';
 import FolderList from '../components/folderList';
@@ -43,7 +43,6 @@ export default function MyPage() {
     const [dropdownOpen, setDropdownOpen] = useState<{ [key: number]: boolean }>({});
     const [selectedQuizId, setSelectedQuizId] = useState<number | null>(null);
     const [folderModalOpen, setFolderModalOpen] = useState(false);
-    const dropdownRef = useRef<HTMLDivElement | null>(null);
     
     const openModal = () => setShowModal(true);
     const closeModal = () => setShowModal(false);

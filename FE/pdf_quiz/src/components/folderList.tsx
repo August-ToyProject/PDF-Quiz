@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ListQuiz } from '../pages/MyPage.tsx';
 import folder from '../assets/folder2.png';
 import resetIcon from '../assets/reset.png';
@@ -25,7 +25,6 @@ const FolderList: React.FC<FolderListProps> = ({
     setSelectedFolderId,
     setQuiz
 }) => {
-    const [selectedQuizId, setSelectedQuizId] = useState<number | null>(null);
     const [dropdownOpen, setDropdownOpen] = useState<{ [key: number]: boolean }>({});
 
     useEffect(() => {
