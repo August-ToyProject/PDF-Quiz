@@ -1,10 +1,11 @@
-import { useState, useEffect, useRef } from "react";
-import Upload from "../Modal/Upload";
-import { useNavigate } from "react-router-dom";
-import FolderList from "../components/folderList";
-import FolderModal from "../Modal/folderModal";
-import { fetchUserNickname, logoutUser } from "../api/ApiUser";
-import { deleteQuiz, fetchQuizzes } from "../api/ApiQuiz";
+import { useState, useEffect } from 'react';
+import Upload from '../Modal/Upload';
+import { useNavigate } from 'react-router-dom';
+import FolderList from '../components/folderList';
+import FolderModal from '../Modal/folderModal'; 
+import { fetchUserNickname, logoutUser } from '../api/ApiUser';
+import { deleteQuiz, fetchQuizzes } from '../api/ApiQuiz';
+
 
 export interface ListQuiz {
   id: number;
@@ -33,24 +34,21 @@ const months = [
 ];
 
 export default function MyPage() {
-  const [showModal, setShowModal] = useState(false);
-  const [quiz, setQuiz] = useState<ListQuiz[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
-  const [folders, setFolders] = useState<
-    { id: number; name: string; isEditing: boolean }[]
-  >([]);
-  const [selectedFolderId, setSelectedFolderId] = useState<number | null>(null);
-  const [user, setUser] = useState<User | null>(null);
-  const [dropdownOpen, setDropdownOpen] = useState<{ [key: number]: boolean }>(
-    {}
-  );
-  const [selectedQuizId, setSelectedQuizId] = useState<number | null>(null);
-  const [folderModalOpen, setFolderModalOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement | null>(null);
 
-  const openModal = () => setShowModal(true);
-  const closeModal = () => setShowModal(false);
+    const [showModal, setShowModal] = useState(false); 
+    const [quiz, setQuiz] = useState<ListQuiz[]>([]);
+    const [searchTerm, setSearchTerm] = useState(''); 
+    const [selectedMonth, setSelectedMonth] = useState<number | null>(null);  
+    const [folders, setFolders] = useState<{id:number; name:string; isEditing:boolean}[]>([]);
+    const [selectedFolderId, setSelectedFolderId] = useState<number | null>(null);
+    const [user, setUser] = useState<User | null>(null);
+    const [dropdownOpen, setDropdownOpen] = useState<{ [key: number]: boolean }>({});
+    const [selectedQuizId, setSelectedQuizId] = useState<number | null>(null);
+    const [folderModalOpen, setFolderModalOpen] = useState(false);
+    
+    const openModal = () => setShowModal(true);
+    const closeModal = () => setShowModal(false);
+
 
   const navigate = useNavigate();
 
