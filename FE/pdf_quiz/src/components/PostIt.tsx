@@ -9,6 +9,9 @@ interface PostItProps {
 
 function PostIt({ onClose, style }: PostItProps) {
     const [text, setText] = useState('');
+    
+    //👇 타입스크립트 에러 방지용 추후 해당 변수가 필요 여부에 따라 삭제 또는 수정해주세요
+    console.log(style)
 
     return (
         <Draggable>

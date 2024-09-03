@@ -3,6 +3,9 @@ import { useNavigate } from "react-router-dom";
 import pdfLogo from "../assets/DragFile.png";
 import closeIcon from "../assets/X.png";
 import { useQuizContext } from "../context/QuizContext";
+        
+//👇 타입스크립트 에러 방지용 추후 해당 변수가 필요 여부에 따라 삭제 또는 수정해주세요
+// import { error } from "console";
 
 interface ModalProps {
   showModal: boolean;
@@ -97,6 +100,8 @@ export default function Upload({
         setSelectedFile(file);
         const fileURL = URL.createObjectURL(file);
         setPreview(fileURL);
+        //👇 타입스크립트 에러 방지용 추후 해당 변수가 필요 여부에 따라 삭제 또는 수정해주세요
+        console.log(preview)         
       }
     }
   };
@@ -221,6 +226,8 @@ export default function Upload({
         const result = await response.text();
         console.log(result);
         setErrors(null);
+        //👇 타입스크립트 에러 방지용 추후 해당 변수가 필요 여부에 따라 삭제 또는 수정해주세요
+        console.log(errors)
         console.log("Generation successful:", result);
       } else if (response.status === 400) {
         const result = await response.json();

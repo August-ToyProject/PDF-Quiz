@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect} from "react";
 import Upload from "../Modal/Upload";
 import { useNavigate } from "react-router-dom";
 import FolderList from "../components/folderList";
@@ -47,7 +47,9 @@ export default function MyPage() {
   );
   const [selectedQuizId, setSelectedQuizId] = useState<number | null>(null);
   const [folderModalOpen, setFolderModalOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement | null>(null);
+  
+  //👇 타입스크립트 에러 방지용 추후 해당 변수가 필요 여부에 따라 삭제 또는 수정해주세요
+  // const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   const openModal = () => setShowModal(true);
   const closeModal = () => setShowModal(false);
