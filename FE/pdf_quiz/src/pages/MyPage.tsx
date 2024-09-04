@@ -189,27 +189,29 @@ export default function MyPage() {
     <div className="h-screen w-screen flex flex-col items-center bg-white overflow-x-hidden min-w-[600px]">
       {/* 상단 바 및 사용자 정보 */}
       <div className="w-full ">
-        <div className="text-blue-600 text-xl mt-4 mx-4 font-bold">
-          PDF Quiz
-        </div>
+        <div className="text-blue-600 text-lg mt-4 mx-4 font-bold">QuizGen</div>
         <div className="h-[2px] bg-gray-300 mt-1 mx-4"></div>
       </div>
 
-      <div className="flex flex-col lg:flex-row w-full mt-10 mx-4 lg:space-x-6 space-y-6 lg:space-y-0">
+      <div className="flex flex-col lg:flex-row w-full mt-8 mx-4 lg:space-x-6 space-y-6 lg:space-y-0">
         {/* 좌측 옵션 */}
         <div className="hidden lg:flex flex-col flex-none w-56 ml-6">
-          <div className="text-blue-600 text-xs font-black">마이프로필</div>
+          <div className="font-body text-blue-600 text-lg font-black">
+            마이프로필
+          </div>
           <div className="mt-2 p-4 border border-gray-300 rounded-lg h-24">
-            <div className="text-center">{user?.nickname || "닉네임"}</div>
+            <div className="font-body text-center">
+              {user?.nickname || "닉네임"}
+            </div>
             <div className="flex justify-center space-x-4 mt-4">
               <button
-                className="px-2 py-1 bg-gray-50 border border-gray-300 text-xs text-gray-500 rounded-lg"
+                className="font-body px-2 py-1 bg-gray-50 border border-gray-300 text-xs text-gray-500 rounded-lg"
                 onClick={handleInfo}
               >
                 내 정보
               </button>
               <button
-                className="px-2 py-1 bg-gray-50 border border-gray-300 text-xs text-gray-500 rounded-lg"
+                className="font-body px-2 py-1 bg-gray-50 border border-gray-300 text-xs text-gray-500 rounded-lg"
                 onClick={handleLogout}
               >
                 로그아웃
@@ -217,19 +219,19 @@ export default function MyPage() {
             </div>
           </div>
           <button
-            className="bg-blue-600 mt-4 text-white font-bold p-2 rounded-lg"
+            className="font-body bg-blue-600 mt-4 text-white font-bold p-2 rounded-lg"
             onClick={openModal}
           >
             PDF Upload
           </button>
-          <div className="mt-4 p-4 flex justify-center text-xs border border-gray-300 rounded-lg h-full bg-white">
-            오 답 노 트
-          </div>
+          {/* <div className="font-body mt-4 p-4 flex justify-center text-lg border border-gray-300 rounded-lg h-full bg-white tracking-wider">
+            오답노트
+          </div> */}
         </div>
 
         <div className="flex-grow h-full max-w-xl w-full lg:max-w-2xl mx-auto min-w-[300px]">
           {/* 폴더 리스트 */}
-          <div className="text-blue-600 text-xs mb-2 font-black">
+          <div className="font-body text-blue-600 text-lg mb-2 font-black">
             폴더 리스트
           </div>
           <FolderList
@@ -241,7 +243,7 @@ export default function MyPage() {
           />
 
           {/* 검색창 */}
-          <div className="relative mt-8">
+          <div className="relative mt-6">
             <input
               type="text"
               placeholder="Search"
@@ -252,7 +254,7 @@ export default function MyPage() {
           </div>
 
           {/* 퀴즈 리스트 */}
-          <div className="text-blue-600 text-xs my-2 font-black">
+          <div className=" font-body text-blue-600 text-lg my-2 font-black">
             퀴즈 리스트
           </div>
           <div className="mt-2 p-4 border border-gray-300 rounded-lg bg-gray-50 overflow-y-auto h-80 flex-grow">
@@ -306,7 +308,7 @@ export default function MyPage() {
 
         {/* 캘린더 */}
         <div className="flex-grow max-w-2xl lg:flex-none lg:w-98 overflow-hidden mx-auto">
-          <div className="text-blue-600 text-xs mb-2 font-black">캘린더</div>
+          <div className="text-blue-600 text-lg mb-2 font-black">캘린더</div>
           <div
             className="bg-blue-600 rounded-lg p-2 border border-gray-300 w-full mb-28"
             style={{ height: "12rem" }}
