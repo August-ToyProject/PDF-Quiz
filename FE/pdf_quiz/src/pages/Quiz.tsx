@@ -52,13 +52,13 @@ const Quiz = () => {
   };
 
   return (
-    <div className="h-screen w-full bg-white flex flex-col overflow-x-hidden min-w-[860px]">
+    <div className="h-screen w-full bg-white  flex flex-col overflow-x-hidden min-w-[860px]">
       {isScreenSmall && (
         <div className="bg-red-500 text-white text-center p-2">
           이 크기보다 더 줄이시면 최적화된 화면을 보기 어렵습니다.
         </div>
       )}
-      <div className="h-16 flex flex-row justify-center">
+      <div className="h-16 flex flex-row justify-center font-body ">
         {/* 사용자가 입력한 제목 or pdf 파일 제목 그대로 받아와서 띄워주기 */}
         <div className="w-4/5 flex flex-start items-center bg-gray-100 pl-10">
           Quiz Title
@@ -88,7 +88,7 @@ const Quiz = () => {
         </div>
       </div>
 
-      <div className="h-14 flex flex-row justify-center">
+      <div className="h-14 flex flex-row justify-center font-body">
         {/* 후에 옵션이 추가될 것을 고려하여 남겨둠 / 전체 문제 및 안푼 문제 띄우기 */}
         <div className="w-4/5 flex justify-center items-center">
           <div className="w-2/3 left_container"> </div>
@@ -107,7 +107,7 @@ const Quiz = () => {
       </div>
 
       <div className="h-4/5 flex flex-row pt-2">
-        <div className="w-4/5 flex-shrink flex-grow flex  overflow-auto">
+        <div className="w-4/5 flex-shrink flex-grow flex font-body overflow-auto">
           <QuizData
             page={page}
             itemsPerPage={itemsPerPage}
@@ -126,7 +126,7 @@ const Quiz = () => {
           />
         </div>
       </div>
-      <div className="flex-grow flex flex-row justify-center">
+      <div className="font-body flex-grow flex flex-row justify-center">
         <div className="w-4/5 flex-grow flex justify-center gap-5 items-center bg-gray-100">
           <button
             className="rounded-3xl bg-white border-black"
