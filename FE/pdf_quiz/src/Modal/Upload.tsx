@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import pdfLogo from "../assets/DragFile.png";
 import closeIcon from "../assets/X.png";
 import { useQuizContext } from "../context/QuizContext";
+import { Tooltip } from "react-tooltip";
 
 //👇 타입스크립트 에러 방지용 추후 해당 변수가 필요 여부에 따라 삭제 또는 수정해주세요
 // import { error } from "console";
@@ -244,27 +245,23 @@ export default function Upload({
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-4 rounded-lg" style={{ width, height }}>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold mb-2">PDF Upload</h2>
-          <img
-            src={closeIcon}
-            alt="Close"
-            onClick={closeModal}
-            className="cursor-pointer"
-            style={{ width: "16px", height: "16px", marginTop: "-8px" }}
-          />
-        </div>
-        <div className="flex flex-row items-center space-x-4">
+    <div className="font-body fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div
+        className="flex flex-row bg-white p-4 rounded-lg"
+        style={{ width, height }}
+      >
+        <div className=" flex flex-1 flex-col items-start justify-start items-center space-x-2">
+          <div className="flex mb-2 w-full">
+            <h2 className="font-body text-xl font-bold mb-2">PDF Upload</h2>
+          </div>
           <div
-            className={`rounded-lg flex flex-col items-center justify-center border-2 border-blue-600
-                    ${
-                      isActive
-                        ? "bg-slate-200 border-3 border-dashed"
-                        : "bg-white border-solid"
-                    }`}
-            style={{ width: boxSize, height: boxSize }}
+            className={`w-[320px] h-[320px] rounded-lg flex flex-col items-center justify-center border-2 border-blue-600
+            ${
+              isActive
+                ? "bg-slate-200 border-3 border-dashed"
+                : "bg-white border-solid"
+            }`}
+            // style={{ width: boxSize, height: boxSize }}
             onDragStart={handleDragStart}
             onDragLeave={handleDragEnd}
             onDragOver={handleDragOver}
@@ -299,22 +296,29 @@ export default function Upload({
                 {selectedFile.name}
               </span>
             )}
-            <button
-              className="mt-3 px-4 py-2 bg-blue-600 text-white rounded"
-              onClick={handlePDFUploadClick}
-            >
-              PDF 업로드
-            </button>
           </div>
-
-          <div
-            className="flex flex-col space-y-4"
-            style={{ marginLeft: "40px" }}
+          <button
+            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded"
+            data-tooltip-id="PDFUpload"
+            onClick={handlePDFUploadClick}
           >
-            <div className="flex flex-col items-start mb-2">
-              <div>* PDF 파일 업로드 후 버튼을 클릭하셔야</div>
-              <div>선택 칸이 활성화됩니다!</div>
-            </div>
+            PDF 업로드
+          </button>
+          <Tooltip
+            id="PDFUpload"
+            content="PDF 파일 업로드 후 버튼을 클릭하셔야 선택 칸이 활성화됩니다!"
+            place="bottom"
+          />
+        </div>
+        <div className="relative flex flex-1 flex-col bg-white rounded-lg">
+          <img
+            src={closeIcon}
+            alt="Close"
+            onClick={closeModal}
+            className="cursor-pointer absolute top-3 right-2 "
+            style={{ width: "16px", height: "16px", marginTop: "-8px" }}
+          />
+          <div className="flex flex-col mt-14 ml-10 space-y-8">
             {/* 난이도 */}
             <div className="flex items-center">
               <span className="mr-2 font-bold">난이도</span>
@@ -406,12 +410,14 @@ export default function Upload({
               <span className="ml-2 mr-2">분</span>
             </div>
             {/* 완료 버튼 */}
-            <button
-              className="px-4 py-2 bg-blue-600 text-white rounded"
-              onClick={handleGenerateClick}
-            >
-              문제 생성하기
-            </button>
+            <div className="absolute w-full bottom-0">
+              <button
+                className="w-3/4 mt-auto px-4 py-2 bg-blue-600 text-white rounded"
+                onClick={handleGenerateClick}
+              >
+                문제 생성하기
+              </button>
+            </div>
           </div>
         </div>
         {uploadMessage && (
