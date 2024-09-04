@@ -26,12 +26,8 @@ const QuizData = ({
 }: PageProps) => {
   // props로 상태 및 함수 받음
   const [fetchedData, setFetchedData] = useState<QuizDataProps[]>([]); // 데이터를 저장할 상태
-  const [error, setError] = useState<string | null>(null); // Store error state
 
   useEffect(() => {
-    
-    //👇 타입스크립트 에러 방지용 추후 해당 변수가 필요 여부에 따라 삭제 또는 수정해주세요
-    setError(null)
     const eventSource = new EventSourcePolyfill(
       `http://43.201.129.54:8080/api/v1/notifications/subscribe`,
       {
@@ -44,7 +40,7 @@ const QuizData = ({
       }
     );
     //👇 타입스크립트 에러 방지용 추후 해당 변수가 필요 여부에 따라 삭제 또는 수정해주세요
-    eventSource.addEventListener("sse",  (event: MessageEvent) => {
+    eventSource.addEventListener("sse", (event: MessageEvent) => {
       try {
         const data = JSON.parse(event.data);
         console.log("Received data: ", data);
@@ -92,7 +88,6 @@ const QuizData = ({
 
   return (
     <div className="grid grid-cols-2 gap-4 divide-x divide-gray-400">
-      {error && <div>{error}</div>}
       {/* 왼쪽 컬럼 */}
       <ul className="flex-1 flex-col space-y-4 pl-4">
         {leftItems.map((item, index) => (
