@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import pdfLogo from "../assets/DragFile.png";
 import closeIcon from "../assets/X.png";
 import { useQuizContext } from "../context/QuizContext";
-        
+
 //👇 타입스크립트 에러 방지용 추후 해당 변수가 필요 여부에 따라 삭제 또는 수정해주세요
 // import { error } from "console";
 
@@ -29,7 +29,6 @@ export default function Upload({
   const [isSelectDisabled, setIsSelectDisabled] = useState(true);
   //PDF 파일 선택
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string | null>(null);
   const [uploadMessage, setUploadMessage] = useState<string | null>(null);
   const [errors, setErrors] = useState<string | null>(null);
 
@@ -59,7 +58,6 @@ export default function Upload({
       setTimeLimitHour(1);
       setTimeLimitMinute(0);
       setSelectedFile(null);
-      setPreview(null);
       setUploadMessage(null);
       setErrors(null);
       setPath("");
@@ -98,10 +96,6 @@ export default function Upload({
       const file = e.dataTransfer!.files[0];
       if (file) {
         setSelectedFile(file);
-        const fileURL = URL.createObjectURL(file);
-        setPreview(fileURL);
-        //👇 타입스크립트 에러 방지용 추후 해당 변수가 필요 여부에 따라 삭제 또는 수정해주세요
-        console.log(preview)         
       }
     }
   };
@@ -119,8 +113,6 @@ export default function Upload({
     const file = event.target.files?.[0];
     if (file) {
       setSelectedFile(file);
-      const fileURL = URL.createObjectURL(file);
-      setPreview(fileURL);
     }
   };
   //PDF 파일 선택 후 버튼 클릭시 선택지 활성화
@@ -227,7 +219,7 @@ export default function Upload({
         console.log(result);
         setErrors(null);
         //👇 타입스크립트 에러 방지용 추후 해당 변수가 필요 여부에 따라 삭제 또는 수정해주세요
-        console.log(errors)
+        console.log(errors);
         console.log("Generation successful:", result);
       } else if (response.status === 400) {
         const result = await response.json();
