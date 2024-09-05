@@ -4,6 +4,7 @@ import pdfLogo from "../assets/DragFile.png";
 import closeIcon from "../assets/X.png";
 import { useQuizContext } from "../context/QuizContext";
 import { Tooltip } from "react-tooltip";
+import { SyncLoader } from "react-spinners";
 
 //👇 타입스크립트 에러 방지용 추후 해당 변수가 필요 여부에 따라 삭제 또는 수정해주세요
 // import { error } from "console";
@@ -21,7 +22,6 @@ export default function Upload({
   closeModal,
   width = "700px",
   height = "440px",
-  boxSize = "350px",
 }: ModalProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   //드래그 active 여부
@@ -34,6 +34,7 @@ export default function Upload({
   const [errors, setErrors] = useState<string | null>(null);
 
   const [path, setPath] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const {
     difficulty,
@@ -119,9 +120,9 @@ export default function Upload({
   //PDF 파일 선택 후 버튼 클릭시 선택지 활성화
   const handlePDFUploadClick = async () => {
     if (selectedFile) {
-      setIsSelectDisabled(false);
       formData.append("file", selectedFile);
       console.log(formData);
+      setIsLoading(true);
     } else {
       setErrors("Please select a file first.");
     }
@@ -139,6 +140,8 @@ export default function Upload({
         const result = await response.json();
         setUploadMessage(result.message);
         setErrors(null);
+        setIsLoading(false);
+        setIsSelectDisabled(false);
         console.log("Upload successful:", result);
 
         const indexPath = result.indexPath;
@@ -148,7 +151,7 @@ export default function Upload({
         const result = await response.json();
         setUploadMessage(result.message);
         setErrors("Upload failed: Invalid file format.");
-        console.log("Upload failed with 400 Bad Request:", result);
+        console.log(errors, result);
       } else {
         const result = await response.json();
         setUploadMessage(result.message);
@@ -158,14 +161,14 @@ export default function Upload({
     } catch (error) {
       setUploadMessage("An error occurred while uploading the file.");
       setErrors("Network error occurred.");
-      console.error("Upload error:", error);
+      console.error(errors);
     }
   };
 
   const handleGenerateClick = async () => {
     if (!selectedFile) {
       setErrors("Please select a PDF file to upload.");
-      console.log("No file selected for upload.");
+      console.log(errors);
       return;
     }
 
@@ -219,14 +222,12 @@ export default function Upload({
         const result = await response.text();
         console.log(result);
         setErrors(null);
-        //👇 타입스크립트 에러 방지용 추후 해당 변수가 필요 여부에 따라 삭제 또는 수정해주세요
-        console.log(errors);
         console.log("Generation successful:", result);
       } else if (response.status === 400) {
         const result = await response.json();
         setUploadMessage(result.message);
         setErrors("Request failed: Invalid data provided.");
-        console.log("Request failed with 400 Bad Request:", result);
+        console.log(errors, result);
       } else {
         const result = await response.json();
         setUploadMessage(result.message);
@@ -236,7 +237,7 @@ export default function Upload({
     } catch (error) {
       setUploadMessage("An error occurred while processing the request.");
       setErrors("Network error occurred.");
-      console.error("Generation error:", error);
+      console.error(errors, error);
     }
   };
 
@@ -303,6 +304,7 @@ export default function Upload({
             onClick={handlePDFUploadClick}
           >
             PDF 업로드
+            {isLoading && <SyncLoader size={5} color="#ffffff" />}
           </button>
           <Tooltip
             id="PDFUpload"
