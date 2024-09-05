@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import ServiceName from "../assets/Logo.svg";
+import ServiceLogo from "../assets/ServiceLogo.png";
 
 interface loginData {
   id: string;
@@ -62,8 +64,8 @@ const Login = () => {
       if (accessToken) {
         localStorage.setItem("accesstoken", accessToken);
         navigateToMyPage();
-      }else{
-        alert('아이디 또는 비밀번호가 틀렸습니다.');
+      } else {
+        alert("아이디 또는 비밀번호가 틀렸습니다.");
       }
     } catch (error) {
       console.error("Error during login:, ", error);
@@ -91,21 +93,24 @@ const Login = () => {
   const navigateToMyPage = () => {
     navigate("/mypage");
   };
-  //퀴즈 페이지 테스트용 navigation 버튼
-  const navigateToQuiz = () => {
-    navigate("/quiz");
-  };
+
   //아이디 비밀번호 찾기 페이지로 이동
   const navigateToFindIDPW = () => {
     navigate("/findAccount");
   };
 
   return (
-    <div>
-      <div className="h-screen w-full flex flex-col justify-center items-center bg-white">
-        <div className="text-4xl text-blue-600 font-black mb-8">Login</div>
+    <div className="w-full h-screen grid grid-cols-3">
+      <div className="col-span-1 bg-blue-600 flex flex-col gap-7 justify-center items-center">
+        <img src={ServiceName} alt="logo" className="w-60" />
+        <img src={ServiceLogo} alt="pdf" className="w-60" />
+      </div>
+      <div className="col-span-2 h-screen  flex flex-col justify-center items-center bg-white">
+        <div className="font-title text-5xl text-blue-600 font-black mb-8 tracking-wide">
+          Login
+        </div>
         <form
-          className="w-full flex flex-col gap-4 max-w-2xl"
+          className="w-4/5 flex flex-col gap-4 max-w-2xl"
           onSubmit={handleLogin}
         >
           <label className="w-full flex flex-row justify-center gap-2 items-center">
@@ -152,15 +157,6 @@ const Login = () => {
               type="submit"
             >
               로그인
-            </button>
-          </div>
-          <div className="w-full flex justify-center">
-            <button
-              className="p-2 bg-white text-blue font-black rounded"
-              type="submit"
-              onClick={navigateToQuiz}
-            >
-              문제 풀러 가기
             </button>
           </div>
         </form>

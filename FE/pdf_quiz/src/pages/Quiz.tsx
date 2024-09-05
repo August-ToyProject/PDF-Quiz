@@ -5,6 +5,7 @@ import OMR from "../Hooks/OMR";
 import SubmitCheck from "../Modal/Submit";
 import QuizData from "./QuizData";
 import { useQuizContext } from "../context/QuizContext";
+import UserAnswers from "../Hooks/userAnswers";
 
 const Quiz = () => {
   const [showModal, setShowModal] = useState(false); // 모달
@@ -15,6 +16,7 @@ const Quiz = () => {
 
   const { quizCount, optionCount, timeLimitHour, timeLimitMinute } =
     useQuizContext();
+  const { answerList, handleOptionClick, uncompletedCount } = UserAnswers();
 
   const openModal = () => setShowModal(true);
   const closeModal = () => setShowModal(false);
@@ -50,20 +52,13 @@ const Quiz = () => {
   };
 
   return (
-    //퀴즈 내용
-
-    //퀴즈 정답 입력칸 - 모달에서 넘어온 문제 개수 및 n지 선다 종류로
-    //제한시간
-    //제출버튼
-
-    //modal 에서 props로 받아야할 내용: 1) 사용자가 입력한 제목, 문제 개수, 선지 개수
-    <div className="h-screen w-full bg-white flex flex-col overflow-x-hidden min-w-[860px]">
+    <div className="h-screen w-full bg-white  flex flex-col overflow-x-hidden min-w-[860px]">
       {isScreenSmall && (
         <div className="bg-red-500 text-white text-center p-2">
           이 크기보다 더 줄이시면 최적화된 화면을 보기 어렵습니다.
         </div>
       )}
-      <div className="h-16 flex flex-row justify-center">
+      <div className="h-16 flex flex-row justify-center font-body ">
         {/* 사용자가 입력한 제목 or pdf 파일 제목 그대로 받아와서 띄워주기 */}
         <div className="w-4/5 flex flex-start items-center bg-gray-100 pl-10">
           Quiz Title
@@ -93,7 +88,7 @@ const Quiz = () => {
         </div>
       </div>
 
-      <div className="h-14 flex flex-row justify-center">
+      <div className="h-14 flex flex-row justify-center font-body">
         {/* 후에 옵션이 추가될 것을 고려하여 남겨둠 / 전체 문제 및 안푼 문제 띄우기 */}
         <div className="w-4/5 flex justify-center items-center">
           <div className="w-2/3 left_container"> </div>
@@ -112,7 +107,7 @@ const Quiz = () => {
       </div>
 
       <div className="h-4/5 flex flex-row pt-2">
-        <div className="w-4/5 flex-shrink flex-grow flex  overflow-auto">
+        <div className="w-4/5 flex-shrink flex-grow flex font-body overflow-auto">
           <QuizData
             page={page}
             itemsPerPage={itemsPerPage}
@@ -123,10 +118,15 @@ const Quiz = () => {
         </div>
         {/* OMR 부분이 항상 보이도록 유지 */}
         <div className="w-1/5 max-lg:w-[25%] min-w-0 overflow-scroll">
-          <OMR quizCount={quizCount} optionCount={optionCount} />
+          <OMR
+            quizCount={quizCount}
+            optionCount={optionCount}
+            answerList={answerList}
+            handleOptionClick={handleOptionClick}
+          />
         </div>
       </div>
-      <div className="flex-grow flex flex-row justify-center">
+      <div className="font-body flex-grow flex flex-row justify-center">
         <div className="w-4/5 flex-grow flex justify-center gap-5 items-center bg-gray-100">
           <button
             className="rounded-3xl bg-white border-black"
@@ -153,7 +153,12 @@ const Quiz = () => {
           </button>
         </div>
       </div>
-      <SubmitCheck showModal={showModal} closeModal={closeModal} />
+      <SubmitCheck
+        showModal={showModal}
+        closeModal={closeModal}
+        answerList={answerList}
+        uncompletedCount={uncompletedCount}
+      />
     </div>
   );
 };

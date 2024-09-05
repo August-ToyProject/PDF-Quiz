@@ -43,6 +43,9 @@ export default function Answer() {
             .then(data => {
                 setQuizTitle(data.title);
                 setUserAnswerData(data.submitted_answer);
+                
+                //👇 타입스크립트 에러 방지용 추후 해당 변수가 필요 여부에 따라 삭제 또는 수정해주세요
+                console.log(userAnswerData)
                 setUpdatedAt(new Date(data.updated_at));
                 setExamId(data.exam_id);
 
