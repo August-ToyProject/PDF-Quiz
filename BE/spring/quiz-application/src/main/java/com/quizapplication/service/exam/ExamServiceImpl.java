@@ -1,19 +1,33 @@
 package com.quizapplication.service.exam;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.quizapplication.config.security.SecurityUtil;
+import com.quizapplication.domain.Answer;
 import com.quizapplication.domain.exam.Exam;
 import com.quizapplication.domain.folder.Folder;
+import com.quizapplication.domain.quiz.Quiz;
+import com.quizapplication.dto.request.exam.ExamResultRequest;
 import com.quizapplication.dto.response.FolderResponse;
 import com.quizapplication.dto.response.exam.ExamResponse;
+import com.quizapplication.dto.response.exam.ExamResultResponse;
+import com.quizapplication.dto.response.quiz.QuizResult;
 import com.quizapplication.repository.MemberRepository;
+import com.quizapplication.repository.answer.AnswerRepository;
 import com.quizapplication.repository.exam.ExamRepository;
 import com.quizapplication.repository.folder.FolderRepository;
+import com.quizapplication.repository.quiz.QuizRepository;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ExamServiceImpl implements ExamService {
@@ -21,6 +35,9 @@ public class ExamServiceImpl implements ExamService {
     private final FolderRepository folderRepository;
     private final ExamRepository examRepository;
     private final MemberRepository memberRepository;
+    private final QuizRepository quizRepository;
+    private final AnswerRepository answerRepository;
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public List<ExamResponse> getExams() {
@@ -48,6 +65,58 @@ public class ExamServiceImpl implements ExamService {
         exam.updateFolder(folder);
         folder.addExam(exam);
         return FolderResponse.of(exam.getFolder());
+    }
+
+    @Override
+    @Transactional
+    public ExamResultResponse saveExam(ExamResultRequest request) {
+        Exam exam = request.toEntity(memberRepository.findByEmail(SecurityUtil.getCurrentMemberEmail()));
+        examRepository.save(exam);
+        List<QuizResult> result = request.getExam();
+
+        for (QuizResult quizResult : result) {
+            Quiz quiz = quizRepository.findById(quizResult.getQuizId()).get();
+            Map<String, String> map = convertOptions(quiz.getOptions());
+            log.info("map={}", map);
+
+            String pickedNum = quizResult.getAnswer();
+            String pickedDescription = map.get(pickedNum);
+            log.info("pickedNum={}", pickedNum);
+            log.info("pickedDescription={}", pickedDescription);
+
+            String pickedOption = answerToJson(Map.of(pickedNum, pickedDescription));
+            Answer answer = Answer.builder()
+                    .quiz(quiz)
+                    .pickedOptions(pickedOption)
+                    .correct(quizResult.isCorrect())
+                    .build();
+            answerRepository.save(answer);
+        }
+
+
+        return ExamResultResponse.of(exam);
+    }
+
+    /**
+     * JSON 문자열을 Map으로 변환
+     */
+    private Map<String, String> convertOptions(String options) {
+        try {
+            return objectMapper.readValue(options, Map.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Failed to convert options");
+        }
+    }
+
+    /**
+     * Map을 JSON 문자열로 변환
+     */
+    private String answerToJson(Map<String, String> answer) {
+        try {
+            return objectMapper.writeValueAsString(answer);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Failed to convert answer");
+        }
     }
 
 }

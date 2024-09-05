@@ -1,7 +1,9 @@
 package com.quizapplication.controller.exam;
 
+import com.quizapplication.dto.request.exam.ExamResultRequest;
 import com.quizapplication.dto.response.FolderResponse;
 import com.quizapplication.dto.response.exam.ExamResponse;
+import com.quizapplication.dto.response.exam.ExamResultResponse;
 import com.quizapplication.service.exam.ExamService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -11,7 +13,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -42,5 +46,11 @@ public class ExamController {
     public ResponseEntity deleteExam(@RequestParam("examId") Long examId) {
         examService.deleteExam(examId);
         return ResponseEntity.status(HttpStatus.OK).body("Exam deleted successfully");
+    }
+
+    @Operation(summary = "시험 결과 저장", description = "시험 결과를 저장")
+    @PostMapping("/exams")
+    public ResponseEntity<ExamResultResponse> saveExam(@RequestBody ExamResultRequest request) {
+        return ResponseEntity.ok().body(examService.saveExam(request));
     }
 }
