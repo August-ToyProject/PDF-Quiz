@@ -46,20 +46,26 @@ jobs:
     steps:
     - name: Check out code
       uses: actions/checkout@v4
-      # 전역으로 환경 변수를 선언
       
     - name: Check environment variables
-      
+      env: # 각 스텝에서 환경 변수 적용
+        EC2_HOST: ${{ secrets.EC2_REACT_HOST }}
+        EC2_USER: ubuntu
+        SSH_KEY: ${{ secrets.EC2_SSH_REACT_KEY }}
       run: |
         echo "EC2_HOST: $EC2_HOST"
         echo "EC2_USER: $EC2_USER"
         echo "SSH_KEY: $SSH_KEY"
 
     - name: Deploy to EC2
+      env: # 각 스텝에서 환경 변수 적용
+        EC2_HOST: ${{ secrets.EC2_REACT_HOST }}
+        EC2_USER: ubuntu
+        SSH_KEY: ${{ secrets.EC2_SSH_REACT_KEY }}
       run: |
         echo "$SSH_KEY" > key.pem
         chmod 400 key.pem
         ssh -o StrictHostKeyChecking=no -i key.pem $EC2_USER@$EC2_HOST << 'ENDSSH'
-          # shell 스크립트 실행
+          # EC2 서버에서 실행할 명령어
           sh run.sh
         ENDSSH
