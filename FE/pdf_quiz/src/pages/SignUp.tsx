@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { signupUser } from "../api/ApiUser";
+import AgreementModal from "../Modal/agreementModal";
 
 interface InputData {
   name: string;
@@ -22,7 +23,9 @@ export default function SignUp() {
     confirmPassword: "",
   });
 
-  const [errors, setErrors] = useState<Partial<InputData>>({});
+  const [errors, setErrors] = useState<Partial<InputData> & { agreement?: string }>({});
+  const [showAgreementModal, SetShowAgreementModal] = useState(false);
+  const [agreementChecked, setAgreementChecked] = useState(false); 
   const navigate = useNavigate();
 
   // 입력 필드
@@ -35,7 +38,7 @@ export default function SignUp() {
       marginRight: "9.5rem",
     },
     {
-      label: "닉네임(영어)",
+      label: "닉네임",
       placeholder: "nickname",
       key: "nickname",
       marginRight: "9.5rem",
@@ -62,8 +65,8 @@ export default function SignUp() {
   };
 
   // 유효성 검사
-  const validate = (): Partial<InputData> => {
-    const inputError: Partial<InputData> = {};
+  const validate = (): Partial<InputData & { agreement: string }> => {
+    const inputError: Partial<InputData & { agreement: string }> = {};
     // 이름 형식 제한
     if (!/^[가-힣]*$/.test(inputData.name)) {
       inputError.name = "이름은 한글만 입력 가능합니다.";
@@ -96,6 +99,10 @@ export default function SignUp() {
     // 비밀번호 일치 확인
     if (inputData.password !== inputData.confirmPassword) {
       inputError.confirmPassword = "비밀번호가 일치하지 않습니다.";
+    }
+    // 개인정보 수집/이용 동의 체크 여부 확인
+    if (!agreementChecked) {
+      inputError.agreement = "개인정보 수집 및 이용에 동의하셔야 합니다.";
     }
     return inputError;
   };
@@ -174,15 +181,42 @@ export default function SignUp() {
             )}
           </div>
         ))}
-        <div className="col-span-2 flex justify-center">
+        <div className="col-span-2 flex flex-col justify-center items-center">
+          <div className="flex items-center space-x-4">
+            <input 
+              type="checkbox" 
+              className="form-checkbox h-5 w-5 text-blue-600" 
+              checked={agreementChecked}
+              onChange={() => setAgreementChecked(!agreementChecked)}
+            />
+            <div className="font-bold text-base text-red-600">[필수]개인정보 수집/이용 동의</div>
+            <button 
+              type="button"
+              className="font-bold text-sm text-gray-400 p-1 bg-transparent"
+              onClick={() => SetShowAgreementModal(true)}
+            >
+                약관보기
+            </button>
+          </div>
+          {errors.agreement && (
+            <div className="text-red-500 text-xs mt-1">
+              {errors.agreement}
+            </div>
+          )}
           <button
             type="submit"
-            className="p-4 bg-blue-600 text-white border font-black rounded-tr-lg mt-4"
+            className="p-3 bg-blue-600 text-white border font-black rounded-tr-lg mt-4"
           >
             회원가입
           </button>
         </div>
       </form>
+      {showAgreementModal && (
+        <AgreementModal
+          showModal={showAgreementModal}
+          closeModal={() => SetShowAgreementModal(false)} // 모달 닫기 함수
+        />
+      )}
     </div>
   );
 }
