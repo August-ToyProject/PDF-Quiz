@@ -38,10 +38,17 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build
+    
 
     steps:
     - name: Check out code
       uses: actions/checkout@v4
+    
+    - name: Check environment variables
+      run: |
+        echo "EC2_HOST: $EC2_HOST"
+        echo "EC2_USER: $EC2_USER"
+        echo "SSH_KEY: $SSH_KEY" 
 
     - name: Deploy to EC2
       env:
