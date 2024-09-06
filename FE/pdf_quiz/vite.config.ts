@@ -9,4 +9,9 @@ export default defineConfig({
       process.env.REACT_APP_NGROK_URL
     ),
   },
+  build: {
+    rollupOptions: {
+      external: ['react-spinners'], // 여기서 react-spinners를 명시적으로 외부 모듈로 지정
+    },
+  },
 });
