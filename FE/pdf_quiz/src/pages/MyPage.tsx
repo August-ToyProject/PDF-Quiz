@@ -5,6 +5,7 @@ import FolderList from "../components/folderList";
 import FolderModal from "../Modal/folderModal";
 import { fetchUserNickname, logoutUser } from "../api/ApiUser";
 import { deleteQuiz, fetchQuizzes } from "../api/ApiQuiz";
+import BlueLogo from "../assets/Logo_blue.svg";
 
 export interface ListQuiz {
   id: number;
@@ -188,12 +189,13 @@ export default function MyPage() {
   return (
     <div className="h-screen w-screen flex flex-col items-center bg-white overflow-x-hidden min-w-[600px]">
       {/* 상단 바 및 사용자 정보 */}
-      <div className="w-full ">
-        <div className="text-blue-600 text-lg mt-4 mx-4 font-bold">QuizGen</div>
-        <div className="h-[2px] bg-gray-300 mt-1 mx-4"></div>
+      <div className="w-full h-[100px]">
+        <img src={BlueLogo} alt="Quizgen" className="w-36 h-24 ml-5" />
+        {/* <div className="text-blue-600 text-lg mt-4 mx-4 font-bold">QuizGen</div> */}
+        <div className="h-[2px] bg-gray-300 mx-4"></div>
       </div>
 
-      <div className="flex flex-col lg:flex-row w-full mt-8 mx-4 lg:space-x-6 space-y-6 lg:space-y-0">
+      <div className="flex flex-col lg:flex-row w-full mt-4 mx-4 lg:space-x-6 space-y-6 lg:space-y-0">
         {/* 좌측 옵션 */}
         <div className="hidden lg:flex flex-col flex-none w-56 ml-6">
           <div className="font-body text-blue-600 text-lg font-black">
