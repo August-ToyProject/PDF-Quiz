@@ -49,7 +49,7 @@ jobs:
         EC2_USER: ${{ secrets.EC2_USER }}
         SSH_KEY: ${{ secrets.EC2_SSH_REACT_KEY }}
       run: |
-        echo "$EC2_SSH_REACT_KEY" > key.pem
+        echo "$SSH_KEY" > key.pem
         chmod 400 key.pem
         ssh -o StrictHostKeyChecking=no -i key.pem $EC2_USER@$EC2_REACT_HOST << 'ENDSSH'
           # shell 스크립트 실행
