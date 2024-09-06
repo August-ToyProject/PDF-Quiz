@@ -66,6 +66,7 @@ jobs:
     - name: Deploy to EC2
       run: |
         ssh -o StrictHostKeyChecking=no -i key.pem $EC2_USER@$EC2_HOST << 'ENDSSH'
-          # EC2 서버에서 실행할 명령어
+          echo "Running run.sh on EC2"
           sh run.sh
+          echo "Finished running run.sh"
         ENDSSH
