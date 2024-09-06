@@ -1,70 +1,36 @@
-import {useEffect, useState} from 'react';
+import { useState } from 'react';
 import AnswerExit from '../Modal/answerExit'; 
 import AnswerSave from '../Modal/answerSave'; 
-import { fetchQuizData, saveQuizData } from '../api/ApiQuiz';
+import { useQuizContext } from '../context/QuizContext';
 
 export interface QuizItem {
     difficulty: string;
     question: string;
-    options: string[];
-    answer: string;
-    explanation: string;
+    options: { [key: string]: string }; 
+    answer: { [key: string]: string };  
+    description: string;
     user_answer?: string;
 }
 
 export default function Answer() {
-
+    const { quizCount, quizData, userAnswers, elapsedTime } = useQuizContext();
     const [isExitModalOpen, setIsExitModalOpen] = useState(false);
     const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
-    const [quizTitle, setQuizTitle] = useState('');
-    const [userAnswerData, setUserAnswerData] = useState<string[]>([]);
-    const [updatedAt, setUpdatedAt] = useState(new Date);
-    const [quizData, setQuizData] = useState<QuizItem[]>([]);
-    const [examId, setExamId] = useState<string | null>(null);
+    const [quizTitle] = useState('임시 제목');
 
-
-    const handleSaveClick = async () => {
-        if (examId) {
-            try {
-                await saveQuizData(quizData, examId);
-                console.log("퀴즈 데이터가 성공적으로 저장되었습니다.");
-            } catch (error) {
-                console.error("퀴즈 데이터를 저장하는 중 오류 발생:", error);
-            }
-        }
-        setIsSaveModalOpen(true);
-    };
+    const handleSaveClick = async () => { setIsSaveModalOpen(true) };
     const closeSaveModal = () => setIsSaveModalOpen(false);
     const handleExitClick = () => setIsExitModalOpen(true);
     const closeExitModal = () => setIsExitModalOpen(false);
 
-    useEffect(() => {
-        fetchQuizData()
-            .then(data => {
-                setQuizTitle(data.title);
-                setUserAnswerData(data.submitted_answer);
-                
-                //👇 타입스크립트 에러 방지용 추후 해당 변수가 필요 여부에 따라 삭제 또는 수정해주세요
-                console.log(userAnswerData)
-                setUpdatedAt(new Date(data.updated_at));
-                setExamId(data.exam_id);
-
-                const quizzes: QuizItem[] = data.quizzes.map((quiz:any, index:number) => ({
-                    difficulty: quiz.difficulty,
-                    question: quiz.question,
-                    options: Object.entries(quiz.options).map(([key, value]) => `${key}) ${value}`),
-                    answer: quiz.answer,
-                    explanation: quiz.explanation,
-                    user_answer: data.submitted_answer[index],
-                }));
-                setQuizData(quizzes);
-            })
-            .catch(error => console.error("데이터를 가져오지 못했습니다.", error));
-    }, []);
-
-    const formattedTime = updatedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
-    const correctAnswers = quizData.filter(item => item.user_answer === item.answer).length;
-    const totalQuestions = quizData.length;
+    const correctAnswersCount = quizData.reduce((cnt, item, index) => {
+        const userAnswer = userAnswers[index]?.[0];  // 유저가 선택한 답안
+        const correctAnswerKey = Object.keys(item.answer)[0];  // 정답을 찾는 방식 수정
+        if (correctAnswerKey && userAnswer === parseInt(correctAnswerKey)) {
+            cnt++;  // 유저가 맞춘 경우 카운트 증가
+        }
+        return cnt;
+    }, 0);
 
     return (
         <div className='w-screen h-screen flex flex-col bg-white'>
@@ -74,55 +40,54 @@ export default function Answer() {
             <div className='flex justify-center h-full'>
                 <div className='w-3/4 flex flex-col'>
                     <div className='h-3/4 border-t-2 border-b-2 border-gray-300 overflow-y-auto'>
-                        {quizData.map((data, index) => (
-                            <div key={index}>
-                                <div className='flex items-center h-10 bg-gray-50 border-t-2 border-b-2 border-gray-300'>
-                                    <div className={`flex items-center justify-center flex-grow-0 min-w-[5vw] h-full border-r-2 border-b-1 border-gray-300 font-bold text-gray-100
-                                        ${data.user_answer === data.answer ? 'bg-green-400' : 'bg-red-400'}`}>
-                                        문제 {index+1}
+                        {quizData.map((data, index) => {
+                            const userAnswer = userAnswers[index]?.[0];  // 유저의 답안 가져오기
+                            const correctAnswerKey = Object.keys(data.answer)[0];  // 정답의 번호
+                            const isCorrect = userAnswer === parseInt(correctAnswerKey);  // 유저의 답과 정답 비교
+                            return (
+                                <div key={index}>
+                                    <div className='flex items-center h-10 bg-gray-50 border-t-2 border-b-2 border-gray-300'>
+                                        <div className={`flex items-center justify-center flex-grow-0 min-w-[5vw] h-full border-r-2 border-b-1 border-gray-300 font-bold text-gray-100
+                                            ${isCorrect ? 'bg-green-400' : 'bg-red-400'}`}>
+                                            문제 {index + 1}
+                                        </div>
+                                        <div className='flex-grow ml-4 font-bold'>
+                                            {data.question}
+                                        </div>
                                     </div>
-                                    <div className='flex-grow ml-4 font-bold'>
-                                        {data.question}
+                                    <div className='ml-2 mt-2 font-bold flex justify-between'>
+                                        <div className='flex flex-col'>
+                                            {Object.entries(data.options).map(([key, value], optionIndex) => (
+                                                <div key={optionIndex} className={`mt-2 ${userAnswer === parseInt(key) ? isCorrect 
+                                                ? 'text-green-600' : 'text-red-600': ''}`}>
+                                                    ({key}) {value}
+                                                </div>
+                                            ))}
+                                        </div>
+                                        <div className='text-xs text-orange-400 mr-4 my-2'>
+                                            난이도 : {data.difficulty}
+                                        </div>
+                                    </div>
+                                    <div className='flex justify-between'>
+                                        <div className='flex justify-start ml-2 mt-2 font-bold text-green-600'>
+                                            정답 : {correctAnswerKey}
+                                        </div>
+                                    </div>
+                                    <div className='border border-yellow-200 rounded h-[8vh] bg-yellow-50 mt-2 mb-4'>
+                                        <div className='m-2 text-xs font-bold'>
+                                            설명 : {data.description}
+                                        </div>
                                     </div>
                                 </div>
-                                <div className='ml-2 mt-2 font-bold flex justify-between'>
-                                    <div className='flex flex-col'>
-                                        {data.options.map((option, index) => (
-                                            <div key={index} className={`mt-2 ${data.user_answer === option.split(') ')[0] ? data.user_answer === data.answer 
-                                            ? 'text-green-600' : 'text-red-600': ''}`}>
-                                                {option}
-                                            </div>
-                                        ))}
-                                    </div>
-                                    <div className='text-xs text-orange-400 mr-4 my-2'>
-                                        난이도 : {data.difficulty}
-                                    </div>
-                                </div>
-                                <div className='flex justify-between'>
-                                    <div className='flex justify-start ml-2 mt-2 font-bold text-green-600'>
-                                        정답 : {data.answer}
-                                    </div>
-                                    {data.user_answer !== data.answer && (
-                                        <button className='bg-red-400 rounded-full text-white text-xs mr-2 font-bold p-2'>
-                                            오답노트 저장
-                                        </button>
-                                    )}
-                                </div>
-                                <div className='border border-yellow-200 rounded h-[8vh] bg-yellow-50 mt-2 mb-4'>
-                                    <div className='m-2 text-xs font-bold'>
-                                        설명 : {data.explanation}
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                        
+                            );
+                        })}
                     </div>
                     <div className='h-12 border-b-2 border-gray-300 flex justify-between items-center'>
                         <div className='ml-4 font-bold'>
-                            정답 : {correctAnswers} / {totalQuestions}
+                            정답 : {correctAnswersCount} / {quizCount}
                         </div>
                         <div className='mr-4 font-bold'>
-                            시간 : {formattedTime}
+                            시간 : {elapsedTime?.hours || '00'}:{elapsedTime?.minutes || '00'}:{elapsedTime?.seconds || '00'}
                         </div>
                     </div>
                     <div className='flex justify-end mt-4'>
@@ -136,7 +101,7 @@ export default function Answer() {
                     {isExitModalOpen && <AnswerExit onClose={closeExitModal} />}
                     {isSaveModalOpen && <AnswerSave onClose={closeSaveModal} />}
                 </div>
-            </div>          
+            </div>
         </div>
-    )
+    );
 }
