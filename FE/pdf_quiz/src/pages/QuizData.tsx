@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import Pagination from "react-js-pagination";
 import { EventSourcePolyfill } from "event-source-polyfill";
+import { useQuizContext } from "../context/QuizContext";
 
 interface PageProps {
   page: number;
@@ -10,6 +11,7 @@ interface PageProps {
 }
 
 interface QuizDataProps {
+  quizId: string; 
   difficulty: string;
   question: string;
   options: { [key: string]: string };
@@ -18,14 +20,10 @@ interface QuizDataProps {
   slice: (startIndex: number, endIndex: number) => QuizDataProps;
 }
 
-const QuizData = ({
-  page,
-  itemsPerPage,
-  setPage,
-  setTotalPages,
-}: PageProps) => {
+const QuizData = ({ page, itemsPerPage, setPage, setTotalPages, }: PageProps) => {
   // props로 상태 및 함수 받음
   const [fetchedData, setFetchedData] = useState<QuizDataProps[]>([]); // 데이터를 저장할 상태
+  const { setQuizData } = useQuizContext();
 
   useEffect(() => {
     const eventSource = new EventSourcePolyfill(
@@ -59,7 +57,7 @@ const QuizData = ({
 
           // 총 페이지 수 계산
           setTotalPages(Math.ceil(updatedData.length / itemsPerPage));
-
+          setQuizData(updatedData);
           return updatedData;
         });
       } catch (err) {
@@ -78,7 +76,7 @@ const QuizData = ({
     return () => {
       eventSource.close();
     };
-  }, [itemsPerPage, setTotalPages]);
+  }, [itemsPerPage, setTotalPages, setQuizData]);
 
   const startIndex = (page - 1) * itemsPerPage;
   const currentItems = fetchedData.slice(startIndex, startIndex + itemsPerPage);

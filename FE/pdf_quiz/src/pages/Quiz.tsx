@@ -14,12 +14,38 @@ const Quiz = () => {
   const [totalPages, setTotalPages] = useState(1); // 전체 페이지 수 상태 추가
   const itemsPerPage = 5;
 
-  const { quizCount, optionCount, timeLimitHour, timeLimitMinute } =
-    useQuizContext();
-  const { answerList, handleOptionClick, uncompletedCount } = UserAnswers();
+  const { quizCount, optionCount, timeLimitHour, timeLimitMinute } = useQuizContext();
+  const { userAnswers, handleOptionClick, uncompletedCount } = UserAnswers();
 
   const openModal = () => setShowModal(true);
   const closeModal = () => setShowModal(false);
+
+  const [startTime, setStartTime] = useState<number | null>(null); 
+  const { setElapsedTime } = useQuizContext();
+
+  useEffect(() => {
+    // 퀴즈 시작 시 startTime 기록
+    const now = Date.now();
+    setStartTime(now);
+
+    // 매 초마다 경과 시간 계산
+    const intervalId = setInterval(() => {
+      if (startTime) {
+        const endTime = Date.now();
+        const timeDiff = endTime - startTime;
+
+        const hours = Math.floor(timeDiff / (1000 * 60 * 60));
+        const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+
+        // 경과 시간을 QuizContext에 저장
+        setElapsedTime({ hours, minutes, seconds });
+      }
+    }, 1000); // 1초마다 업데이트
+
+    // 컴포넌트 언마운트 시 interval 정리
+    return () => clearInterval(intervalId);
+  }, [startTime, setElapsedTime]);
 
   const handleResize = () => {
     // 화면 크기가 860px 이하인지 확인
@@ -121,7 +147,7 @@ const Quiz = () => {
           <OMR
             quizCount={quizCount}
             optionCount={optionCount}
-            answerList={answerList}
+            answerList={userAnswers}
             handleOptionClick={handleOptionClick}
           />
         </div>
@@ -156,7 +182,7 @@ const Quiz = () => {
       <SubmitCheck
         showModal={showModal}
         closeModal={closeModal}
-        answerList={answerList}
+        answerList={userAnswers}
         uncompletedCount={uncompletedCount}
       />
     </div>

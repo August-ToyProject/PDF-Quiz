@@ -1,5 +1,4 @@
 import { apiRequest } from './ApiClient';
-import { QuizItem } from '../pages/Answer';
 
 // 폴더별 퀴즈 리스트 가져오기
 export const fetchFolderQuizzes = async (folderId: number | null) => {
@@ -25,11 +24,17 @@ export const moveQuizToFolder = async (quizId: number, folderId: number) => {
 };
 
 // 퀴즈 데이터 저장
-export const saveQuizData = async (quizData: QuizItem[], examId: string) => {
-    return apiRequest(`/save/${examId}`, {
+export const saveQuizData = async (quizTitle: string, setTime: number, spentTime: number, exams: { quizId: number, answer: string, correct: boolean }[]) => {
+    const dataToSend = {
+        title: quizTitle,
+        setTime: setTime,
+        spentTime: spentTime,
+        exam: exams
+    };
+
+    return apiRequest(`/exams`, {
         method: 'POST',
-        body: JSON.stringify({ quizzes: quizData }),
-        headers: { 'Content-Type': 'application/json' }
+        body: JSON.stringify(dataToSend),
     });
 };
 
