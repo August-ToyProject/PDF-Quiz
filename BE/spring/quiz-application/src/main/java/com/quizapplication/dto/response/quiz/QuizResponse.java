@@ -8,6 +8,8 @@ import lombok.Getter;
 @Builder
 public class QuizResponse {
 
+    private Long quizId;
+
     private String difficulty;
 
     private String question;
@@ -20,6 +22,7 @@ public class QuizResponse {
 
     public static QuizResponse of(Quiz quiz) {
         return QuizResponse.builder()
+                .quizId(quiz.getId())
                 .difficulty(quiz.getDifficulty())
                 .question(quiz.getQuestion())
                 .options(quiz.getOptions())
