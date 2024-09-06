@@ -42,7 +42,7 @@ jobs:
     # 전역으로 환경 변수를 선언
     env:
       EC2_HOST: ${{ secrets.EC2_REACT_HOST }}
-      EC2_USER: ${{ secrets.EC2_USER }}
+      EC2_USER: ubuntu
       SSH_KEY: ${{ secrets.EC2_SSH_REACT_KEY }}
 
     steps:
