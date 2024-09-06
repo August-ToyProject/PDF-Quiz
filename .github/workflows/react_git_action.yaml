@@ -51,13 +51,17 @@ jobs:
       run: |
         echo "EC2_HOST: $EC2_HOST"
         echo "EC2_USER: $EC2_USER"
-        echo "SSH_KEY: $SSH_KEY"        
 
-    - name: Deploy to EC2
+    - name: Add SSH key to agent
       run: |
         echo "$SSH_KEY" > key.pem
         chmod 400 key.pem
-        ssh -o StrictHostKeyChecking=no -i key.pem $EC2_USER@$EC2_HOST << 'ENDSSH'
+        eval "$(ssh-agent -s)"
+        ssh-add key.pem
+
+    - name: Deploy to EC2
+      run: |
+        ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST << 'ENDSSH'
           # EC2 서버에서 실행할 명령어
           sh run.sh
         ENDSSH
