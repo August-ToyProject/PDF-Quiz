@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { infoUser, updateInfo, updatePassword } from "../api/ApiUser";
 import { useNavigate } from "react-router-dom";
+import BlueLogo from "../assets/Logo_blue.svg";
 
 interface UserInfo {
   userId: string;
@@ -128,9 +129,8 @@ export default function InfoPage() {
 
   return (
     <div className="h-screen w-full flex flex-col justify-start items-center bg-white">
-      <div className="text-4xl text-blue-600 font-black mt-16 mb-8">
-        QUIZ GEN
-      </div>
+      <img src={BlueLogo} alt="Quizgen" className="w-36 h-24 ml-5" />
+
       <div className="bg-white p-4 w-80 flex flex-col justify-start min-h-[400px]">
         <div className="flex justify-center w-full mb-4">
           <button
