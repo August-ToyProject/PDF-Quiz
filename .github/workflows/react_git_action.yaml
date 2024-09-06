@@ -38,16 +38,15 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build
-    
-    # 전역으로 환경 변수를 선언
-    env:
-      EC2_HOST: ${{ secrets.EC2_REACT_HOST }}
-      EC2_USER: ubuntu
-      SSH_KEY: ${{ secrets.EC2_SSH_REACT_KEY }}
-
+  
     steps:
     - name: Check out code
       uses: actions/checkout@v4
+      # 전역으로 환경 변수를 선언
+      with:
+        EC2_HOST: ${{ secrets.EC2_REACT_HOST }}
+        EC2_USER: ubuntu
+        SSH_KEY: ${{ secrets.EC2_SSH_REACT_KEY }}
 
     - name: Check environment variables
       run: |
