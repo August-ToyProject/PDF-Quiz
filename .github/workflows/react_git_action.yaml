@@ -39,26 +39,27 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     
+    # 전역으로 환경 변수를 선언
+    env:
+      EC2_HOST: ${{ secrets.EC2_REACT_HOST }}
+      EC2_USER: ${{ secrets.EC2_USER }}
+      SSH_KEY: ${{ secrets.EC2_SSH_REACT_KEY }}
 
     steps:
     - name: Check out code
       uses: actions/checkout@v4
-    
+
     - name: Check environment variables
       run: |
         echo "EC2_HOST: $EC2_HOST"
         echo "EC2_USER: $EC2_USER"
-        echo "SSH_KEY: $SSH_KEY" 
+        echo "SSH_KEY: $SSH_KEY"
 
     - name: Deploy to EC2
-      env:
-        EC2_HOST: ${{ secrets.EC2_REACT_HOST }}
-        EC2_USER: ${{ secrets.EC2_USER }}
-        SSH_KEY: ${{ secrets.EC2_SSH_REACT_KEY }}
       run: |
         echo "$SSH_KEY" > key.pem
         chmod 400 key.pem
-        ssh -o StrictHostKeyChecking=no -i key.pem $EC2_USER@$EC2_REACT_HOST << 'ENDSSH'
+        ssh -o StrictHostKeyChecking=no -i key.pem $EC2_USER@$EC2_HOST << 'ENDSSH'
           # shell 스크립트 실행
           sh run.sh
         ENDSSH
