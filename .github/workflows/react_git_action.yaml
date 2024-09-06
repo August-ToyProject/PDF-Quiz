@@ -53,6 +53,8 @@ jobs:
         echo "EC2_HOST: $EC2_HOST"
         echo "EC2_USER: $EC2_USER"
         echo "SSH_KEY: $SSH_KEY"
+        echo "SLACK_WEBHOOK_URL: $SLACK_WEBHOOK_URL"
+        
 
     - name: Deploy to EC2
       run: |
