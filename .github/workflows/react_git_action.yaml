@@ -54,14 +54,18 @@ jobs:
 
     - name: Add SSH key to agent
       run: |
-        echo "$SSH_KEY" > key.pem
+        echo "$SSH_KEY" | tr -d '\r' > key.pem  # Windows와 Unix 줄바꿈 문제 해결
         chmod 400 key.pem
         eval "$(ssh-agent -s)"
         ssh-add key.pem
 
+    - name: Test SSH connection
+      run: |
+        ssh -o StrictHostKeyChecking=no -i key.pem $EC2_USER@$EC2_HOST "echo Connection successful"
+
     - name: Deploy to EC2
       run: |
-        ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST << 'ENDSSH'
+        ssh -o StrictHostKeyChecking=no -i key.pem $EC2_USER@$EC2_HOST << 'ENDSSH'
           # EC2 서버에서 실행할 명령어
           sh run.sh
         ENDSSH
