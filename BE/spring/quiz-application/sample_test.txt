@@ -7,4 +7,5 @@
 7. spring boot ci/cd 7차 테스트 입니다.(ssh 인증 코드 추가)
 8. spring boot ci/cd 8차 테스트 입니다.(경로 수정)
 9. spring boot ci/cd 9차 테스트 입니다. (temp 수정)
-10. spring boot ci/cd 10차 테스트 입니다. 
+10. spring boot ci/cd 10차 테스트 입니다. (빌드 경로 확인)
+11. spring boot ci/cd 11차 테스트 입니다. 
