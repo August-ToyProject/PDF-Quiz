@@ -1,0 +1,71 @@
+name: Spring Boot CI/CD
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'BE/spring/**'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'BE/spring/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      EC2_HOST: ${{ secrets.EC2_SPRING_HOST }}
+      EC2_USER: ${{ secrets.EC2_USER }}
+      SSH_KEY: ${{ secrets.EC2_SSH_SPRING_KEY }}
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_DEPLOY_WEB_HOOK }}  # SLACK_DEPLOY_WEB_HOOK 시크릿 사용
+      SLACK_USER_ID: 'U07F90W5TKN'  # 슬랙 사용자 ID 하드코딩
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 21
+      uses: actions/setup-java@v2
+      with:
+        java-version: '21'
+
+    - name: Build with Gradle
+      run: ./gradlew build
+
+    - name: SCP to EC2
+      run: |
+        scp -o StrictHostKeyChecking=no -i ${{ secrets.SSH_KEY }} build/libs/quiz-application-0.0.1-SNAPSHOT.jar ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ubuntu/quiz-application-0.0.1-SNAPSHOT.jar
+
+    - name: Deploy to EC2
+      run: |
+        ssh -o StrictHostKeyChecking=no -i ${{ secrets.SSH_KEY }} ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+          # 기존 스프링 서버 종료
+          ps -ef | grep java | grep -v grep | awk '{print $2}' | xargs kill -9 || true
+          
+          # 새로운 JAR 파일 실행
+          nohup java -Duser.timezone=Asia/Seoul -jar /home/ubuntu/quiz-application-0.0.1-SNAPSHOT.jar > /dev/null 2>&1 &
+          echo "Application has been successfully deployed!"
+        EOF
+
+    - name: Notify Slack on Success 🎉
+      if: success()  # 배포 성공 시
+      run: |
+        curl -X POST -H 'Content-type: application/json' --data '{
+          "channel": "#your-channel",
+          "text": "<@${{ env.SLACK_USER_ID }}> 개복치가 오늘도 무사히 배포를 완료했습니다! 🎉 오늘은 스트레스 받지 않고 잘 버텼네요! 🐟",
+          "username": "DeployMola",
+          "icon_emoji": ":fish:"
+        }' ${{ env.SLACK_WEBHOOK_URL }}
+
+    - name: Notify Slack on Failure 💀
+      if: failure()  # 배포 실패 시
+      run: |
+        BUILD_LOG=$(tail -n 10 $GITHUB_WORKSPACE/build/libs/quiz-application-0.0.1-SNAPSHOT.jar.log)
+        curl -X POST -H 'Content-type: application/json' --data '{
+          "channel": "#your-channel",
+          "text": "<@${{ env.SLACK_USER_ID }}> 개복치가 배포 중 스트레스를 받아서... 죽었습니다... 💀 로그를 확인하고 다시 살려주세요!\n\n```\n'"$BUILD_LOG"'\n```",
+          "username": "DeployMola",
+          "icon_emoji": ":skull:"
+        }' ${{ env.SLACK_WEBHOOK_URL }}
