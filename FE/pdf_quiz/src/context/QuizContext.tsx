@@ -18,6 +18,7 @@ interface QuizItem {
 }
 
 interface QuizContextType {
+  title: string;
   difficulty: string;
   quizCount: number;
   optionCount: number;
@@ -27,9 +28,10 @@ interface QuizContextType {
   quizData: QuizItem[];
   elapsedTime: ElapsedTime | null;
   setTime: number;
+  setTitle: React.Dispatch<React.SetStateAction<string>>;
   setUserAnswers: React.Dispatch<React.SetStateAction<number[][]>>;
   setQuizData: React.Dispatch<React.SetStateAction<QuizItem[]>>;
-  setElapsedTime: React.Dispatch<React.SetStateAction<ElapsedTime | null>>; 
+  setElapsedTime: React.Dispatch<React.SetStateAction<ElapsedTime | null>>;
   setDifficulty: React.Dispatch<React.SetStateAction<string>>;
   setQuizCount: React.Dispatch<React.SetStateAction<number>>;
   setOptionCount: React.Dispatch<React.SetStateAction<number>>;
@@ -48,19 +50,24 @@ const QuizContext = createContext<QuizContextType | undefined>(undefined);
 export const QuizProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
+  const [title, setTitle] = useState<string>("퀴즈 제목");
   const [difficulty, setDifficulty] = useState<string>("쉬움");
   const [quizCount, setQuizCount] = useState<number>(5);
   const [optionCount, setOptionCount] = useState<number>(4);
   const [timeLimitHour, setTimeLimitHour] = useState<number>(1);
   const [timeLimitMinute, setTimeLimitMinute] = useState<number>(0);
   const [quizData, setQuizData] = useState<QuizItem[]>([]);
-  const [userAnswers, setUserAnswers] = useState<number[][]>(new Array(quizCount).fill([]).map(() => []));
+  const [userAnswers, setUserAnswers] = useState<number[][]>(
+    new Array(quizCount).fill([]).map(() => [])
+  );
   const [elapsedTime, setElapsedTime] = useState<ElapsedTime | null>(null);
   const [setTime] = useState<number>(3600);
 
   return (
     <QuizContext.Provider
       value={{
+        title,
+        setTitle,
         difficulty,
         setDifficulty,
         quizCount,
