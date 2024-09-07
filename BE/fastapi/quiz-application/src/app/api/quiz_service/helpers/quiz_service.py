@@ -3,7 +3,9 @@ from langchain_anthropic import ChatAnthropic
 from langchain_community.vectorstores import FAISS
 from langchain_openai import OpenAIEmbeddings
 from langchain.prompts import PromptTemplate
-from langchain.chains import LLMChain
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.runnables import RunnablePassthrough
+from langchain_core.runnables import RunnableParallel
 from langchain_openai import ChatOpenAI
 import asyncio
 import random
@@ -28,6 +30,36 @@ async def load_vector(index_path: str):
     )
     return vector_store
 
+async def get_subject_from_summary_docs(
+    llm,
+    retriever
+):
+    try:
+        subject_prompt = PromptTemplate(
+            template="""
+            주어진 요약과 context를 보고 해당 내용의 가장 주된 **도메인**이나 **주제**를 한 단어 또는 짧은 구문으로 추출해주세요.
+            1. 문서의 내용이 어느 분야에 속하는지, 주요 주제가 무엇인지를 포괄하는 단어를 선택하세요.
+            2. 너무 구체적인 세부사항 대신, 전체적인 주제나 도메인을 파악하세요.
+            3. 예시: '데이터베이스', '소프트웨어 개발', '마케팅 전략' 등.
+            4. 주제를 하나의 단어 또는 짧은 구문으로 요약해 제시해주세요.
+            
+            #context를:
+            {context}
+            """
+            )
+        subject_chain = (
+        {"context": retriever, "question": RunnablePassthrough()}
+        | subject_prompt
+        | llm
+        | StrOutputParser()
+        )
+        question = "해당 문서의 주제는?"
+        subject = subject_chain.invoke(question)
+        
+        return subject
+    except Exception as e:
+        raise e
+
 async def summarize_document(
     docs, 
     model_name="gpt-4o-mini",
@@ -50,15 +82,16 @@ async def summarize_document(
 async def get_keyword_from_summary(
     llm,
     summary,
+    subject,
+    retriever,
     num_questions=5,
     num_keywords =2
 ):
     try:
         total_keyword = num_questions * num_keywords
         keyword_prompt = PromptTemplate(
-            input_variables=["summary", "n"],
             template="""
-        주어진 요약에서 가장 중요하고 관련성 높은 {n}개의 키워드를 추출해주세요. 다음 지침을 따라주세요:
+        주어진 요약과 context, 주제를 보고 가장 중요하고 관련성 높은 {n}개의 키워드를 추출해주세요. 다음 지침을 따라주세요:
 
         1. 키워드는 문서의 주제, 핵심 개념, 중요한 용어를 대표해야 합니다.
         2. 단일 단어와 짧은 구문 모두 포함할 수 있습니다.
@@ -67,21 +100,44 @@ async def get_keyword_from_summary(
         5. 키워드를 중요도 순으로 정렬하여 제시해주세요.
         6. 각 키워드는 쉼표로 구분하고, 마지막에 마침표를 찍지 마세요.
 
-        요약:
+        #요약:
         {summary}
+        
+        #contenxt:
+        {context}
+        
+        #주제:
+        {subject}
 
         키워드 (중요도 순):"""
         )
         
-        input_data = {
-            "summary":summary,
-            "n":total_keyword
-            }
+        # RunnableParallel을 이용해 여러 값을 병렬로 처리
         keyword_chain = (
-            keyword_prompt | llm
+            RunnableParallel(
+                context=RunnablePassthrough(),
+                summary=RunnablePassthrough(),
+                subject=RunnablePassthrough(),
+                n=RunnablePassthrough(),
+                question=RunnablePassthrough()
+            )
+            | keyword_prompt
+            | llm
+            | StrOutputParser()
         )
-        
-        keywords = keyword_chain.invoke(input_data).content
+
+        # 전달할 input 데이터 정의
+        question = f"{subject}와 가장 관련도가 높은 키워드를 알려줘"
+        input_data = {
+            "context":retriever,
+            "summary": summary,
+            "subject": subject,
+            "n": total_keyword,
+            "question": question
+        }
+
+        # keyword_chain 실행
+        keywords = keyword_chain.invoke(input_data)
         keyword_list = [kw.strip() for kw in keywords.split(',')]
         
         num_groups = num_questions//5
@@ -92,7 +148,6 @@ async def get_keyword_from_summary(
             end = start + (5*num_keywords)
             ret .append(keyword_list[start:end])
             start =  end
-        
         return ret
     except Exception as e:
         raise e
@@ -180,7 +235,6 @@ import random
 
 async def make_quiz(
     retriever,
-    summary,
     keywords,
     user_idx,
     email,
