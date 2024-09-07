@@ -3,4 +3,5 @@
 3. spring boot ci/cd 3차 테스트 입니다.(빌드 실패 무시 -> db관련)
 4. spring boot ci/cd 4차 테스트 입니다.(슬랙 메시지 수정)
 5. spring boot ci/cd 4차 테스트 입니다.(ssh키 설정 추가)
-6. spring boot ci/cd 4차 테스트 입니다. 
+6. spring boot ci/cd 4차 테스트 입니다.(스프링 호스트 ip 수정)
+7. spring boot ci/cd 4차 테스트 입니다. 
