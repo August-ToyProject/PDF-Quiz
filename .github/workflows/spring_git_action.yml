@@ -1,100 +1,100 @@
-name: Spring Boot CI/CD
+# name: Spring Boot CI/CD
 
-on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'BE/spring/**'
-  pull_request:
-    branches:
-      - main
-    paths:
-      - 'BE/spring/**'
+# on:
+#   push:
+#     branches:
+#       - main
+#     paths:
+#       - 'BE/spring/**'
+#   pull_request:
+#     branches:
+#       - main
+#     paths:
+#       - 'BE/spring/**'
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    env:
-      EC2_HOST: ${{ secrets.EC2_SPRING_HOST }}
-      EC2_USER: ${{ secrets.EC2_USER }}
-      SSH_KEY: ${{ secrets.EC2_SSH_SPRING_KEY }}
-      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_DEPLOY_WEB_HOOK }}
-      SLACK_USER_ID: 'U07F90W5TKN'
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+#     env:
+#       EC2_HOST: ${{ secrets.EC2_SPRING_HOST }}
+#       EC2_USER: ${{ secrets.EC2_USER }}
+#       SSH_KEY: ${{ secrets.EC2_SSH_SPRING_KEY }}
+#       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_DEPLOY_WEB_HOOK }}
+#       SLACK_USER_ID: 'U07F90W5TKN'
 
-    steps:
-    - name: Check out code
-      uses: actions/checkout@v4
+#     steps:
+#     - name: Check out code
+#       uses: actions/checkout@v4
 
-    - name: Set up JDK 21
-      uses: actions/setup-java@v2
-      with:
-        java-version: '21'
-        distribution: 'temurin'
-        java-package: 'jdk'
+#     - name: Set up JDK 21
+#       uses: actions/setup-java@v2
+#       with:
+#         java-version: '21'
+#         distribution: 'temurin'
+#         java-package: 'jdk'
 
-    - name: Build with Gradle (Skip Tests)
-      run: |
-        cd BE/spring/quiz-application
-        ./gradlew build -x test  # 빌드 (테스트 생략)
+#     - name: Build with Gradle (Skip Tests)
+#       run: |
+#         cd BE/spring/quiz-application
+#         ./gradlew build -x test  # 빌드 (테스트 생략)
 
-    - name: Check build output
-      run: |
-        pwd
-        cd BE/spring/quiz-application
-        ls -al ./build/libs  # 빌드 결과 확인
+#     - name: Check build output
+#       run: |
+#         pwd
+#         cd BE/spring/quiz-application
+#         ls -al ./build/libs  # 빌드 결과 확인
 
-    - name: Compress JAR file
-      run: |
-        cd BE/spring/quiz-application/build/libs
-        gzip -c quiz-application-0.0.1-SNAPSHOT.jar > quiz-application-0.0.1-SNAPSHOT.jar.gz
-        ls -al  # 압축된 파일 확인
+#     - name: Compress JAR file
+#       run: |
+#         cd BE/spring/quiz-application/build/libs
+#         gzip -c quiz-application-0.0.1-SNAPSHOT.jar > quiz-application-0.0.1-SNAPSHOT.jar.gz
+#         ls -al  # 압축된 파일 확인
 
-    - name: Add SSH key to agent
-      run: |
-        echo "$SSH_KEY" | tr -d '\r' > key.pem
-        chmod 400 key.pem
-        eval "$(ssh-agent -s)"
-        ssh-add key.pem
+#     - name: Add SSH key to agent
+#       run: |
+#         echo "$SSH_KEY" | tr -d '\r' > key.pem
+#         chmod 400 key.pem
+#         eval "$(ssh-agent -s)"
+#         ssh-add key.pem
 
-    - name: Test SSH connection
-      run: |
-        ssh -o StrictHostKeyChecking=no -i key.pem $EC2_USER@$EC2_HOST "echo Connection successful"
+#     - name: Test SSH connection
+#       run: |
+#         ssh -o StrictHostKeyChecking=no -i key.pem $EC2_USER@$EC2_HOST "echo Connection successful"
 
-    - name: SCP compressed JAR to EC2
-      run: |
-        scp -o StrictHostKeyChecking=no -i key.pem BE/spring/quiz-application/build/libs/quiz-application-0.0.1-SNAPSHOT.jar.gz $EC2_USER@$EC2_HOST:/home/ubuntu/quiz-application-0.0.1-SNAPSHOT.jar.gz
+#     - name: SCP compressed JAR to EC2
+#       run: |
+#         scp -o StrictHostKeyChecking=no -i key.pem BE/spring/quiz-application/build/libs/quiz-application-0.0.1-SNAPSHOT.jar.gz $EC2_USER@$EC2_HOST:/home/ubuntu/quiz-application-0.0.1-SNAPSHOT.jar.gz
 
-    - name: Deploy to EC2
-      run: |
-        ssh -o StrictHostKeyChecking=no -i key.pem $EC2_USER@$EC2_HOST << 'EOF'
-          # 기존 스프링 서버 종료
-          ps -ef | grep java | grep -v grep | awk '{print $2}' | xargs kill -9 || true
+#     - name: Deploy to EC2
+#       run: |
+#         ssh -o StrictHostKeyChecking=no -i key.pem $EC2_USER@$EC2_HOST << 'EOF'
+#           # 기존 스프링 서버 종료
+#           ps -ef | grep java | grep -v grep | awk '{print $2}' | xargs kill -9 || true
 
-          # 압축 해제
-          gunzip /home/ubuntu/quiz-application-0.0.1-SNAPSHOT.jar.gz
+#           # 압축 해제
+#           gunzip /home/ubuntu/quiz-application-0.0.1-SNAPSHOT.jar.gz
 
-          # 새로운 JAR 파일 실행
-          nohup java -Duser.timezone=Asia/Seoul -jar /home/ubuntu/quiz-application-0.0.1-SNAPSHOT.jar > /dev/null 2>&1 &
-          echo "Application has been successfully deployed!"
-        EOF
+#           # 새로운 JAR 파일 실행
+#           nohup java -Duser.timezone=Asia/Seoul -jar /home/ubuntu/quiz-application-0.0.1-SNAPSHOT.jar > /dev/null 2>&1 &
+#           echo "Application has been successfully deployed!"
+#         EOF
 
-    - name: Notify Slack on Success 🎉
-      if: success()
-      run: |
-        curl -X POST -H 'Content-type: application/json' --data '{
-          "channel": "#your-channel",
-          "text": ":white_check_mark: *배포 성공!* :tada: :rocket: \n<@${{ env.SLACK_USER_ID }}> 배포 개복치가 오늘도 무사히 배포를 완료했습니다! 🎉 오늘의 배포는 성공적입니다! 🐟 :rocket:",
-          "username": "DeployMola",
-          "icon_emoji": ":fish:"
-        }' ${{ env.SLACK_WEBHOOK_URL }}
+#     - name: Notify Slack on Success 🎉
+#       if: success()
+#       run: |
+#         curl -X POST -H 'Content-type: application/json' --data '{
+#           "channel": "#your-channel",
+#           "text": ":white_check_mark: *배포 성공!* :tada: :rocket: \n<@${{ env.SLACK_USER_ID }}> 배포 개복치가 오늘도 무사히 배포를 완료했습니다! 🎉 오늘의 배포는 성공적입니다! 🐟 :rocket:",
+#           "username": "DeployMola",
+#           "icon_emoji": ":fish:"
+#         }' ${{ env.SLACK_WEBHOOK_URL }}
 
-    - name: Notify Slack on Failure 💀
-      if: failure()
-      run: |
-        curl -X POST -H 'Content-type: application/json' --data '{
-          "channel": "#your-channel",
-          "text": ":x: *배포 실패!* :rotating_light: \n<@${{ env.SLACK_USER_ID }}>\n 배포 개복치가 스트레스를 이기지 못하고 꾀꼬닥했습니다... :skull: :warning: 로그를 확인하고 다시 살려주세요! ⚠️",
-          "username": "DeployMola",
-          "icon_emoji": ":skull:"
-        }' ${{ env.SLACK_WEBHOOK_URL }}
+#     - name: Notify Slack on Failure 💀
+#       if: failure()
+#       run: |
+#         curl -X POST -H 'Content-type: application/json' --data '{
+#           "channel": "#your-channel",
+#           "text": ":x: *배포 실패!* :rotating_light: \n<@${{ env.SLACK_USER_ID }}>\n 배포 개복치가 스트레스를 이기지 못하고 꾀꼬닥했습니다... :skull: :warning: 로그를 확인하고 다시 살려주세요! ⚠️",
+#           "username": "DeployMola",
+#           "icon_emoji": ":skull:"
+#         }' ${{ env.SLACK_WEBHOOK_URL }}
