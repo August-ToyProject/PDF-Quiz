@@ -51,7 +51,11 @@ jobs:
 
     - name: SCP to EC2
       run: |
-        scp -o StrictHostKeyChecking=no -i key.pem BE/spring/quiz-application/build/libs/quiz-application-0.0.1-SNAPSHOT.jar ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ubuntu/quiz-application-0.0.1-SNAPSHOT.jar
+        echo "$SSH_KEY" > key.pem
+        chmod 400 key.pem
+        eval "$(ssh-agent -s)"
+        ssh-add key.pem
+        scp -o StrictHostKeyChecking=no -i key.pem ./build/libs/quiz-application-0.0.1-SNAPSHOT.jar $EC2_USER@$EC2_HOST:/home/ubuntu/quiz-application-0.0.1-SNAPSHOT.jar
 
     - name: Deploy to EC2
       run: |
