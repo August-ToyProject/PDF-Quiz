@@ -1,49 +1,74 @@
-name: Slack Notification on PR and Merge
+name: Spring Boot CI/CD
 
 on:
   push:
     branches:
       - main
+    paths:
+      - 'BE/spring/**'
   pull_request:
-    types: [opened, reopened]
+    branches:
+      - main
+    paths:
+      - 'BE/spring/**'
 
 jobs:
-  notify:
+  build:
     runs-on: ubuntu-latest
+    env:
+      EC2_HOST: ${{ secrets.EC2_SPRING_HOST }}
+      EC2_USER: ${{ secrets.EC2_USER }}
+      SSH_KEY: ${{ secrets.EC2_SSH_SPRING_KEY }}
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_DEPLOY_WEB_HOOK }}
+      SLACK_USER_ID: 'U07F90W5TKN'
+
     steps:
-      - name: Send notification to Slack
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        run: |
-          if [[ "${{ github.event_name }}" == "push" ]]; then
-            if [[ "${{ github.event.head_commit.message }}" == *"Merge pull request"* ]]; then
-              TEXT=":rotating_light: *PR이 메인 브랜치에 머지되었습니다!*\n\n📂 *레포지토리:* ${{ github.repository }}\n👤 *머지한 사람:* ${{ github.actor }}\n🔗 <${{ github.event.compare }}|*변경 내용 보기*>\n\n:arrow_down: 모두 최신 상태를 유지하기 위해 메인 브랜치를 풀 하세요!"
-            else
-              TEXT=":rocket: *새로운 커밋이 메인 브랜치에 푸시되었습니다!*\n\n📂 *레포지토리:* ${{ github.repository }}\n👤 *작성자:* ${{ github.actor }}\n📝 *커밋 메시지:* ${{ github.event.head_commit.message }}\n🔗 <${{ github.event.head_commit.url }}|*커밋 보기*>\n🔍 <${{ github.event.compare }}|*변경 내용 보기*>\n\n:arrow_down: 모두 최신 상태를 유지하기 위해 메인 브랜치를 풀 하세요!"
-            fi
-          elif [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            TEXT=":sparkles: *풀 리퀘스트가 ${{ github.event.pull_request.state }} 되었습니다!*\n\n📝 *제목:* ${{ github.event.pull_request.title }}\n👤 *작성자:* ${{ github.event.pull_request.user.login }}\n📂 *레포지토리:* ${{ github.repository }}\n🔗 <${{ github.event.pull_request.html_url }}|*PR 보기*>"
-          else
-            TEXT=":warning: 알 수 없는 이벤트가 감지되었습니다: ${{ github.event_name }}"
-          fi
+    - name: Check out code
+      uses: actions/checkout@v4
 
-          # 특수 문자 이스케이프 처리
-          TEXT=$(echo "$TEXT" | sed 's/"/\\"/g')
+    - name: Set up JDK 21
+      uses: actions/setup-java@v2
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        java-package: 'jdk'
 
-          PAYLOAD="{\"text\": \"$TEXT\"}"
+    - name: Build with Gradle (Skip Tests)
+      run: |
+        cd BE/spring/quiz-application   # 스프링 애플리케이션 디렉터리로 이동
+        ./gradlew build -x test         # 테스트를 무시하고 빌드
 
-          echo "Sending payload to Slack:"
-          echo "$PAYLOAD"
+    - name: SCP to EC2
+      run: |
+        scp -o StrictHostKeyChecking=no -i ${{ secrets.SSH_KEY }} BE/spring/quiz-application/build/libs/quiz-application-0.0.1-SNAPSHOT.jar ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ubuntu/quiz-application-0.0.1-SNAPSHOT.jar
 
-          RESPONSE=$(curl -X POST -H 'Content-type: application/json' --data "$PAYLOAD" "$SLACK_WEBHOOK_URL" -w "\n%{http_code}")
-          HTTP_STATUS=$(echo "$RESPONSE" | tail -n1)
-          BODY=$(echo "$RESPONSE" | sed '$d')
+    - name: Deploy to EC2
+      run: |
+        ssh -o StrictHostKeyChecking=no -i ${{ secrets.SSH_KEY }} ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+          # 기존 스프링 서버 종료
+          ps -ef | grep java | grep -v grep | awk '{print $2}' | xargs kill -9 || true
+          
+          # 새로운 JAR 파일 실행
+          nohup java -Duser.timezone=Asia/Seoul -jar /home/ubuntu/quiz-application-0.0.1-SNAPSHOT.jar > /dev/null 2>&1 &
+          echo "Application has been successfully deployed!"
+        EOF
 
-          echo "Slack API Response:"
-          echo "Status Code: $HTTP_STATUS"
-          echo "Body: $BODY"
+    - name: Notify Slack on Success 🎉
+      if: success()
+      run: |
+        curl -X POST -H 'Content-type: application/json' --data '{
+          "channel": "#your-channel",
+          "text": "<@${{ env.SLACK_USER_ID }}> 배포 개복치가 오늘도 무사히 배포를 완료했습니다! 🎉 오늘은 스트레스 받지 않고 잘 버텼네요! 🐟",
+          "username": "DeployMola",
+          "icon_emoji": ":fish:"
+        }' ${{ env.SLACK_WEBHOOK_URL }}
 
-          if [[ "$HTTP_STATUS" != "200" ]]; then
-            echo "Error: Failed to send message to Slack"
-            exit 1
-          fi
+    - name: Notify Slack on Failure 💀
+      if: failure()
+      run: |
+        curl -X POST -H 'Content-type: application/json' --data '{
+          "channel": "#your-channel",
+          "text": "<@${{ env.SLACK_USER_ID }}> 배포 개복치가 스트레스를 이기지 못하고 꾀꼬닥했습니다... :skull: 로그를 확인하고 다시 살려주세요!",
+          "username": "DeployMola",
+          "icon_emoji": ":skull:"
+        }' ${{ env.SLACK_WEBHOOK_URL }}
