@@ -19,8 +19,8 @@ jobs:
       EC2_HOST: ${{ secrets.EC2_SPRING_HOST }}
       EC2_USER: ${{ secrets.EC2_USER }}
       SSH_KEY: ${{ secrets.EC2_SSH_SPRING_KEY }}
-      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_DEPLOY_WEB_HOOK }}  # SLACK_DEPLOY_WEB_HOOK 시크릿 사용
-      SLACK_USER_ID: 'U07F90W5TKN'  # 슬랙 사용자 ID 하드코딩
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_DEPLOY_WEB_HOOK }}
+      SLACK_USER_ID: 'U07F90W5TKN'
 
     steps:
     - name: Check out code
@@ -30,6 +30,8 @@ jobs:
       uses: actions/setup-java@v2
       with:
         java-version: '21'
+        distribution: 'temurin'
+        java-package: 'jdk'
 
     - name: Build with Gradle
       run: ./gradlew build
@@ -50,7 +52,7 @@ jobs:
         EOF
 
     - name: Notify Slack on Success 🎉
-      if: success()  # 배포 성공 시
+      if: success()
       run: |
         curl -X POST -H 'Content-type: application/json' --data '{
           "channel": "#your-channel",
@@ -60,12 +62,12 @@ jobs:
         }' ${{ env.SLACK_WEBHOOK_URL }}
 
     - name: Notify Slack on Failure 💀
-      if: failure()  # 배포 실패 시
+      if: failure()
       run: |
-        BUILD_LOG=$(tail -n 10 $GITHUB_WORKSPACE/build/libs/quiz-application-0.0.1-SNAPSHOT.jar.log)
+        FAILURE_REASON=$(tail -n 1 $GITHUB_WORKSPACE/build/libs/quiz-application-0.0.1-SNAPSHOT.jar.log || echo "실패 이유를 찾을 수 없습니다.")
         curl -X POST -H 'Content-type: application/json' --data '{
           "channel": "#your-channel",
-          "text": "<@${{ env.SLACK_USER_ID }}> 개복치가 배포 중 스트레스를 받아서... 죽었습니다... 💀 로그를 확인하고 다시 살려주세요!\n\n```\n'"$BUILD_LOG"'\n```",
+          "text": "<@${{ env.SLACK_USER_ID }}> 배포에 실패했습니다. 로그를 확인해주세요.\n\n실패 이유: '"$FAILURE_REASON"'",
           "username": "DeployMola",
           "icon_emoji": ":skull:"
         }' ${{ env.SLACK_WEBHOOK_URL }}
