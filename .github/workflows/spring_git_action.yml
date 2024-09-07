@@ -34,11 +34,13 @@ jobs:
         java-package: 'jdk'
 
     - name: Build with Gradle
-      run: ./gradlew build
+      run: |
+        cd BE/spring/quiz-application   # 스프링 애플리케이션 디렉터리로 이동
+        ./gradlew build
 
     - name: SCP to EC2
       run: |
-        scp -o StrictHostKeyChecking=no -i ${{ secrets.SSH_KEY }} build/libs/quiz-application-0.0.1-SNAPSHOT.jar ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ubuntu/quiz-application-0.0.1-SNAPSHOT.jar
+        scp -o StrictHostKeyChecking=no -i ${{ secrets.SSH_KEY }} BE/spring/quiz-application/build/libs/quiz-application-0.0.1-SNAPSHOT.jar ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ubuntu/quiz-application-0.0.1-SNAPSHOT.jar
 
     - name: Deploy to EC2
       run: |
@@ -64,10 +66,10 @@ jobs:
     - name: Notify Slack on Failure 💀
       if: failure()
       run: |
-        FAILURE_REASON=$(tail -n 1 $GITHUB_WORKSPACE/build/libs/quiz-application-0.0.1-SNAPSHOT.jar.log || echo "실패 이유를 찾을 수 없습니다.")
+        FAILURE_REASON=$(tail -n 1 BE/spring/quiz-application/build/libs/quiz-application-0.0.1-SNAPSHOT.jar.log || echo "실패 이유를 찾을 수 없습니다.")
         curl -X POST -H 'Content-type: application/json' --data '{
           "channel": "#your-channel",
-          "text": "<@${{ env.SLACK_USER_ID }}> 배포에 실패했습니다. 로그를 확인해주세요.\n\n실패 이유: '"$FAILURE_REASON"'",
+          "text": "<@${{ env.SLACK_USER_ID }}> 배포 개복치가 스트레스를 이기지 못하고 꾀꼬닥했습니다... 💀 로그를 확인하고 다시 살려주세요!\n\n실패 이유: '"$FAILURE_REASON"'",
           "username": "DeployMola",
           "icon_emoji": ":skull:"
         }' ${{ env.SLACK_WEBHOOK_URL }}
