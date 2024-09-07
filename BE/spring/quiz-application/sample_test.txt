@@ -1,3 +1,4 @@
 1. spring boot ci/cd 1차 테스트 입니다.(배포 버전 수정)
 2. spring boot ci/cd 2차 테스트 입니다.(스프링 빌드 파일 경로 수정)
-3. spring boot ci/cd 3차 테스트 입니다. 
+3. spring boot ci/cd 3차 테스트 입니다.(빌드 실패 무시 -> db관련)
+4. spring boot ci/cd 4차 테스트 입니다. 
