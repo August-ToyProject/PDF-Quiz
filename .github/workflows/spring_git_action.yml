@@ -38,10 +38,19 @@ jobs:
         cd BE/spring/quiz-application   # 스프링 애플리케이션 디렉터리로 이동
         ./gradlew build -x test         # 테스트를 무시하고 빌드 (JAR 파일 생성)
 
+    - name: Add SSH key to agent
+      run: |
+        echo "$SSH_KEY" | tr -d '\r' > key.pem  # SSH 키 저장 (줄바꿈 문제 해결)
+        chmod 400 key.pem
+        eval "$(ssh-agent -s)"
+        ssh-add key.pem
+
+    - name: Test SSH connection
+      run: |
+        ssh -o StrictHostKeyChecking=no -i key.pem $EC2_USER@$EC2_HOST "echo Connection successful"
+
     - name: SCP to EC2
       run: |
-        echo "$SSH_KEY" > key.pem
-        chmod 400 key.pem
         scp -o StrictHostKeyChecking=no -i key.pem BE/spring/quiz-application/build/libs/quiz-application-0.0.1-SNAPSHOT.jar ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ubuntu/quiz-application-0.0.1-SNAPSHOT.jar
 
     - name: Deploy to EC2
@@ -60,7 +69,7 @@ jobs:
       run: |
         curl -X POST -H 'Content-type: application/json' --data '{
           "channel": "#your-channel",
-          "text": ":white_check_mark: *배포 성공!* :tada: \n<@${{ env.SLACK_USER_ID }}> 배포 개복치가 오늘도 무사히 배포를 완료했습니다! 🎉",
+          "text": ":white_check_mark: *배포 성공!* :tada: :rocket: \n<@${{ env.SLACK_USER_ID }}> 배포 개복치가 오늘도 무사히 배포를 완료했습니다! 🎉 오늘의 배포는 성공적입니다! 🐟 :rocket:",
           "username": "DeployMola",
           "icon_emoji": ":fish:"
         }' ${{ env.SLACK_WEBHOOK_URL }}
@@ -70,7 +79,7 @@ jobs:
       run: |
         curl -X POST -H 'Content-type: application/json' --data '{
           "channel": "#your-channel",
-          "text": "<@${{ env.SLACK_USER_ID }}>\n 배포 개복치가 스트레스를 이기지 못하고 꾀꼬닥했습니다... :skull: 로그를 확인하고 다시 살려주세요!",
+          "text": ":x: *배포 실패!* :rotating_light: \n<@${{ env.SLACK_USER_ID }}>\n 배포 개복치가 스트레스를 이기지 못하고 꾀꼬닥했습니다... :skull: :warning: 로그를 확인하고 다시 살려주세요! ⚠️",
           "username": "DeployMola",
           "icon_emoji": ":skull:"
         }' ${{ env.SLACK_WEBHOOK_URL }}
