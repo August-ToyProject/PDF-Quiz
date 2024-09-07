@@ -58,6 +58,8 @@ jobs:
 
     - name: SCP to EC2
       run: |
+        pwd
+        cd BE/spring/quiz-application
         scp -o StrictHostKeyChecking=no -i /tmp/key.pem ./build/libs/quiz-application-0.0.1-SNAPSHOT.jar $EC2_USER@$EC2_HOST:/home/ubuntu/quiz-application-0.0.1-SNAPSHOT.jar
 
     - name: Deploy to EC2
