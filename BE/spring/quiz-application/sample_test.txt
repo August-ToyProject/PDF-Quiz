@@ -5,4 +5,5 @@
 5. spring boot ci/cd 5차 테스트 입니다.(ssh키 설정 추가)
 6. spring boot ci/cd 6차 테스트 입니다.(스프링 호스트 ip 수정)
 7. spring boot ci/cd 7차 테스트 입니다.(ssh 인증 코드 추가)
-8. spring boot ci/cd 8차 테스트 입니다. 
+8. spring boot ci/cd 9차 테스트 입니다.(경로 수정)
+9. spring boot ci/cd 8차 테스트 입니다. 
