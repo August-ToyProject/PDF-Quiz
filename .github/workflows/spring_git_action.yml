@@ -35,39 +35,45 @@ jobs:
 
     - name: Build with Gradle (Skip Tests)
       run: |
-        cd BE/spring/quiz-application   # 스프링 애플리케이션 디렉터리로 이동
-        ./gradlew build -x test         # 테스트를 무시하고 빌드 (JAR 파일 생성)
+        cd BE/spring/quiz-application
+        ./gradlew build -x test  # 빌드 (테스트 생략)
 
     - name: Check build output
       run: |
         pwd
         cd BE/spring/quiz-application
-        ls -al ./build/libs             # 빌드 결과 확인
+        ls -al ./build/libs  # 빌드 결과 확인
+
+    - name: Compress JAR file
+      run: |
+        cd BE/spring/quiz-application/build/libs
+        gzip -c quiz-application-0.0.1-SNAPSHOT.jar > quiz-application-0.0.1-SNAPSHOT.jar.gz
+        ls -al  # 압축된 파일 확인
 
     - name: Add SSH key to agent
       run: |
-        echo "$SSH_KEY" | tr -d '\r' > /tmp/key.pem  # SSH 키 저장 (줄바꿈 문제 해결)
-        chmod 400 /tmp/key.pem
+        echo "$SSH_KEY" | tr -d '\r' > key.pem
+        chmod 400 key.pem
         eval "$(ssh-agent -s)"
-        ssh-add /tmp/key.pem
+        ssh-add key.pem
 
     - name: Test SSH connection
       run: |
-        cd BE/spring/quiz-application
-        ssh -o StrictHostKeyChecking=no -i /tmp/key.pem $EC2_USER@$EC2_HOST "echo Connection successful"
+        ssh -o StrictHostKeyChecking=no -i key.pem $EC2_USER@$EC2_HOST "echo Connection successful"
 
-    - name: SCP to EC2
+    - name: SCP compressed JAR to EC2
       run: |
-        pwd
-        cd BE/spring/quiz-application
-        scp -o StrictHostKeyChecking=no -i /tmp/key.pem ./build/libs/quiz-application-0.0.1-SNAPSHOT.jar $EC2_USER@$EC2_HOST:/home/ubuntu/quiz-application-0.0.1-SNAPSHOT.jar
+        scp -o StrictHostKeyChecking=no -i key.pem BE/spring/quiz-application/build/libs/quiz-application-0.0.1-SNAPSHOT.jar.gz $EC2_USER@$EC2_HOST:/home/ubuntu/quiz-application-0.0.1-SNAPSHOT.jar.gz
 
     - name: Deploy to EC2
       run: |
-        ssh -o StrictHostKeyChecking=no -i /tmp/key.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+        ssh -o StrictHostKeyChecking=no -i key.pem $EC2_USER@$EC2_HOST << 'EOF'
           # 기존 스프링 서버 종료
           ps -ef | grep java | grep -v grep | awk '{print $2}' | xargs kill -9 || true
-          
+
+          # 압축 해제
+          gunzip /home/ubuntu/quiz-application-0.0.1-SNAPSHOT.jar.gz
+
           # 새로운 JAR 파일 실행
           nohup java -Duser.timezone=Asia/Seoul -jar /home/ubuntu/quiz-application-0.0.1-SNAPSHOT.jar > /dev/null 2>&1 &
           echo "Application has been successfully deployed!"
