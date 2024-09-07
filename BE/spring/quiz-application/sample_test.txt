@@ -10,4 +10,5 @@
 10. spring boot ci/cd 10차 테스트 입니다. (빌드 경로 확인)
 11. spring boot ci/cd 11차 테스트 입니다. (pwd 경로 확인)
 12. spring boot ci/cd 12차 테스트 입니다. (집에가자)
-13. spring boot ci/cd 13차 테스트 입니다. 
+13. spring boot ci/cd 13차 테스트 입니다. (환경변수 사용안함 문제 제거)
+14. spring boot ci/cd 14차 테스트 입니다. 
