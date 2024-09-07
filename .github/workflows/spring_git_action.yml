@@ -40,6 +40,8 @@ jobs:
 
     - name: Check build output
       run: |
+        pwd
+        cd BE/spring/quiz-application
         ls -al ./build/libs             # 빌드 결과 확인
 
     - name: Add SSH key to agent
@@ -51,6 +53,7 @@ jobs:
 
     - name: Test SSH connection
       run: |
+        cd BE/spring/quiz-application
         ssh -o StrictHostKeyChecking=no -i /tmp/key.pem $EC2_USER@$EC2_HOST "echo Connection successful"
 
     - name: SCP to EC2
