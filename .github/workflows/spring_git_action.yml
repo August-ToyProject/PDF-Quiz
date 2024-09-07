@@ -40,11 +40,13 @@ jobs:
 
     - name: SCP to EC2
       run: |
-        scp -o StrictHostKeyChecking=no -i ${{ secrets.SSH_KEY }} BE/spring/quiz-application/build/libs/quiz-application-0.0.1-SNAPSHOT.jar ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ubuntu/quiz-application-0.0.1-SNAPSHOT.jar
+        echo "$SSH_KEY" > key.pem
+        chmod 400 key.pem
+        scp -o StrictHostKeyChecking=no -i key.pem BE/spring/quiz-application/build/libs/quiz-application-0.0.1-SNAPSHOT.jar ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ubuntu/quiz-application-0.0.1-SNAPSHOT.jar
 
     - name: Deploy to EC2
       run: |
-        ssh -o StrictHostKeyChecking=no -i ${{ secrets.SSH_KEY }} ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+        ssh -o StrictHostKeyChecking=no -i key.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
           # 기존 스프링 서버 종료
           ps -ef | grep java | grep -v grep | awk '{print $2}' | xargs kill -9 || true
           
@@ -68,7 +70,7 @@ jobs:
       run: |
         curl -X POST -H 'Content-type: application/json' --data '{
           "channel": "#your-channel",
-          "text": ":x: *배포 실패!* :rotating_light: \n<@${{ env.SLACK_USER_ID }}> 배포 개복치가 스트레스를 이기지 못하고 꾀꼬닥했습니다... :skull: 로그를 확인하고 다시 살려주세요!",
+          "text": "<@${{ env.SLACK_USER_ID }}>\n 배포 개복치가 스트레스를 이기지 못하고 꾀꼬닥했습니다... :skull: 로그를 확인하고 다시 살려주세요!",
           "username": "DeployMola",
           "icon_emoji": ":skull:"
         }' ${{ env.SLACK_WEBHOOK_URL }}
