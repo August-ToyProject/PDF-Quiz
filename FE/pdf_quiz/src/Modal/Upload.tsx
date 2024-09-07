@@ -37,6 +37,8 @@ export default function Upload({
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const {
+    title,
+    setTitle,
     difficulty,
     setDifficulty,
     quizCount,
@@ -54,6 +56,7 @@ export default function Upload({
   useEffect(() => {
     if (!showModal) {
       // 초기값으로 되돌리기
+      setTitle("");
       setDifficulty("쉬움");
       setQuizCount(10);
       setOptionCount(5);
@@ -64,7 +67,7 @@ export default function Upload({
       setErrors(null);
       setPath("");
     }
-  }, [showModal]);
+  }, [showModal, path, title]);
 
   const navigateToQuiz = () => {
     navigate("/quiz");
@@ -171,6 +174,10 @@ export default function Upload({
       console.log(errors);
       return;
     }
+    if (!title) {
+      setTitle(selectedFile.name.slice(0, -4));
+    }
+    console.log(title);
 
     // 난이도 매핑
     let difficultyValue;
@@ -320,7 +327,18 @@ export default function Upload({
             className="cursor-pointer absolute top-3 right-2 "
             style={{ width: "16px", height: "16px", marginTop: "-8px" }}
           />
-          <div className="flex flex-col mt-14 ml-10 space-y-8">
+          <div className="flex flex-col mt-14 ml-8 space-y-5">
+            {/* 주제 */}
+            <div className="flex items-center">
+              <span className="mr-2 font-bold">시험지 제목</span>
+              <input
+                type="text"
+                value={title}
+                className="w-[12rem] p-3 border border-gray-300 rounded"
+                onChange={(e) => setTitle(e.target.value)}
+                disabled={isSelectDisabled}
+              />
+            </div>
             {/* 난이도 */}
             <div className="flex items-center">
               <span className="mr-2 font-bold">난이도</span>
