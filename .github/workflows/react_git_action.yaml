@@ -42,6 +42,9 @@ jobs:
       EC2_HOST: ${{ secrets.EC2_REACT_HOST }}
       EC2_USER: ${{ secrets.EC2_USER }}
       SSH_KEY: ${{ secrets.EC2_SSH_REACT_KEY }}
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_DEPLOY_WEB_HOOK }}
+      SLACK_USER_1: 'U07FB0CTK8V'
+      SLACK_USER_2: 'U07F5U2HV1C'  # 두 번째 사용자 ID 추가
       
     steps:
     - name: Check out code
@@ -70,3 +73,25 @@ jobs:
           sh run.sh
           echo "Finished running run.sh"
         ENDSSH
+        
+    - name: Notify Slack on Success 🎉
+      if: success()
+      run: |
+        curl -X POST -H 'Content-type: application/json' --data '{
+          "channel": "#your-channel",
+          "text": ":white_check_mark: *배포 성공!* :tada: :rocket: \n<@${{ env.SLACK_USER_1 }}> <@${{ env.SLACK_USER_2 }}> 배포 개복치가 오늘도 무사히 배포를 완료했습니다! 🎉 오늘의 배포는 성공적입니다! 🐟 :rocket:",
+          "username": "DeployMola",
+          "icon_emoji": ":fish:"
+        }' ${{ env.SLACK_WEBHOOK_URL }}
+  
+    - name: Notify Slack on Failure 💀
+      if: failure()
+      run: |
+        curl -X POST -H 'Content-type: application/json' --data '{
+          "channel": "#your-channel",
+          "text": ":x: *배포 실패!* :rotating_light: \n<@${{ env.SLACK_USER_1 }}> <@${{ env.SLACK_USER_2 }}>\n 배포 개복치가 스트레스를 이기지 못하고 꾀꼬닥했습니다... :skull: :warning: 로그를 확인하고 다시 살려주세요! ⚠️",
+          "username": "DeployMola",
+          "icon_emoji": ":skull:"
+        }' ${{ env.SLACK_WEBHOOK_URL }}
+
+  
