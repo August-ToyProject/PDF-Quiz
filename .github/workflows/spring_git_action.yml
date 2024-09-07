@@ -38,29 +38,28 @@ jobs:
         cd BE/spring/quiz-application   # 스프링 애플리케이션 디렉터리로 이동
         ./gradlew build -x test         # 테스트를 무시하고 빌드 (JAR 파일 생성)
 
+    - name: Check build output
+      run: |
+        ls -al ./build/libs             # 빌드 결과 확인
+
     - name: Add SSH key to agent
       run: |
-        echo "$SSH_KEY" | tr -d '\r' > key.pem  # SSH 키 저장 (줄바꿈 문제 해결)
-        chmod 400 key.pem
-        eval "$(ssh-agent -s)"
-        ssh-add key.pem
-
-    - name: Test SSH connection
-      run: |
-        ssh -o StrictHostKeyChecking=no -i key.pem $EC2_USER@$EC2_HOST "echo Connection successful"
-
-    - name: SCP to EC2
-      run: |
-        echo "$SSH_KEY" > /tmp/key.pem
+        echo "$SSH_KEY" | tr -d '\r' > /tmp/key.pem  # SSH 키 저장 (줄바꿈 문제 해결)
         chmod 400 /tmp/key.pem
         eval "$(ssh-agent -s)"
         ssh-add /tmp/key.pem
-        scp -o StrictHostKeyChecking=no -i /tmp/key.pem ./build/libs/quiz-application-0.0.1-SNAPSHOT.jar $EC2_USER@$EC2_HOST:/home/ubuntu/quiz-application-0.0.1-SNAPSHOT.jar
 
+    - name: Test SSH connection
+      run: |
+        ssh -o StrictHostKeyChecking=no -i /tmp/key.pem $EC2_USER@$EC2_HOST "echo Connection successful"
+
+    - name: SCP to EC2
+      run: |
+        scp -o StrictHostKeyChecking=no -i /tmp/key.pem ./build/libs/quiz-application-0.0.1-SNAPSHOT.jar $EC2_USER@$EC2_HOST:/home/ubuntu/quiz-application-0.0.1-SNAPSHOT.jar
 
     - name: Deploy to EC2
       run: |
-        ssh -o StrictHostKeyChecking=no -i key.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+        ssh -o StrictHostKeyChecking=no -i /tmp/key.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
           # 기존 스프링 서버 종료
           ps -ef | grep java | grep -v grep | awk '{print $2}' | xargs kill -9 || true
           
