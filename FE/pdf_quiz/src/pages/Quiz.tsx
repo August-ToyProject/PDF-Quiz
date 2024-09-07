@@ -14,14 +14,15 @@ const Quiz = () => {
   const [totalPages, setTotalPages] = useState(1); // 전체 페이지 수 상태 추가
   const itemsPerPage = 5;
 
-  const { quizCount, optionCount, timeLimitHour, timeLimitMinute } = useQuizContext();
+  const { quizCount, optionCount, timeLimitHour, timeLimitMinute } =
+    useQuizContext();
   const { userAnswers, handleOptionClick, uncompletedCount } = UserAnswers();
 
   const openModal = () => setShowModal(true);
   const closeModal = () => setShowModal(false);
 
-  const [startTime, setStartTime] = useState<number | null>(null); 
-  const { setElapsedTime } = useQuizContext();
+  const [startTime, setStartTime] = useState<number | null>(null);
+  const { title, setElapsedTime } = useQuizContext();
 
   useEffect(() => {
     // 퀴즈 시작 시 startTime 기록
@@ -87,7 +88,7 @@ const Quiz = () => {
       <div className="h-16 flex flex-row justify-center font-body ">
         {/* 사용자가 입력한 제목 or pdf 파일 제목 그대로 받아와서 띄워주기 */}
         <div className="w-4/5 flex flex-start items-center bg-gray-100 pl-10">
-          Quiz Title
+          {title}
         </div>
         {/* 사용자가 입력한 시간  */}
         <div className="w-1/5 max-lg:w-[25%] min-w-0 flex flex-row gap-4 justify-center items-center text-center">
