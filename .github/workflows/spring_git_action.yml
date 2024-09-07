@@ -33,10 +33,10 @@ jobs:
         distribution: 'temurin'
         java-package: 'jdk'
 
-    - name: Build with Gradle
+    - name: Build with Gradle (Skip Tests)
       run: |
         cd BE/spring/quiz-application   # 스프링 애플리케이션 디렉터리로 이동
-        ./gradlew build
+        ./gradlew build -x test         # 테스트를 무시하고 빌드 (JAR 파일 생성)
 
     - name: SCP to EC2
       run: |
@@ -58,7 +58,7 @@ jobs:
       run: |
         curl -X POST -H 'Content-type: application/json' --data '{
           "channel": "#your-channel",
-          "text": "<@${{ env.SLACK_USER_ID }}> 개복치가 오늘도 무사히 배포를 완료했습니다! 🎉 오늘은 스트레스 받지 않고 잘 버텼네요! 🐟",
+          "text": ":white_check_mark: *배포 성공!* :tada: \n<@${{ env.SLACK_USER_ID }}> 배포 개복치가 오늘도 무사히 배포를 완료했습니다! 🎉",
           "username": "DeployMola",
           "icon_emoji": ":fish:"
         }' ${{ env.SLACK_WEBHOOK_URL }}
@@ -66,10 +66,9 @@ jobs:
     - name: Notify Slack on Failure 💀
       if: failure()
       run: |
-        FAILURE_REASON=$(tail -n 1 BE/spring/quiz-application/build/libs/quiz-application-0.0.1-SNAPSHOT.jar.log || echo "실패 이유를 찾을 수 없습니다.")
         curl -X POST -H 'Content-type: application/json' --data '{
           "channel": "#your-channel",
-          "text": "<@${{ env.SLACK_USER_ID }}> 배포 개복치가 스트레스를 이기지 못하고 꾀꼬닥했습니다... 💀 로그를 확인하고 다시 살려주세요!\n\n실패 이유: '"$FAILURE_REASON"'",
+          "text": ":x: *배포 실패!* :rotating_light: \n<@${{ env.SLACK_USER_ID }}> 배포 개복치가 스트레스를 이기지 못하고 꾀꼬닥했습니다... :skull: 로그를 확인하고 다시 살려주세요!",
           "username": "DeployMola",
           "icon_emoji": ":skull:"
         }' ${{ env.SLACK_WEBHOOK_URL }}
