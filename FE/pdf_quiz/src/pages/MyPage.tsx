@@ -202,7 +202,7 @@ export default function MyPage() {
             마이프로필
           </div>
           <div className="mt-2 p-4 border border-gray-300 rounded-lg h-24">
-            <div className="font-body text-center">
+            <div className="font-body font-bold text-center">
               {user?.nickname || "닉네임"}
             </div>
             <div className="flex justify-center space-x-4 mt-4">

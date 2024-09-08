@@ -11,7 +11,7 @@ interface PageProps {
 }
 
 interface QuizDataProps {
-  quizId: string; 
+  quizId: string;
   difficulty: string;
   question: string;
   options: { [key: string]: string };
@@ -20,7 +20,12 @@ interface QuizDataProps {
   slice: (startIndex: number, endIndex: number) => QuizDataProps;
 }
 
-const QuizData = ({ page, itemsPerPage, setPage, setTotalPages, }: PageProps) => {
+const QuizData = ({
+  page,
+  itemsPerPage,
+  setPage,
+  setTotalPages,
+}: PageProps) => {
   // props로 상태 및 함수 받음
   const [fetchedData, setFetchedData] = useState<QuizDataProps[]>([]); // 데이터를 저장할 상태
   const { setQuizData } = useQuizContext();
@@ -85,7 +90,7 @@ const QuizData = ({ page, itemsPerPage, setPage, setTotalPages, }: PageProps) =>
   const rightItems = currentItems.slice(3); // 두 번째 컬럼에 표시할 나머지 문제들
 
   return (
-    <div className="grid grid-cols-2 gap-4 divide-x divide-gray-400">
+    <div className="font-bold grid grid-cols-2 gap-4 divide-x divide-gray-400">
       {/* 왼쪽 컬럼 */}
       <ul className="flex-1 flex-col space-y-4 pl-4">
         {leftItems.map((item, index) => (
