@@ -160,7 +160,7 @@ async def create_prompt_template():
         return PromptTemplate(
             template="""
             당신은 가장 뛰어난 퀴즈 생성에 대해 전문 지식을 가지고 있는 퀴즈 생성자입니다. 아래 조건을 보고 퀴즈를 만들어주세요.
-            1. 다음 주제에 맞게 context, 요약을 보고 키워드에 해당하는 중요한 개념을 바탕으로 객관식 문제 5개를 만드세요. 
+            1. 다음 주제에 맞게 context를 보고 키워드에 해당하는 중요한 개념을 바탕으로 객관식 문제 5개를 만드세요. 
             2. 난이도가 올라갈수록 키워드를 여러개 조합해서 문제를 만들어주세요 쉬움 : 1개 , 중간 2~3개, 어려움 4~5개.
             3. 절대로 동일문제와 비슷하거나 똑같은 문제는 생성하지 마세요.
             4. {used_keywords}로는 문제를 생성하지 마세요.
@@ -174,9 +174,6 @@ async def create_prompt_template():
             
             #context
             context : {context}
-            
-            #요약
-            요약 : {summary}
         
             #키워드
             키워드 : {keywords}
@@ -280,7 +277,6 @@ async def make_quiz(
                     keywords=RunnablePassthrough(),
                     used_keywords=RunnablePassthrough(),
                     used_quiz=RunnablePassthrough(),
-                    summary=RunnablePassthrough(),
                     subject=RunnablePassthrough(),
                     num_questions=RunnablePassthrough(),
                     choice_count=RunnablePassthrough(),
@@ -300,7 +296,6 @@ async def make_quiz(
                 "keywords": ', '.join(keywords[i]),
                 "used_keywords": used_keywords,
                 "used_quiz":used_quiz,
-                "summary": summary,
                 "subject": subject,
                 "num_questions":num_questions,
                 "question": question,
