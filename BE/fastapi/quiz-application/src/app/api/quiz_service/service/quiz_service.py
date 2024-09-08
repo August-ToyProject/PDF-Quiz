@@ -3,7 +3,7 @@ from fastapi import HTTPException
 
 import asyncio
 from langchain.prompts import PromptTemplate
-from src.app.api.quiz_service.helpers.quiz_service import create_prompt_template, get_keyword_from_summary, load_vector, make_quiz, summarize_document
+from src.app.api.quiz_service.helpers.quiz_service import create_prompt_template, get_keyword_from_summary, get_subject_from_summary_docs, load_vector, make_quiz, summarize_document
 from src.app.api.quiz_service.shema.quiz_request import QuizRequest
 
 
@@ -20,10 +20,18 @@ async def generate_quiz(request:QuizRequest):
             temperature = 0.1
             )
         
+        #-- 주제 선정
+        subject = await get_subject_from_summary_docs(
+            llm,
+            retriever
+        )
+        
         #-- 중요 키워드 추출
         keywords = await get_keyword_from_summary(
             llm,
             summary,
+            retriever=retriever,
+            subject=subject,
             num_questions=request.num_questions,
             num_keywords=2
         )
@@ -33,6 +41,7 @@ async def generate_quiz(request:QuizRequest):
             # retriever=retriever,
             retriever=retriever,
             summary=summary,
+            subject=subject,
             keywords=keywords,
             num_questions=request.num_questions,
             choice_count=request.choice_count,

@@ -3,7 +3,9 @@ from langchain_anthropic import ChatAnthropic
 from langchain_community.vectorstores import FAISS
 from langchain_openai import OpenAIEmbeddings
 from langchain.prompts import PromptTemplate
-from langchain.chains import LLMChain
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.runnables import RunnablePassthrough
+from langchain_core.runnables import RunnableParallel
 from langchain_openai import ChatOpenAI
 import asyncio
 import random
@@ -28,6 +30,36 @@ async def load_vector(index_path: str):
     )
     return vector_store
 
+async def get_subject_from_summary_docs(
+    llm,
+    retriever
+):
+    try:
+        subject_prompt = PromptTemplate(
+            template="""
+            주어진 요약과 context를 보고 해당 내용의 가장 주된 **도메인**이나 **주제**를 한 단어 또는 짧은 구문으로 추출해주세요.
+            1. 문서의 내용이 어느 분야에 속하는지, 주요 주제가 무엇인지를 포괄하는 단어를 선택하세요.
+            2. 너무 구체적인 세부사항 대신, 전체적인 주제나 도메인을 파악하세요.
+            3. 예시: '데이터베이스', '소프트웨어 개발', '마케팅 전략' 등.
+            4. 주제를 하나의 단어 또는 짧은 구문으로 요약해 제시해주세요.
+            
+            #context를:
+            {context}
+            """
+            )
+        subject_chain = (
+        {"context": retriever, "question": RunnablePassthrough()}
+        | subject_prompt
+        | llm
+        | StrOutputParser()
+        )
+        question = "해당 문서의 주제는?"
+        subject = subject_chain.invoke(question)
+        
+        return subject
+    except Exception as e:
+        raise e
+
 async def summarize_document(
     docs, 
     model_name="gpt-4o-mini",
@@ -50,15 +82,16 @@ async def summarize_document(
 async def get_keyword_from_summary(
     llm,
     summary,
+    subject,
+    retriever,
     num_questions=5,
     num_keywords =2
 ):
     try:
         total_keyword = num_questions * num_keywords
         keyword_prompt = PromptTemplate(
-            input_variables=["summary", "n"],
             template="""
-        주어진 요약에서 가장 중요하고 관련성 높은 {n}개의 키워드를 추출해주세요. 다음 지침을 따라주세요:
+        주어진 요약과 context, 주제를 보고 가장 중요하고 관련성 높은 {n}개의 키워드를 추출해주세요. 다음 지침을 따라주세요:
 
         1. 키워드는 문서의 주제, 핵심 개념, 중요한 용어를 대표해야 합니다.
         2. 단일 단어와 짧은 구문 모두 포함할 수 있습니다.
@@ -67,21 +100,44 @@ async def get_keyword_from_summary(
         5. 키워드를 중요도 순으로 정렬하여 제시해주세요.
         6. 각 키워드는 쉼표로 구분하고, 마지막에 마침표를 찍지 마세요.
 
-        요약:
+        #요약:
         {summary}
+        
+        #contenxt:
+        {context}
+        
+        #주제:
+        {subject}
 
         키워드 (중요도 순):"""
         )
         
-        input_data = {
-            "summary":summary,
-            "n":total_keyword
-            }
+        # RunnableParallel을 이용해 여러 값을 병렬로 처리
         keyword_chain = (
-            keyword_prompt | llm
+            RunnableParallel(
+                context=RunnablePassthrough(),
+                summary=RunnablePassthrough(),
+                subject=RunnablePassthrough(),
+                n=RunnablePassthrough(),
+                question=RunnablePassthrough()
+            )
+            | keyword_prompt
+            | llm
+            | StrOutputParser()
         )
-        
-        keywords = keyword_chain.invoke(input_data).content
+
+        # 전달할 input 데이터 정의
+        question = f"{subject}와 가장 관련도가 높은 {total_keyword}개의 키워드를 알려줘"
+        input_data = {
+            "context":retriever,
+            "summary": summary,
+            "subject": subject,
+            "n": total_keyword,
+            "question": question
+        }
+
+        # keyword_chain 실행
+        keywords = keyword_chain.invoke(input_data)
         keyword_list = [kw.strip() for kw in keywords.split(',')]
         
         num_groups = num_questions//5
@@ -92,7 +148,6 @@ async def get_keyword_from_summary(
             end = start + (5*num_keywords)
             ret .append(keyword_list[start:end])
             start =  end
-        
         return ret
     except Exception as e:
         raise e
@@ -101,20 +156,30 @@ async def get_keyword_from_summary(
 async def create_prompt_template():
     try:
         return PromptTemplate(
-            input_variables=["document", "keywords", "num_questions", "choice_count", "difficulty"],
             template="""
             당신은 가장 뛰어난 퀴즈 생성에 대해 전문 지식을 가지고 있는 퀴즈 생성자입니다. 아래 조건을 보고 퀴즈를 만들어주세요.
-            다음 문서에서 키워드에 해당하는 중요한 개념을 바탕으로 객관식 문제 5개를 만드세요 
+            다음 주제에 맞게 context, 요약을 보고 키워드에 해당하는 중요한 개념을 바탕으로 객관식 문제 5개를 만드세요. 
+            난이도가 올라갈수록 키워드를 여러개 조합해서 문제를 만들어주세요 쉬움 : 1개 , 중간 2~3개, 어려움 4~5개.
+            {used_quiz}와 동일하거나 비슷한 문제는 생성하지 마세요.
+            {used_keywords}로는 문제를 생성하지 마세요.
+            
+            
+            
             문제 보기는 1~{choice_count}까지 다양하게 해주세요:
             
-            문서: {document}
-
-            키워드: {keywords}
+            주제 : {subject}
+            
+            context : {context}
+            
+            요약 : {summary}
+        
+            키워드 : {keywords}
             
             1. {choice_count}개의 선택지(1부터 {choice_count}까지 번호 매김)와 하나의 정답을 포함해야 합니다.
             2. 난이도는 {difficulty}입니다.
-            3. 정답에 대한 간단한 설명을 제공하되, 반드시 주어진 요약이나 키워드에서 정보를 인용하세요.
-            4. 다음 형식을 사용하세요:
+            3. 정답에 대한 간단한 설명을 제공하되, 반드시 주어진 context, 요약이나 키워드에서 정보를 인용하세요.
+            4. 문단을 나누기 위해 ###과 같은 특수문자는 사용하지마세요
+            5. 다음 형식을 사용하세요:
 
             난이도: [쉬움/보통/어려움]
             문제: [문제 내용]
@@ -180,11 +245,12 @@ import random
 
 async def make_quiz(
     retriever,
-    summary,
     keywords,
+    subject,
     user_idx,
     email,
     index_path,
+    summary,
     num_questions=5,
     choice_count=4,
     user_difficulty_choice=None
@@ -192,24 +258,52 @@ async def make_quiz(
     try:
         difficulties, weights = await get_weighted_difficulties(user_difficulty_choice)
         num_questions = num_questions // 5
+        quiz_prompt = await create_prompt_template() 
+        openai_llm = ChatOpenAI(model_name="gpt-4o-mini", temperature=0.2)
+        quiz_chain = (
+            RunnableParallel(
+                context=RunnablePassthrough(),
+                keywords=RunnablePassthrough(),
+                used_keywords=RunnablePassthrough(),
+                used_quiz=RunnablePassthrough(),
+                summary=RunnablePassthrough(),
+                subject=RunnablePassthrough(),
+                num_questions=RunnablePassthrough(),
+                choice_count=RunnablePassthrough(),
+                difficulty=RunnablePassthrough(),
+                question=RunnablePassthrough()
+            )
+            | quiz_prompt
+            | openai_llm
+            | StrOutputParser()
+            )
+        result = ""
+        used_quiz = ""
+        # used_keywords는 반복문 밖에서 초기화하지 않고, 매번 새로운 값으로 설정
         for i in range(num_questions):
             # 가중치를 적용하여 난이도 선택
-            difficulty = random.choices(difficulties, weights=weights, k=1)[0]
-            
-            openai_llm = ChatOpenAI(model_name="gpt-4o-mini", temperature=0)    
-            quiz_prompt = await create_prompt_template() 
-            
+            difficulty = random.choices(difficulties, weights=weights, k=1)[0]                
+            question = f"{subject}와 관련된 문제를 {', '.join(keywords[i])}에 맞게 생성해줘"
+            # 각 퀴즈 생성 시마다 사용된 키워드가 포함된 새 used_keywords 값
+            used_keywords = ', '.join(keywords[i])
+            used_quiz = used_quiz + result
+
             input_data = {
-                "document": retriever,
-                "keywords": ', '.join(keywords[i]),
-                "choice_count": choice_count,
-                "difficulty": difficulty
+                "context":retriever,
+                "keywords": used_keywords,
+                "used_keywords": used_keywords,
+                "used_quiz":used_quiz,
+                "summary": summary,
+                "subject": subject,
+                "num_questions":num_questions,
+                "question": question,
+                "choice_count":choice_count,
+                "difficulty":difficulty,
+                "question":question
             }
-            
-            quiz_chain = (
-                quiz_prompt | openai_llm
-                )
-            result= quiz_chain.invoke(input_data).content
+
+            # keyword_chain 실행
+            result = quiz_chain.invoke(input_data)
 
             # Kafka로 퀴즈 및 추가 정보를 전송 (JSON 직렬화 후 UTF-8 인코딩, ensure_ascii=False 추가)
             quiz_data = {
