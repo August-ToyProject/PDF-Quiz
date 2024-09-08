@@ -79,7 +79,7 @@ const Quiz = () => {
   };
 
   return (
-    <div className="h-screen w-full bg-white  flex flex-col overflow-x-hidden min-w-[860px]">
+    <div className="h-screen w-full bg-white flex flex-col overflow-x-hidden min-w-[860px]">
       {isScreenSmall && (
         <div className="bg-red-500 text-white text-center p-2">
           이 크기보다 더 줄이시면 최적화된 화면을 보기 어렵습니다.
@@ -87,17 +87,17 @@ const Quiz = () => {
       )}
       <div className="h-16 flex flex-row justify-center font-body ">
         {/* 사용자가 입력한 제목 or pdf 파일 제목 그대로 받아와서 띄워주기 */}
-        <div className="w-4/5 flex flex-start items-center bg-gray-100 pl-10">
+        <div className="w-4/5 flex flex-start items-center bg-gray-100 pl-7 border-r border-b border-gray-400">
           {title}
         </div>
         {/* 사용자가 입력한 시간  */}
-        <div className="w-1/5 max-lg:w-[25%] min-w-0 flex flex-row gap-4 justify-center items-center text-center">
+        <div className="w-1/5 max-lg:w-[25%] min-w-0 flex flex-row gap-4 justify-center items-center text-center border-b border-gray-400">
           <img
             src={timerImage}
             alt="clock"
             className="w-8 h-8 max-lg:w-6 max-lg:h-6"
           />
-          <div className="flex flex-col justify-center items-center">
+          <div className="flex flex-col justify-center items-center ">
             <div className="flex flex-row gap-2 max-lg:text-sm ">
               <div>제한 시간 </div>
               <div>
@@ -117,30 +117,38 @@ const Quiz = () => {
 
       <div className="h-14 flex flex-row justify-center font-body">
         {/* 후에 옵션이 추가될 것을 고려하여 남겨둠 / 전체 문제 및 안푼 문제 띄우기 */}
-        <div className="w-4/5 flex justify-center items-center">
-          <div className="w-2/3 left_container"> </div>
-          <div className="w-1/3 flex flex-col gap-1">
-            <div className="flex flex-end flex-row">
-              <div>전체 문제: {quizCount}개 </div>
-            </div>
-            <div className="flex flex-end flex-row">
-              <div>안 푼 문제 </div>
+        <div className="w-4/5 flex justify-center items-center border-r border-b border-gray-400">
+          <div className="w-2/3 ml-5 left_container">
+            <div className=" flex max-lg:text-m whitespace-nowrap">
+              * 한 페이지에 문제는 5개씩 표시됩니다.
             </div>
           </div>
+
+          <div className="w-1/3 flex flex-col gap-1">
+            <div className="flex justify-end flex-row">
+              <div className=" flex max-lg:text-m whitespace-nowrap">
+                전체 문제: {quizCount}개
+              </div>
+            </div>
+            <div className="flex flex-end flex-row">
+              {/* <div>안 푼 문제 </div> */}
+            </div>
+          </div>
+          <div className="h-[3px] bg-gray-300 mx-4"></div>
         </div>
-        <div className="w-1/5 max-lg:w-[25%] min-w-0 flex justify-center items-center text-lg bg-blue-200 max-lg:text-m">
+        <div className="w-1/5 max-lg:w-[25%] min-w-0 flex justify-center items-center text-lg bg-blue-200 max-lg:text-m border-b border-gray-400">
           답안 OMR
         </div>
       </div>
 
       <div className="h-4/5 flex flex-row pt-2">
-        <div className="w-4/5 flex-shrink flex-grow flex font-body overflow-auto">
+        <div className="w-4/5 flex-shrink flex-grow flex font-body overflow-auto border-r border-gray-400">
           <QuizData
             page={page}
             itemsPerPage={itemsPerPage}
             setPage={setPage}
             setTotalPages={setTotalPages}
-          />{" "}
+          />
           {/* 페이지 관련 props 전달 */}
         </div>
         {/* OMR 부분이 항상 보이도록 유지 */}
@@ -154,7 +162,7 @@ const Quiz = () => {
         </div>
       </div>
       <div className="font-body flex-grow flex flex-row justify-center">
-        <div className="w-4/5 flex-grow flex justify-center gap-5 items-center bg-gray-100">
+        <div className="w-4/5 flex-grow flex justify-center gap-5 items-center bg-gray-100 border-t border-gray-400">
           <button
             className="rounded-3xl bg-white border-black"
             onClick={handlePrevPage}
