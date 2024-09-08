@@ -41,6 +41,7 @@ async def generate_quiz(request:QuizRequest):
             # retriever=retriever,
             retriever=retriever,
             summary=summary,
+            subject=subject,
             keywords=keywords,
             num_questions=request.num_questions,
             choice_count=request.choice_count,
