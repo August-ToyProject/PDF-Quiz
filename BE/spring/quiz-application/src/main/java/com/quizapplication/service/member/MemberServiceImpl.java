@@ -10,6 +10,7 @@ import com.quizapplication.domain.Role;
 import com.quizapplication.domain.exam.Exam;
 import com.quizapplication.domain.folder.Folder;
 import com.quizapplication.domain.pdf.Pdf;
+import com.quizapplication.domain.quiz.Quiz;
 import com.quizapplication.dto.request.EditUserInfoDto;
 import com.quizapplication.dto.request.ResetPwdRequest;
 import com.quizapplication.dto.request.SignupDto;
@@ -23,6 +24,7 @@ import com.quizapplication.repository.MemberRepository;
 import com.quizapplication.repository.exam.ExamRepository;
 import com.quizapplication.repository.folder.FolderRepository;
 import com.quizapplication.repository.pdf.PdfRepository;
+import com.quizapplication.repository.quiz.QuizRepository;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.Duration;
@@ -43,6 +45,7 @@ public class MemberServiceImpl implements MemberService {
     private final FolderRepository folderRepository;
     private final PdfRepository pdfRepository;
     private final ExamRepository examRepository;
+    private final QuizRepository quizRepository;
     private final PasswordEncoder passwordEncoder;
 
     @PostConstruct
@@ -237,10 +240,18 @@ public class MemberServiceImpl implements MemberService {
                 .role(ROLE_USER)
                 .password(passwordEncoder.encode("12345678"))
                 .build();
+        Quiz quiz1 = Quiz.builder()
+                .answer("{\"3\": \"교차 관심사(cross-cutting concerns)를 모듈화하는 것\"}")
+                .description("AOP의 주요 목적은 교차 관심사(cross-cutting concerns)를 모듈화하여 코드의 가독성과 유지보수성을 높이는 것입니다.")
+                .difficulty("어려움")
+                .options(
+                        "{\"1\": \"코드의 재사용성을 높이는 것\", \"2\": \"애플리케이션의 성능을 향상시키는 것\", \"3\": \"교차 관심사(cross-cutting concerns)를 모듈화하는 것\", \"4\": \"데이터베이스와의 연결을 단순화하는 것\", \"5\": \"사용자 인터페이스(UI)를 개선하는 것\"}")
+                .member(member1)
+                .build();
         memberRepository.saveAll(List.of(member1, member2, member3, member4));
         pdfRepository.saveAll(List.of(pdf1, pdf2, pdf3, pdf4, pdf5, pdf6, pdf7, pdf8, pdf9, pdf10, pdf11, pdf12, pdf13));
         examRepository.saveAll(List.of(exam1, exam2, exam3, exam4, exam5, exam6, exam7, exam8, exam9, exam10, exam11, exam12, exam13));
-
+        quizRepository.save(quiz1);
     }
     @Override
     @Transactional

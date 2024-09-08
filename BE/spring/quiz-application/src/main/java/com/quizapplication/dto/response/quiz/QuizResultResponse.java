@@ -1,12 +1,13 @@
 package com.quizapplication.dto.response.quiz;
 
+import com.quizapplication.domain.Answer;
 import com.quizapplication.domain.quiz.Quiz;
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 @Builder
-public class QuizResponse {
+public class QuizResultResponse {
 
     private Long quizId;
 
@@ -20,14 +21,17 @@ public class QuizResponse {
 
     private String description;
 
-    public static QuizResponse of(Quiz quiz) {
-        return QuizResponse.builder()
+    private String userAnswer;
+
+    public static QuizResultResponse of(Quiz quiz, Answer answer) {
+        return QuizResultResponse.builder()
                 .quizId(quiz.getId())
                 .difficulty(quiz.getDifficulty())
                 .question(quiz.getQuestion())
                 .options(quiz.getOptions())
                 .answer(quiz.getAnswer())
                 .description(quiz.getDescription())
+                .userAnswer(answer.getPickedOptions())
                 .build();
     }
 }
