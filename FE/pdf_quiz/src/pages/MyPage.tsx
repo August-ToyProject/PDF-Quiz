@@ -6,6 +6,7 @@ import FolderModal from "../Modal/folderModal";
 import { fetchUserNickname, logoutUser } from "../api/ApiUser";
 import { deleteQuiz, fetchQuizzes } from "../api/ApiQuiz";
 import BlueLogo from "../assets/Logo_blue.svg";
+import Banner from "../assets/Banner2.png";
 
 export interface ListQuiz {
   id: number;
@@ -226,6 +227,10 @@ export default function MyPage() {
           >
             PDF Upload
           </button>
+          <a href="https://forms.gle/jmuCNSTjQL52fek4A">
+            <img src={Banner} alt="Banner" className="mt-4" />
+          </a>
+
           {/* <div className="font-body mt-4 p-4 flex justify-center text-lg border border-gray-300 rounded-lg h-full bg-white tracking-wider">
             오답노트
           </div> */}
