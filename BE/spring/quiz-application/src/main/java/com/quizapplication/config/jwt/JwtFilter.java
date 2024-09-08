@@ -25,11 +25,18 @@ public class JwtFilter extends OncePerRequestFilter {
             "/v3/api-docs",
             "/swagger-resources",
             "/webjars",
-            "/api/v1/find-user", "/api/v1/find-pwd");
+            "/favicon.ico",
+            "/api/v1/find-user", "/api/v1/find-pwd",
+            "/actuator/health");
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+
+        if (shouldNotFilter(request)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         if (request.getHeader("Authorization") == null) {
             log.info("Token is missing or empty");
@@ -39,10 +46,6 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
 
-        if (shouldNotFilter(request)) {
-            filterChain.doFilter(request, response);
-            return;
-        }
 
         String accessToken = tokenProvider.resolveAccessToken(request);
 
