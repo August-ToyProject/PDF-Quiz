@@ -8,6 +8,7 @@ import com.quizapplication.service.exam.ExamService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -52,5 +53,11 @@ public class ExamController {
     @PostMapping("/exams")
     public ResponseEntity<ExamResultResponse> saveExam(@RequestBody ExamResultRequest request) {
         return ResponseEntity.ok().body(examService.saveExam(request));
+    }
+
+    @Operation(summary = "시험지 상세 목록 조회", description = "시험지 결과를 조회")
+    @GetMapping("/exams")
+    public ResponseEntity<ExamResultResponse> getExam(@RequestParam("examId") Long examId) {
+        return ResponseEntity.ok().body(examService.getExam(examId));
     }
 }

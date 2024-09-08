@@ -109,5 +109,20 @@ Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJreXVuOTE1MUBnbWFpbC5jb20iL
   "title": "시험지1",
   "setTime": 60,
   "spentTime": 100,
-  "exam" : []
+  "exam" : [
+    {
+      "option": "김명균",
+      "description": "AOP의 주요 목적은 교차 관심사(cross-cutting concerns)를 모듈화하여 코드의 가독성과 유지보수성을 높이는 것입니다.",
+      "difficulty": "상",
+      "question": "문제1",
+      "answer": "답1",
+      "userAnswer": "답1"
+    },
+    {
+      "difficulty": "상",
+      "question": "문제2",
+      "answer": "답2",
+      "userAnswer": "답2"
+    }
+  ]
 }

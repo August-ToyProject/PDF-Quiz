@@ -11,4 +11,5 @@ public interface ExamService {
     void deleteExam(Long examId);
     FolderResponse updateExam(Long examId, Long folderId);
     ExamResultResponse saveExam(ExamResultRequest request);
+    ExamResultResponse getExam(Long examId);
 }

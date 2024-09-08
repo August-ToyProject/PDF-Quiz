@@ -4,6 +4,8 @@ import com.quizapplication.domain.Member;
 import com.quizapplication.domain.common.BaseTimeEntity;
 import com.quizapplication.domain.folder.Folder;
 import com.quizapplication.domain.pdf.Pdf;
+import com.quizapplication.domain.quiz.Quiz;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
@@ -13,8 +15,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,6 +34,7 @@ public class Exam extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "exam_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -43,6 +49,9 @@ public class Exam extends BaseTimeEntity {
     @JoinColumn(name = "pdf_id")
     private Pdf pdf;
 
+    @OneToMany(mappedBy = "exam", cascade = CascadeType.ALL)
+    private List<Quiz> quizzes = new ArrayList<>();
+
     private String title;
 
     @Convert(converter = DurationConverter.class)
@@ -53,5 +62,10 @@ public class Exam extends BaseTimeEntity {
 
     public void updateFolder(Folder folder) {
         this.folder = folder;
+    }
+
+    public void addQuiz(Quiz quiz) {
+        quizzes.add(quiz);
+        quiz.updateExam(this);
     }
 }

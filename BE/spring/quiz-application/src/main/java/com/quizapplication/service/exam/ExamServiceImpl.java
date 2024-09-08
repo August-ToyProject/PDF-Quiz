@@ -12,11 +12,13 @@ import com.quizapplication.dto.response.FolderResponse;
 import com.quizapplication.dto.response.exam.ExamResponse;
 import com.quizapplication.dto.response.exam.ExamResultResponse;
 import com.quizapplication.dto.response.quiz.QuizResult;
+import com.quizapplication.dto.response.quiz.QuizResultResponse;
 import com.quizapplication.repository.MemberRepository;
 import com.quizapplication.repository.answer.AnswerRepository;
 import com.quizapplication.repository.exam.ExamRepository;
 import com.quizapplication.repository.folder.FolderRepository;
 import com.quizapplication.repository.quiz.QuizRepository;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +49,8 @@ public class ExamServiceImpl implements ExamService {
             .collect(Collectors.toList());
     }
 
+
+
     @Override
     @Transactional
     public void deleteExam(Long examId) {
@@ -71,30 +75,46 @@ public class ExamServiceImpl implements ExamService {
     @Transactional
     public ExamResultResponse saveExam(ExamResultRequest request) {
         Exam exam = request.toEntity(memberRepository.findByEmail(SecurityUtil.getCurrentMemberEmail()));
-        examRepository.save(exam);
         List<QuizResult> result = request.getExam();
+        List<QuizResultResponse> quizResults = new ArrayList<>();
 
         for (QuizResult quizResult : result) {
             Quiz quiz = quizRepository.findById(quizResult.getQuizId()).get();
+            quiz.updateExam(exam);
             Map<String, String> map = convertOptions(quiz.getOptions());
-            log.info("map={}", map);
+            map.put("0", "풀지 않은 문제입니다");
 
             String pickedNum = quizResult.getAnswer();
             String pickedDescription = map.get(pickedNum);
-            log.info("pickedNum={}", pickedNum);
-            log.info("pickedDescription={}", pickedDescription);
 
             String pickedOption = answerToJson(Map.of(pickedNum, pickedDescription));
+
             Answer answer = Answer.builder()
                     .quiz(quiz)
                     .pickedOptions(pickedOption)
                     .correct(quizResult.isCorrect())
                     .build();
-            answerRepository.save(answer);
+            Answer savedAnswer = answerRepository.save(answer);
+            quiz.updateUserAnswer(savedAnswer);
+            quizResults.add(QuizResultResponse.of(quiz, savedAnswer));
+        }
+        examRepository.save(exam);
+
+        return ExamResultResponse.of(exam, quizResults);
+    }
+
+    @Override
+    public ExamResultResponse getExam(Long examId) {
+        Exam exam = examRepository.findByIdAndMemberId(examId,
+                memberRepository.findByEmail(SecurityUtil.getCurrentMemberEmail()).getId());
+        List<QuizResultResponse> quizResults = new ArrayList<>();
+        List<Quiz> quizzes = exam.getQuizzes();
+
+        for (Quiz quiz : quizzes) {
+            quizResults.add(QuizResultResponse.of(quiz, quiz.getUserAnswer()));
         }
 
-
-        return ExamResultResponse.of(exam);
+        return ExamResultResponse.of(exam, quizResults);
     }
 
     /**

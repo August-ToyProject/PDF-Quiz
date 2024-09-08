@@ -56,6 +56,10 @@ public class Quiz extends BaseTimeEntity {
     @JoinColumn(name = "pdf_id")
     private Pdf pdf;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "exam_id")
+    private Exam exam;
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "answer_id")
     private Answer userAnswer;
@@ -66,6 +70,14 @@ public class Quiz extends BaseTimeEntity {
 
     public void updatePdf(Pdf pdf) {
         this.pdf = pdf;
+    }
+
+    public void updateExam(Exam exam) {
+        this.exam = exam;
+    }
+
+    public void updateUserAnswer(Answer answer) {
+        this.userAnswer = answer;
     }
 
 }

@@ -9,12 +9,12 @@ public class DurationConverter implements AttributeConverter<Duration, Long> {
 
     @Override
     public Long convertToDatabaseColumn(Duration duration) {
-        return duration == null ? null : duration.toNanos();
+        return duration == null ? null : duration.toSeconds();
     }
 
     @Override
     public Duration convertToEntityAttribute(Long dbData) {
-        return dbData == null ? null : Duration.ofNanos(dbData);
+        return dbData == null ? null : Duration.ofSeconds(dbData);
     }
 }
 
