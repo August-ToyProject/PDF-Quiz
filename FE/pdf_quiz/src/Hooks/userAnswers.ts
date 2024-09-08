@@ -1,8 +1,7 @@
 import { useQuizContext } from "../context/QuizContext";
 
 const UserAnswers = () => {
-
-  const { userAnswers, setUserAnswers } = useQuizContext(); 
+  const { userAnswers, setUserAnswers } = useQuizContext();
   // const [answerList, setAnswerList] = useState<number[][]>(
   //   new Array(quizCount).fill([]).map(() => [])
   // );
@@ -16,7 +15,7 @@ const UserAnswers = () => {
 
       //답안이 없는 경우 답안 배열에 추가
       if (!newAnswerList[problemIndex].includes(optionIndex)) {
-        newAnswerList[problemIndex].push(optionIndex);
+        newAnswerList[problemIndex] = [0];
       }
       //이미 답안이 있는 경우 새로운 답안으로 교체
       if (newAnswerList[problemIndex].length > 0) {
@@ -25,6 +24,7 @@ const UserAnswers = () => {
       return newAnswerList;
     });
   };
+
   //Todo: 추후 제거 예정
   // console.log("newAnswerList", userAnswers);
 
