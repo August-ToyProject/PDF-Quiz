@@ -6,12 +6,6 @@ on:
       - main
     paths:
       - 'FE/**'
-  pull_request:
-    branches:
-      - main
-    paths:
-      - 'FE/**'
-
 jobs:
   build:
     runs-on: ubuntu-latest
