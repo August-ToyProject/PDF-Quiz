@@ -8,6 +8,7 @@ import Answer from "./pages/Answer.tsx";
 import FindAccount from "./pages/FindAccount.tsx";
 import Review from "./pages/ReviewNote.tsx";
 import InfoPage from "./pages/InfoPage.tsx";
+import ListAnswer from "./pages/ListAnswer.tsx";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path="/findAccount" element={<FindAccount />} />
           <Route path="/review" element={<Review />} />
           <Route path="/info" element={<InfoPage />} />
+          <Route path="/listAnswer" element={<ListAnswer />}/>
         </Routes>
       </BrowserRouter>
     </QuizProvider>

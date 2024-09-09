@@ -42,3 +42,9 @@ export const saveQuizData = async (quizTitle: string, setTime: number, spentTime
 export const fetchQuizData = async () => {
     return apiRequest(`/quiz`);
 };
+
+export const quizListCheck = async (examId: number) => {
+    return apiRequest(`/exams?examId=${examId}`, {
+        method: 'GET',
+    })
+}

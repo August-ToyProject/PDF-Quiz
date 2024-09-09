@@ -269,9 +269,14 @@ export default function MyPage() {
               {filteredQuizzes.map((item) => (
                 <div
                   key={item.id}
-                  className="flex justify-between p-4 border border-gray-300 rounded-lg bg-white"
+                  className="flex justify-between items-center p-2 border border-gray-300 rounded-lg bg-white"
                 >
-                  <div className="font-bold text-sm">{item.title}</div>
+                  <button 
+                    className="flex items-center font-bold text-sm bg-transparent"
+                    onClick={() => navigate("/listAnswer", {state: {examId: item.id}})}
+                  >
+                    {item.title}
+                  </button>
                   <div className="flex justify-center">
                     <div className="text-gray-500 text-sm lefo mr-4">
                       {formatDate(item.examDate)}
@@ -285,7 +290,7 @@ export default function MyPage() {
                       </button>
                       {dropdownOpen[item.id] && (
                         <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-300 rounded-lg shadow-lg z-50">
-                          <button
+                          <div
                             className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                             onClick={(e) => {
                               e.stopPropagation();
@@ -293,8 +298,8 @@ export default function MyPage() {
                             }}
                           >
                             폴더로 이동
-                          </button>
-                          <button
+                          </div>
+                          <div
                             className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                             onClick={(e) => {
                               e.stopPropagation();
@@ -302,7 +307,7 @@ export default function MyPage() {
                             }}
                           >
                             삭제
-                          </button>
+                          </div>
                         </div>
                       )}
                     </div>
