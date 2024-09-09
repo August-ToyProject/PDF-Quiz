@@ -18,8 +18,8 @@ public class ExamResultRequest {
         return Exam.builder()
             .member(member)
             .title(title)
-            .setTime(Duration.ofMinutes(setTime))
-            .spentTime(Duration.ofMinutes(spentTime))
+            .setTime(Duration.ofSeconds(setTime))
+            .spentTime(Duration.ofSeconds(spentTime))
             .build();
     }
 
