@@ -45,11 +45,12 @@ const QuizData = ({
     //👇 타입스크립트 에러 방지용 추후 해당 변수가 필요 여부에 따라 삭제 또는 수정해주세요
     eventSource.addEventListener("sse", (event: MessageEvent) => {
       try {
+        console.log("event가 생성됨", event);
         const data = JSON.parse(event.data);
         console.log("Received data: ", data);
 
         if (!data) {
-          console.error("Data is empty");
+          console.log("Data is empty");
         }
 
         if (typeof data.options === "string") {
