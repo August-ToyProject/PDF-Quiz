@@ -115,15 +115,15 @@ const Quiz = () => {
         {/* 후에 옵션이 추가될 것을 고려하여 남겨둠 / 전체 문제 및 안푼 문제 띄우기 */}
         <div className="w-4/5 flex justify-center items-center border-r border-b border-gray-400">
           <div className="w-2/3 ml-5 left_container">
-            <div className=" flex font-bold max-lg:text-m whitespace-nowrap">
+            <div className=" flex font-bold max-lg:text-sm whitespace-nowrap">
               * 문제는 한 번에 5개씩 표시되어 모든 문제를 불러오는데 시간이
               소요됩니다.
             </div>
           </div>
 
           <div className="w-1/3 flex flex-col gap-1">
-            <div className="flex justify-end flex-col">
-              <div className=" flex max-lg:text-m whitespace-nowrap">
+            <div className="flex items-end flex-col">
+              <div className="flex max-lg:text-m whitespace-nowrap">
                 전체 문제: {quizCount}개
               </div>
               <div className="flex max-lg:text-m whitespace-nowrap">
