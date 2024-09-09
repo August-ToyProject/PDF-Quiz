@@ -2,7 +2,6 @@ from fastapi import HTTPException
 
 
 import asyncio
-from langchain.prompts import PromptTemplate
 from src.app.api.quiz_service.helpers.quiz_service import create_prompt_template, get_keyword_from_summary, get_subject_from_summary_docs, load_vector, make_quiz, summarize_document
 from src.app.api.quiz_service.shema.quiz_request import QuizRequest
 
@@ -38,9 +37,7 @@ async def generate_quiz(request:QuizRequest):
         
         #-- 퀴즈 chain and make quiz
         quiz = await make_quiz(
-            # retriever=retriever,
             retriever=retriever,
-            summary=summary,
             subject=subject,
             keywords=keywords,
             num_questions=request.num_questions,
