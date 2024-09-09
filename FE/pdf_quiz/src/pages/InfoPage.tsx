@@ -44,6 +44,10 @@ export default function InfoPage() {
     }
   }, [activeButton]);
 
+  const navigateToMypage = () => {
+    navigate("/mypage");
+  };
+
   const handleExit = () => {
     navigate("/mypage");
   };
@@ -129,7 +133,12 @@ export default function InfoPage() {
 
   return (
     <div className="h-screen w-full flex flex-col justify-start items-center bg-white">
-      <img src={BlueLogo} alt="Quizgen" className="w-36 h-24 ml-5" />
+      <img
+        src={BlueLogo}
+        alt="Quizgen"
+        onClick={navigateToMypage}
+        className="w-36 h-24 ml-5 cursor-pointer"
+      />
 
       <div className="bg-white p-4 w-80 flex flex-col justify-start min-h-[400px]">
         <div className="flex justify-center w-full mb-4">

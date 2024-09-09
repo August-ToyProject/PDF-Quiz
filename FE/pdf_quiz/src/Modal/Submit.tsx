@@ -1,21 +1,28 @@
 import { useNavigate } from "react-router-dom";
+import { useQuizContext } from "../context/QuizContext";
 interface ModalProps {
   showModal: boolean;
   closeModal: () => void;
-  answerList: number[][]; // answerList를 props로 받아옴
+  // answerList: number[][]; // answerList를 props로 받아옴
   uncompletedCount: number; // uncompletedCount를 props로 받아옴
 }
 //ㄱTodo: navigation 필요 (결과페이지로)
 const SubmitCheck = ({
   showModal,
   closeModal,
-  answerList,
   uncompletedCount,
 }: ModalProps) => {
+  const { userAnswers } = useQuizContext();
+
   const navigate = useNavigate();
   const handleSubmit = () => {
+    for (let i = 0; i < userAnswers.length; i++) {
+      if (Array.isArray(userAnswers[i]) && userAnswers[i].length === 0) {
+        userAnswers[i].push(0);
+      }
+    }
     closeModal();
-    console.log("제출 완료", answerList);
+    console.log("제출 완료", userAnswers);
     navigate("/answer");
   };
 

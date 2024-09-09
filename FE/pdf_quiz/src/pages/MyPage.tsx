@@ -6,6 +6,7 @@ import FolderModal from "../Modal/folderModal";
 import { fetchUserNickname, logoutUser } from "../api/ApiUser";
 import { deleteQuiz, fetchQuizzes } from "../api/ApiQuiz";
 import BlueLogo from "../assets/Logo_blue.svg";
+import Banner from "../assets/Banner2.png";
 
 export interface ListQuiz {
   id: number;
@@ -189,13 +190,38 @@ export default function MyPage() {
   return (
     <div className="h-screen w-screen flex flex-col items-center bg-white overflow-x-hidden min-w-[600px]">
       {/* 상단 바 및 사용자 정보 */}
-      <div className="w-full h-[100px]">
-        <img src={BlueLogo} alt="Quizgen" className="w-36 h-24 ml-5" />
-        {/* <div className="text-blue-600 text-lg mt-4 mx-4 font-bold">QuizGen</div> */}
-        <div className="h-[2px] bg-gray-300 mx-4"></div>
+      <div className="w-full h-[60px] border-b-2 border-gray-300 relative flex items-center px-5 mb-4">
+        <img 
+          src={BlueLogo} 
+          alt="Quizgen" 
+          className="w-36 h-14 ml-5 lg:ml-0 lg:relative lg:left-auto lg:transform-none absolute left-1/2 transform -translate-x-1/2 lg:static" />  
+        {/* 작은 화면일 경우 (반응형) */}
+        <div className="flex lg:hidden my-4 items-center space-x-4 ml-auto">
+          <div className="font-body font-bold">{user?.nickname || "닉네임"}</div>
+          <button
+            className="font-body p-1 bg-transparent text-xs text-gray-500"
+            onClick={handleInfo}
+          >
+            내 정보
+          </button>
+          <button
+            className="font-body p-1 bg-transparent text-xs text-gray-500"
+            onClick={handleLogout}
+          >
+            로그아웃
+          </button>
+        </div>      
       </div>
-
-      <div className="flex flex-col lg:flex-row w-full mt-4 mx-4 lg:space-x-6 space-y-6 lg:space-y-0">
+      <div className="h-[2px] bg-gray-300 mx-4"></div>
+      <div className="flex flex-col lg:flex-row w-full mx-4 lg:space-x-6 space-y-6 lg:space-y-0">
+        <div className="flex flex-col items-center w-full mt-4 lg:hidden">
+          <button
+            className="font-body bg-blue-600 text-white font-bold p-2 w-[580px] rounded-lg"
+            onClick={openModal}
+          >
+            PDF Upload
+          </button>
+        </div>
         {/* 좌측 옵션 */}
         <div className="hidden lg:flex flex-col flex-none w-56 ml-6">
           <div className="font-body text-blue-600 text-lg font-black">
@@ -226,6 +252,10 @@ export default function MyPage() {
           >
             PDF Upload
           </button>
+          <a href="https://forms.gle/jmuCNSTjQL52fek4A">
+            <img src={Banner} alt="Banner" className="mt-4" />
+          </a>
+
           {/* <div className="font-body mt-4 p-4 flex justify-center text-lg border border-gray-300 rounded-lg h-full bg-white tracking-wider">
             오답노트
           </div> */}
@@ -264,23 +294,28 @@ export default function MyPage() {
               {filteredQuizzes.map((item) => (
                 <div
                   key={item.id}
-                  className="flex justify-between p-4 border border-gray-300 rounded-lg bg-white"
+                  className="flex justify-between items-center p-2 border border-gray-300 rounded-lg bg-white"
                 >
-                  <div className="font-bold text-sm">{item.title}</div>
+                  <button 
+                    className="flex items-center font-bold text-sm bg-transparent"
+                    onClick={() => navigate("/listAnswer", {state: {examId: item.id}})}
+                  >
+                    {item.title}
+                  </button>
                   <div className="flex justify-center">
                     <div className="text-gray-500 text-sm lefo mr-4">
                       {formatDate(item.examDate)}
                     </div>
                     <div className="relative">
                       <button
-                        className="text-gray-500 hover:text-gray-700 focus:outline-none bg-transparent flex items-center justify-center h-4 w-4 p-1"
+                        className="text-gray-500 hover:text-gray-700 focus:outline-none bg-transparent flex items-center justify-center h-4 w-4 p-1 border-none rounded-none"
                         onClick={(e) => toggleDropdown(item.id, e)}
                       >
                         &#x2026;
                       </button>
                       {dropdownOpen[item.id] && (
                         <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-300 rounded-lg shadow-lg z-50">
-                          <button
+                          <div
                             className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                             onClick={(e) => {
                               e.stopPropagation();
@@ -288,8 +323,8 @@ export default function MyPage() {
                             }}
                           >
                             폴더로 이동
-                          </button>
-                          <button
+                          </div>
+                          <div
                             className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                             onClick={(e) => {
                               e.stopPropagation();
@@ -297,7 +332,7 @@ export default function MyPage() {
                             }}
                           >
                             삭제
-                          </button>
+                          </div>
                         </div>
                       )}
                     </div>

@@ -13,7 +13,7 @@ export interface QuizItem {
 }
 
 export default function Answer() {
-  const { title, quizCount, quizData, userAnswers, elapsedTime } =
+  const { title, quizCount, userAnswers, quizData, elapsedTime } =
     useQuizContext();
   const [isExitModalOpen, setIsExitModalOpen] = useState(false);
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
@@ -52,11 +52,7 @@ export default function Answer() {
                   <div className="flex items-center h-10 bg-gray-50 border-t-2 border-b-2 border-gray-300">
                     <div
                       className={`flex items-center justify-center flex-grow-0 min-w-[5vw] h-full border-r-2 border-b-1 border-gray-300 font-bold text-gray-100
-                                            ${
-                                              isCorrect
-                                                ? "bg-green-400"
-                                                : "bg-red-400"
-                                            }`}
+                        ${ isCorrect ? "bg-green-400" : "bg-red-400" }`}
                     >
                       문제 {index + 1}
                     </div>
@@ -71,11 +67,7 @@ export default function Answer() {
                           <div
                             key={optionIndex}
                             className={`mt-2 ${
-                              userAnswer === parseInt(key)
-                                ? isCorrect
-                                  ? "text-green-600"
-                                  : "text-red-600"
-                                : ""
+                              userAnswer === parseInt(key) ? isCorrect ? "text-green-600" : "text-red-600" : ""
                             }`}
                           >
                             ({key}) {value}

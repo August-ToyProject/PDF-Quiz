@@ -229,7 +229,7 @@ const FolderList: React.FC<FolderListProps> = ({
         />
       </div>
       <div
-        className="border-2 border-dashed border-blue-600 rounded-lg w-32 h-36 mr-4 flex items-center justify-center cursor-pointer"
+        className="border-2 border-dashed border-blue-600 rounded-lg w-28 h-28 mr-4 ml-4 mt-2 flex items-center justify-center cursor-pointer"
         onClick={() => handleFolderAction("add")}
       >
         <span className="text-blue-600 text-2xl">+</span>
@@ -237,11 +237,11 @@ const FolderList: React.FC<FolderListProps> = ({
       {folders.map((folderItem, index) => (
         <div
           key={folderItem.id || `folder-${index}`}
-          className="relative flex flex-col items-center mx-6 mt-2"
+          className="relative flex flex-col items-center mx-6"
           onClick={() => handleFolderClick(folderItem.id)}
         >
           <button
-            className="text-gray-500 hover:text-gray-700 focus:outline-none bg-transparent flex items-center ml-auto h-4 w-4 p-1"
+            className="text-gray-500 hover:text-gray-700 focus:outline-none bg-transparent flex items-center ml-auto h-4 w-4 p-1 border-none rounded-none"
             onClick={(e) => {
               toggleDropdown(folderItem.id, e);
             }}
