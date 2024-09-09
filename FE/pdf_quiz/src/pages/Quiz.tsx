@@ -21,27 +21,23 @@ const Quiz = () => {
   const openModal = () => setShowModal(true);
   const closeModal = () => setShowModal(false);
 
-  const [startTime, setStartTime] = useState<number | null>(null);
+  // const [startTime, setStartTime] = useState<number | null>(null);
   const { title, setElapsedTime } = useQuizContext();
 
-  useEffect(() => {
-    // 퀴즈 시작 시 startTime 기록
-    const now = Date.now();
-    setStartTime(now);
+  const [startTime] = useState(Date.now()); // 상태로 설정하지 않고 한 번만 설정되도록
 
+  useEffect(() => {
     // 매 초마다 경과 시간 계산
     const intervalId = setInterval(() => {
-      if (startTime) {
-        const endTime = Date.now();
-        const timeDiff = endTime - startTime;
+      const now = Date.now();
+      const timeDiff = now - startTime;
 
-        const hours = Math.floor(timeDiff / (1000 * 60 * 60));
-        const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+      const hours = Math.floor(timeDiff / (1000 * 60 * 60));
+      const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
 
-        // 경과 시간을 QuizContext에 저장
-        setElapsedTime({ hours, minutes, seconds });
-      }
+      // 경과 시간을 QuizContext에 저장
+      setElapsedTime({ hours, minutes, seconds });
     }, 1000); // 1초마다 업데이트
 
     // 컴포넌트 언마운트 시 interval 정리
