@@ -48,6 +48,10 @@ const QuizData = ({
         const data = JSON.parse(event.data);
         console.log("Received data: ", data);
 
+        if (!data) {
+          console.error("Data is empty");
+        }
+
         if (typeof data.options === "string") {
           data.options = JSON.parse(data.options);
         }
