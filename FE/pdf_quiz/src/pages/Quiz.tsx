@@ -16,7 +16,7 @@ const Quiz = () => {
 
   const { quizCount, optionCount, timeLimitHour, timeLimitMinute } =
     useQuizContext();
-  const { userAnswers, handleOptionClick, uncompletedCount } = UserAnswers();
+  const { handleOptionClick, uncompletedCount } = UserAnswers();
 
   const openModal = () => setShowModal(true);
   const closeModal = () => setShowModal(false);
@@ -125,13 +125,13 @@ const Quiz = () => {
           </div>
 
           <div className="w-1/3 flex flex-col gap-1">
-            <div className="flex justify-end flex-row">
+            <div className="flex justify-end flex-col">
               <div className=" flex max-lg:text-m whitespace-nowrap">
                 전체 문제: {quizCount}개
               </div>
-            </div>
-            <div className="flex flex-end flex-row">
-              {/* <div>안 푼 문제 </div> */}
+              <div className="flex max-lg:text-m whitespace-nowrap">
+                <div>남은 문제: {uncompletedCount}개 </div>
+              </div>
             </div>
           </div>
           <div className="h-[3px] bg-gray-300 mx-4"></div>
@@ -156,7 +156,7 @@ const Quiz = () => {
           <OMR
             quizCount={quizCount}
             optionCount={optionCount}
-            answerList={userAnswers}
+            // answerList={answerList}
             handleOptionClick={handleOptionClick}
           />
         </div>
@@ -191,7 +191,7 @@ const Quiz = () => {
       <SubmitCheck
         showModal={showModal}
         closeModal={closeModal}
-        answerList={userAnswers}
+        // answerList={answerList}
         uncompletedCount={uncompletedCount}
       />
     </div>
