@@ -190,13 +190,38 @@ export default function MyPage() {
   return (
     <div className="h-screen w-screen flex flex-col items-center bg-white overflow-x-hidden min-w-[600px]">
       {/* 상단 바 및 사용자 정보 */}
-      <div className="w-full h-[100px]">
-        <img src={BlueLogo} alt="Quizgen" className="w-36 h-24 ml-5" />
-        {/* <div className="text-blue-600 text-lg mt-4 mx-4 font-bold">QuizGen</div> */}
-        <div className="h-[2px] bg-gray-300 mx-4"></div>
+      <div className="w-full h-[60px] border-b-2 border-gray-300 relative flex items-center px-5 mb-4">
+        <img 
+          src={BlueLogo} 
+          alt="Quizgen" 
+          className="w-36 h-14 ml-5 lg:ml-0 lg:relative lg:left-auto lg:transform-none absolute left-1/2 transform -translate-x-1/2 lg:static" />  
+        {/* 작은 화면일 경우 (반응형) */}
+        <div className="flex lg:hidden my-4 items-center space-x-4 ml-auto">
+          <div className="font-body font-bold">{user?.nickname || "닉네임"}</div>
+          <button
+            className="font-body p-1 bg-transparent text-xs text-gray-500"
+            onClick={handleInfo}
+          >
+            내 정보
+          </button>
+          <button
+            className="font-body p-1 bg-transparent text-xs text-gray-500"
+            onClick={handleLogout}
+          >
+            로그아웃
+          </button>
+        </div>      
       </div>
-
-      <div className="flex flex-col lg:flex-row w-full mt-4 mx-4 lg:space-x-6 space-y-6 lg:space-y-0">
+      <div className="h-[2px] bg-gray-300 mx-4"></div>
+      <div className="flex flex-col lg:flex-row w-full mx-4 lg:space-x-6 space-y-6 lg:space-y-0">
+        <div className="flex flex-col items-center w-full mt-4 lg:hidden">
+          <button
+            className="font-body bg-blue-600 text-white font-bold p-2 w-[580px] rounded-lg"
+            onClick={openModal}
+          >
+            PDF Upload
+          </button>
+        </div>
         {/* 좌측 옵션 */}
         <div className="hidden lg:flex flex-col flex-none w-56 ml-6">
           <div className="font-body text-blue-600 text-lg font-black">
@@ -283,7 +308,7 @@ export default function MyPage() {
                     </div>
                     <div className="relative">
                       <button
-                        className="text-gray-500 hover:text-gray-700 focus:outline-none bg-transparent flex items-center justify-center h-4 w-4 p-1"
+                        className="text-gray-500 hover:text-gray-700 focus:outline-none bg-transparent flex items-center justify-center h-4 w-4 p-1 border-none rounded-none"
                         onClick={(e) => toggleDropdown(item.id, e)}
                       >
                         &#x2026;
