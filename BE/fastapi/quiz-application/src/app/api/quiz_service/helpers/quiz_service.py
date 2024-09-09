@@ -312,7 +312,7 @@ async def make_quiz(
             }
 
             # keyword_chain 실행
-            result = quiz_chain.invoke(input_data)
+            result = await asyncio.to_thread(quiz_chain.invoke, input_data)
             used_keywords = used_keywords + ', '.join(keywords[i])
             # Kafka로 퀴즈 및 추가 정보를 전송 (JSON 직렬화 후 UTF-8 인코딩, ensure_ascii=False 추가)
             quiz_data = {
@@ -321,9 +321,10 @@ async def make_quiz(
                 'index_path': index_path,
                 'question': result.strip()
             }
-            producer.produce('quiz_topic', json.dumps(quiz_data, ensure_ascii=False).encode('utf-8'))
+            # Kafka 메시지 전송을 비동기적으로 처리
+            await asyncio.to_thread(producer.produce, 'quiz_topic', json.dumps(quiz_data, ensure_ascii=False).encode('utf-8'))
 
-        producer.flush()  # 모든 메시지가 전송되었는지 확인
+        await asyncio.to_thread(producer.flush)
         return {"status": "Quizzes sent to Kafka"}
     except Exception as e:
         raise e
