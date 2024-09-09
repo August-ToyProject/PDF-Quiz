@@ -241,7 +241,7 @@ const FolderList: React.FC<FolderListProps> = ({
           onClick={() => handleFolderClick(folderItem.id)}
         >
           <button
-            className="text-gray-500 hover:text-gray-700 focus:outline-none bg-transparent flex items-center ml-auto h-4 w-4 p-1"
+            className="text-gray-500 hover:text-gray-700 focus:outline-none bg-transparent flex items-center ml-auto h-4 w-4 p-1 border-none rounded-none"
             onClick={(e) => {
               toggleDropdown(folderItem.id, e);
             }}

@@ -51,7 +51,9 @@ export default function ListAnswer() {
                     setUserAnswers(processedQuizResults.map((quiz: any) => quiz.userAnswer));
                     setSetTime(data.setTime);
                     setSpentTime(data.spentTime);
-                    console.log('User Answer:' , userAnswers)
+
+                    if (userAnswers.length === 0) console.log("User answers are empty");
+                    if (setTime === 0) console.log("SetTime is empty");
                     console.log('User setTime:' , setTime)
                 } catch (error) {
                     console.error("Failed to load quiz data:", error);
