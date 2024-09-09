@@ -1,13 +1,15 @@
 import { useQuizContext } from "../context/QuizContext";
+import { useState, useEffect } from "react";
 
 const UserAnswers = () => {
-  const { userAnswers, setUserAnswers } = useQuizContext();
-  // const [answerList, setAnswerList] = useState<number[][]>(
-  //   new Array(quizCount).fill([]).map(() => [])
-  // );
+  const { quizCount, setUserAnswers } = useQuizContext();
+
+  const [answerList, setAnswerList] = useState<number[][]>(
+    new Array(quizCount).fill([]).map(() => [])
+  );
 
   const handleOptionClick = (problemIndex: number, optionIndex: number) => {
-    setUserAnswers((prevAnswerList) => {
+    setAnswerList((prevAnswerList) => {
       const newAnswerList = [...prevAnswerList];
       if (!newAnswerList[problemIndex]) {
         newAnswerList[problemIndex] = [];
@@ -25,13 +27,14 @@ const UserAnswers = () => {
     });
   };
 
-  //Todo: 추후 제거 예정
-  // console.log("newAnswerList", userAnswers);
+  useEffect(() => {
+    setUserAnswers(answerList);
+  }, [answerList, setUserAnswers]);
 
-  const uncompletedCount = userAnswers.filter(
-    (answers) => answers.length === 0
+  const uncompletedCount = answerList.filter(
+    (answers) => answers && answers.length === 0
   ).length;
 
-  return { userAnswers, handleOptionClick, uncompletedCount };
+  return { handleOptionClick, uncompletedCount };
 };
 export default UserAnswers;

@@ -1,17 +1,16 @@
+import { useQuizContext } from "../context/QuizContext";
+
 interface OMRProps {
   quizCount: number;
   optionCount: number;
-  answerList: number[][]; // props로 받아옴
+  // answerList: number[][]; // props로 받아옴
   handleOptionClick: (problemIndex: number, optionIndex: number) => void; // props로 받아옴
 }
 
-const OMR = ({
-  quizCount,
-  optionCount,
-  answerList,
-  handleOptionClick,
-}: OMRProps) => {
+const OMR = ({ quizCount, optionCount, handleOptionClick }: OMRProps) => {
   const choiceSymbols = ["①", "②", "③", "④", "⑤"];
+
+  const { userAnswers = [] } = useQuizContext();
 
   //선택된 옵션에 대해서는 색을 칠한다.
 
@@ -27,7 +26,8 @@ const OMR = ({
           {Array.from({ length: optionCount }).map((_, optionIndex) => (
             <button
               className={`w-10 h-10 mr-1/2 border-0 flex items-center justify-center rounded-full cursor-pointer max-lg:w-7 max-lg:h-8 ${
-                answerList[problemIndex]?.includes(optionIndex + 1)
+                userAnswers[problemIndex]?.length > 0 &&
+                userAnswers[problemIndex].includes(optionIndex + 1)
                   ? "bg-green-400"
                   : "bg-white"
               }`}

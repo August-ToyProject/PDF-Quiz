@@ -13,7 +13,7 @@ export interface QuizItem {
 }
 
 export default function Answer() {
-  const { title, quizCount, quizData, userAnswers, elapsedTime } =
+  const { title, quizCount, userAnswers, quizData, elapsedTime } =
     useQuizContext();
   const [isExitModalOpen, setIsExitModalOpen] = useState(false);
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
