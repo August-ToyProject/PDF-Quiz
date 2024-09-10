@@ -4,6 +4,8 @@ import { EventSourcePolyfill } from "event-source-polyfill";
 import { useQuizContext } from "../context/QuizContext";
 import PacmanLoader from "react-spinners/PacmanLoader";
 
+const apiUrl = import.meta.env.VITE_NGROK_URL;
+
 interface PageProps {
   page: number;
   itemsPerPage: number;
@@ -34,7 +36,7 @@ const QuizData = ({
 
   useEffect(() => {
     const eventSource = new EventSourcePolyfill(
-      `http://43.201.129.54:8080/api/v1/notifications/subscribe`,
+      `${apiUrl}/notifications/subscribe`,
       {
         headers: {
           Authorization: "Bearer " + localStorage.getItem("accesstoken"),

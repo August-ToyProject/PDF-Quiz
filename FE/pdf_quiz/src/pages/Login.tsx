@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import ServiceName from "../assets/Logo.svg";
 import ServiceLogo from "../assets/ServiceLogo.png";
 
+const apiUrl = import.meta.env.VITE_NGROK_URL;
+
 interface loginData {
   id: string;
   password: string;
@@ -46,7 +48,7 @@ const Login = () => {
 
     try {
       //URL 변경 예정
-      const response = await fetch("http://43.201.129.54:8080/api/v1/login", {
+      const response = await fetch(`${apiUrl}/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
