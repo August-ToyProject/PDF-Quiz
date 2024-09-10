@@ -302,6 +302,7 @@ async def make_quiz(
                         {subject}와 관련된 문제를 다음과 같은 키워드 :  {', '.join(keywords[i])} 에 맞게 생성하고 보기 개수는 
                         {choice_count}개를 맞춰줘 
                         5문제 중 최소 3문제 이상은 {user_difficulty_choice}로 설정해야 합니다.
+                        {used_quiz}와 중복되거나 비슷한 문제는 절대 나와서는 안됩니다.
                         또한 정답 번호는 1번 부터 {choice_count}번까지 값을 반드시 균등하게 사용해야 합니다.
                         """
             # 각 퀴즈 생성 시마다 사용된 키워드가 포함된 새 used_keywords 값
