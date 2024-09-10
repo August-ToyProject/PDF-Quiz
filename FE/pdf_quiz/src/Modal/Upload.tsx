@@ -6,6 +6,8 @@ import { useQuizContext } from "../context/QuizContext";
 import { Tooltip } from "react-tooltip";
 import { SyncLoader } from "react-spinners";
 
+const apiUrl = import.meta.env.VITE_NGROK_URL;
+
 //👇 타입스크립트 에러 방지용 추후 해당 변수가 필요 여부에 따라 삭제 또는 수정해주세요
 // import { error } from "console";
 
@@ -131,7 +133,7 @@ export default function Upload({
     }
 
     try {
-      const response = await fetch("http://43.201.129.54:8080/api/v1/upload", {
+      const response = await fetch(`${apiUrl}/upload`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("accesstoken")}`,
@@ -214,7 +216,7 @@ export default function Upload({
     try {
       navigateToQuiz();
       const response = await fetch(
-        "http://43.201.129.54:8080/api/v1/quiz/generate-quiz",
+        `${apiUrl}/quiz/generate-quiz1`,
         {
           method: "POST",
           headers: {
