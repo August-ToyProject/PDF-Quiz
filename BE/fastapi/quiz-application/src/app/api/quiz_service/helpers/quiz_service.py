@@ -171,7 +171,7 @@ async def create_prompt_template():
             3. 절대로 동일문제와 비슷하거나 똑같은 문제는 생성하지 마세요.
             4. {used_keywords}로는 문제를 생성하지 마세요.
             5. 문제 보기는 1~{choice_count}까지 다양하게 해주세요:
-            6. 정답 번호는 1~{choice_count}까지 반드시 각각 1번 이상 넣고 정답 순서를 섞어주세요
+            
             7. {choice_count}개의 선택지(1부터 {choice_count}까지 번호 매김)와 하나의 정답을 포함해야 합니다.
             8. 난이도는 {difficulty}입니다.
             9. 정답에 대한 간단한 설명을 제공하되, 반드시 주어진 context, 요약이나 키워드에서 정보를 인용하세요.
@@ -299,7 +299,11 @@ async def make_quiz(
                 | openai_llm
                 | StrOutputParser()
                 )
-            question = f"{subject}와 관련된 문제를 다음과 같은 키워드 :  {', '.join(keywords[i])} 에 맞게 생성하고 보기 개수는 {choice_count}개를 맞춰줘 "
+            question = f"""
+                        {subject}와 관련된 문제를 다음과 같은 키워드 :  {', '.join(keywords[i])} 에 맞게 생성하고 보기 개수는 
+                        {choice_count}개를 맞춰줘 
+                        또한 정답 번호는 1~{choice_count}까지 값을 반드시 각각 1번 이상 사용해야 합니다.
+                        """
             # 각 퀴즈 생성 시마다 사용된 키워드가 포함된 새 used_keywords 값
             used_quiz = used_quiz + result
 
