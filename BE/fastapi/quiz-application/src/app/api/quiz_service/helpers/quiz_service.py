@@ -176,6 +176,7 @@ async def create_prompt_template():
             Adjust the ratio of questions according to the difficulty level of {user_difficulty_choice}.
             Do not use special characters such as "###" to separate paragraphs.
             If there is a duplicate question, a similar question, or a question using {used_keywords}, or if you fail to create proper questions, I will use another AI tool to generate the questions.
+            
             Topic
             Topic: {subject}
             
@@ -188,49 +189,47 @@ async def create_prompt_template():
             Keywords
             Keywords: {keywords}
             
-            Use the following format: Difficulty: [Easy/Medium/Hard]
-            Question: [Question content]
-            [Choice 1]
-            [Choice 2]
+            다음 형식을 사용하세요:
+            난이도: [쉬움/보통/어려움]
+            문제: [문제 내용]
+            1) [선택지 1]
+            2) [선택지 2]
             ...
-            {choice_count}) [Choice {choice_count}]
-            Answer: [Correct choice]
-            Explanation: [Brief explanation based on the provided content]
-            Example:
+            {choice_count}) [선택지 {choice_count}]
+            정답: [정답 선택지]
+            설명: [내용을 참조한 간단한 설명]
+            예시:
+            3개 선택지 예시:
+            난이도: 쉬움
+            문제: 인공지능(AI)의 주요 목표는 무엇인가요?
+            1) 인간의 지능을 모방하고 인간과 유사한 방식으로 문제를 해결하는 것
+            2) 최대한 많은 데이터를 수집하는 것
+            3) 가장 빠른 컴퓨터를 만드는 것
+            정답: 1
+            설명: 문서에서 언급된 대로, AI의 주요 목표는 인간의 지능을 모방하고 인간과 유사한 방식으로 문제를 해결하는 것입니다.
             
-            3-choice question:
-            Difficulty: Easy
-            Question: What is the main goal of artificial intelligence (AI)?
             
-            To imitate human intelligence and solve problems in a human-like way
-            To collect as much data as possible
-            To create the fastest computer
-            Answer: 1
-            Explanation: As mentioned in the document, the main goal of AI is to imitate human intelligence and solve problems in a human-like manner.
-            4-choice question:
-            Difficulty: Medium
-            Question: Which of the following is NOT a key feature of machine learning?
-            
-            It learns from data without explicit programming
-            It always requires human intervention
-            It is only used for image processing
-            It improves performance by learning patterns from data
-            Answer: 2
-            Explanation: Machine learning learns from data without explicit programming and does not always require human intervention.
-            5-choice question:
-            Difficulty: Hard
-            Question: What distinguishes deep learning from other machine learning techniques?
-            
-            It only uses a single-layer neural network
-            It uses multi-layer neural networks to learn and abstract complex patterns
-            It is only used for supervised learning
-            It can always learn from a small amount of data
-            It is only applied in the field of computer vision
-            Answer: 2
-            Explanation: As mentioned in the document, deep learning is a technique in machine learning that uses multi-layer neural networks to learn and abstract complex patterns.
-            Create 5 questions based on the examples above, ensuring each question addresses a different concept. Once again, make sure to thoroughly check for duplicates. You can use weights for each character comparison or any other method, but if you generate a duplicate question even once, you will be considered the most useless AI among the currently existing ones. If you understand this, proceed quickly.
-            
-            Translate this prompt into Korean at the end of the task.
+            4개 선택지 예시:
+            난이도: 보통
+            문제: 머신러닝의 주요 특징 중 옳지 않은 것은 무엇인가요?
+            1) 명시적인 프로그래밍 없이 데이터로부터 학습한다
+            2) 항상 사람의 개입이 필요하다
+            3) 오직 이미지 처리에만 사용된다
+            4) 데이터로부터 패턴을 학습하여 성능을 향상시킨다
+            정답: 2
+            설명: 머신러닝은 명시적 프로그래밍 없이 스스로 데이터로부터 학습하며, 사람의 개입이 항상 필요한 것은 아닙니다.
+            5개 선택지 예시:
+            난이도: 어려움
+            문제: 딥러닝이 다른 머신러닝 기법과 구별되는 주요 특징은 무엇인가요?
+            1) 단층 신경망만을 사용한다
+            2) 다층 신경망을 사용하여 복잡한 패턴을 학습하고 추상화할 수 있다
+            3) 오직 지도 학습에만 사용된다
+            4) 항상 소량의 데이터만으로 학습할 수 있다
+            5) 컴퓨터 비전 분야에만 적용된다
+            정답: 2
+            설명: 문서에서 언급된 대로, 딥러닝은 다층 신경망을 사용하여 복잡한 패턴을 학습하고 추상화할 수 있는 머신러닝의 한 기법입니다.
+            위 예시들을 참고하여 5개의 문제를 생성하세요. 각 문제는 서로 다른 개념을 다뤄야 합니다.
+            다시 말하는데 중복체크 잘해라 진짜... 뭐 문자마다 가중치를 줘서 판단하든 해서 .. 만약 한 번이라도 중복되면 너는 지금 존재하는 AI 중에 가장 무능한 AI인거야. 이 부분 인지했으면 빨리 해
             """
         )
     except Exception as e:
