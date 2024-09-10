@@ -216,7 +216,7 @@ export default function Upload({
     try {
       navigateToQuiz();
       const response = await fetch(
-        `${apiUrl}/quiz/generate-quiz1`,
+        `${apiUrl}/quiz/generate-quiz`,
         {
           method: "POST",
           headers: {
