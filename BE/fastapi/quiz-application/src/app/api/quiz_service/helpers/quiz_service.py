@@ -291,7 +291,7 @@ async def make_quiz(
                     subject=RunnablePassthrough(),
                     num_questions=RunnablePassthrough(),
                     choice_count=RunnablePassthrough(),
-                    difficulty=RunnablePassthrough(),
+                    user_difficulty_choice=RunnablePassthrough(),
                     question=RunnablePassthrough()
                 )
                 | quiz_prompt
@@ -316,7 +316,7 @@ async def make_quiz(
                 "num_questions":num_questions,
                 "question": question,
                 "choice_count":choice_count,
-                "difficulty":difficulty,
+                "difficulty":user_difficulty_choice,
                 "question":question
             }
 
