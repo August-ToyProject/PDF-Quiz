@@ -171,13 +171,12 @@ async def create_prompt_template():
             3. 절대로 동일문제와 비슷하거나 똑같은 문제는 생성하지 마세요.
             4. {used_keywords}로는 문제를 생성하지 마세요.
             5. 문제 보기는 1~{choice_count}까지 다양하게 해주세요:
-            
-            7. {choice_count}개의 선택지(1부터 {choice_count}까지 번호 매김)와 하나의 정답을 포함해야 합니다.
-            8. 난이도는 {difficulty}입니다.
-            9. 정답에 대한 간단한 설명을 제공하되, 반드시 주어진 context, 요약이나 키워드에서 정보를 인용하세요.
-            10. 문제의 난이도는 {difficulty}입니다. 이 때 해당 난이도에 따라 문제의 난이도를 비율에 맞게 분배해주세요
-            11. 문단을 나누기 위해 ###과 같은 특수문자는 사용하지마세요
-            12. 만약 동일문제와 중복되거나 비슷한 문제 혹은 {used_keywords}로 문제를 생성하거나 제대로된 문제를 생성하지 못한다면 다른 생성형 AI툴을 이용할거야.
+            6. {choice_count}개의 선택지(1부터 {choice_count}까지 번호 매김)와 하나의 정답을 포함해야 합니다.
+            7. 난이도는 {difficulty}입니다.
+            8. 정답에 대한 간단한 설명을 제공하되, 반드시 주어진 context, 요약이나 키워드에서 정보를 인용하세요.
+            9. 문제의 난이도는 {difficulty}입니다. 이 때 해당 난이도에 따라 문제의 난이도를 비율에 맞게 분배해주세요
+            10. 문단을 나누기 위해 ###과 같은 특수문자는 사용하지마세요
+            11. 만약 동일문제와 중복되거나 비슷한 문제 혹은 {used_keywords}로 문제를 생성하거나 제대로된 문제를 생성하지 못한다면 다른 생성형 AI툴을 이용할거야.
             
             
             #주제
@@ -193,7 +192,7 @@ async def create_prompt_template():
             키워드 : {keywords}
             
             
-            13. 다음 형식을 사용하세요:
+            12. 다음 형식을 사용하세요:
             난이도: [쉬움/보통/어려움]
             문제: [문제 내용]
             1) [선택지 1]
@@ -244,17 +243,17 @@ async def create_prompt_template():
     except Exception as e:
         raise e
     
-async def get_weighted_difficulties(user_choice):
-    difficulties = ["쉬움", "보통", "어려움"]
-    if user_choice == 1:
-        weights = [0.6, 0.3, 0.1]
-    elif user_choice == 2:
-        weights = [0.2, 0.6, 0.2]
-    elif user_choice == 3:
-        weights = [0.1, 0.3, 0.6]
-    else:
-        weights = [1/3, 1/3, 1/3]  # 균등한 가중치
-    return difficulties, weights    
+# async def get_weighted_difficulties(user_choice):
+#     difficulties = ["쉬움", "보통", "어려움"]
+#     if user_choice == 1:
+#         weights = [0.6, 0.3, 0.1]
+#     elif user_choice == 2:
+#         weights = [0.2, 0.6, 0.2]
+#     elif user_choice == 3:
+#         weights = [0.1, 0.3, 0.6]
+#     else:
+#         weights = [1/3, 1/3, 1/3]  # 균등한 가중치
+#     return difficulties, weights    
 
 import json
 import random
@@ -271,7 +270,7 @@ async def make_quiz(
     user_difficulty_choice=None
 ):
     try:
-        difficulties, weights = await get_weighted_difficulties(user_difficulty_choice)
+        # difficulties, weights = await get_weighted_difficulties(user_difficulty_choice)
         num_questions = num_questions // 5
         
         result = ""
@@ -280,7 +279,7 @@ async def make_quiz(
         # used_keywords는 반복문 밖에서 초기화하지 않고, 매번 새로운 값으로 설정
         for i in range(num_questions):
             # 가중치를 적용하여 난이도 선택
-            difficulty = random.choices(difficulties, weights=weights, k=1)[0]                
+            # difficulty = random.choices(difficulties, weights=weights, k=1)[0]                
             quiz_prompt = await create_prompt_template() 
             openai_llm = ChatOpenAI(model_name="gpt-4o-mini", temperature=0.2)
             quiz_chain = (
@@ -302,6 +301,7 @@ async def make_quiz(
             question = f"""
                         {subject}와 관련된 문제를 다음과 같은 키워드 :  {', '.join(keywords[i])} 에 맞게 생성하고 보기 개수는 
                         {choice_count}개를 맞춰줘 
+                        5문제 중 최소 3문제 이상은 {user_difficulty_choice}로 설정해야 합니다.
                         또한 정답 번호는 1번 부터 {choice_count}번까지 값을 반드시 균등하게 사용해야 합니다.
                         """
             # 각 퀴즈 생성 시마다 사용된 키워드가 포함된 새 used_keywords 값
