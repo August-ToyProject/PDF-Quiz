@@ -33,6 +33,7 @@ const QuizData = ({
   const [fetchedData, setFetchedData] = useState<QuizDataProps[]>([]); // 데이터를 저장할 상태
   const { setQuizData } = useQuizContext();
   const [isLoading, setIsLoading] = useState(true);
+  const [totalItems, setTotalItems] = useState<number>(0);
 
   useEffect(() => {
     const eventSource = new EventSourcePolyfill(
@@ -75,15 +76,29 @@ const QuizData = ({
         }
 
         // 상태 업데이트
-        setFetchedData((prevData) => {
-          // 새로운 데이터 추가
-          const updatedData = [...prevData, data];
+        // setFetchedData((prevData) => {
+        //   // 새로운 데이터 추가
+        //   const updatedData = [...prevData, data];
+        //   console.log("Updated data: ", updatedData);
 
-          // 총 페이지 수 계산
-          setTotalPages(Math.ceil(updatedData.length / itemsPerPage));
-          setQuizData(updatedData);
-          return updatedData;
-        });
+        //   // 총 페이지 수 계산
+        //   setTotalPages(Math.ceil(updatedData.length / itemsPerPage));
+        //   setQuizData(updatedData);
+        //   return updatedData;
+        // });
+        // 데이터가 배열인지 확인
+        if (Array.isArray(data)) {
+          // 상태 업데이트
+          setFetchedData((prevData) => {
+            const updatedData = [...prevData, ...data];
+            setTotalItems(updatedData.length); // 총 아이템 수 업데이트
+            setTotalPages(Math.ceil(updatedData.length / itemsPerPage));
+            setQuizData(updatedData);
+            return updatedData;
+          });
+        } else {
+          console.log("Expected array but got: ", data);
+        }
       } catch (err) {
         console.error("Parsing error: ", err);
       }
@@ -100,10 +115,11 @@ const QuizData = ({
     return () => {
       eventSource.close();
     };
-  }, [itemsPerPage, setTotalPages, setQuizData]);
+  }, [itemsPerPage, setPage, setTotalPages, setQuizData]);
 
   const startIndex = (page - 1) * itemsPerPage;
-  const currentItems = fetchedData.slice(startIndex, startIndex + itemsPerPage);
+  const endIndex = startIndex + itemsPerPage;
+  const currentItems = fetchedData.slice(startIndex, endIndex);
 
   const leftItems = currentItems.slice(0, 3); // 첫 번째 컬럼에 표시할 3개의 문제
   const rightItems = currentItems.slice(3); // 두 번째 컬럼에 표시할 나머지 문제들
