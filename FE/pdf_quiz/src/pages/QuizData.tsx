@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Pagination from "react-js-pagination";
 import { EventSourcePolyfill } from "event-source-polyfill";
 import { useQuizContext } from "../context/QuizContext";
+import PacmanLoader from "react-spinners/PacmanLoader";
 
 interface PageProps {
   page: number;
@@ -29,6 +30,7 @@ const QuizData = ({
   // props로 상태 및 함수 받음
   const [fetchedData, setFetchedData] = useState<QuizDataProps[]>([]); // 데이터를 저장할 상태
   const { setQuizData } = useQuizContext();
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const eventSource = new EventSourcePolyfill(
@@ -42,15 +44,25 @@ const QuizData = ({
         withCredentials: true,
       }
     );
-    //👇 타입스크립트 에러 방지용 추후 해당 변수가 필요 여부에 따라 삭제 또는 수정해주세요
+    eventSource.onopen = () => {
+      console.log("SSE 연결이 성공적으로 열렸습니다.");
+    };
     eventSource.addEventListener("sse", (event: MessageEvent) => {
       try {
         console.log("event가 생성됨", event);
+        setIsLoading(false);
         const data = JSON.parse(event.data);
         console.log("Received data: ", data);
 
         if (!data) {
           console.log("Data is empty");
+        }
+        if (data === null) {
+          console.log("Data is null");
+        }
+
+        if (data === undefined) {
+          console.log("Data is undefined");
         }
 
         if (typeof data.options === "string") {
@@ -95,43 +107,58 @@ const QuizData = ({
   const rightItems = currentItems.slice(3); // 두 번째 컬럼에 표시할 나머지 문제들
 
   return (
-    <div className="font-bold grid grid-cols-2 gap-4 divide-x divide-gray-400">
-      {/* 왼쪽 컬럼 */}
-      <ul className="flex-1 flex-col space-y-4 pl-4">
-        {leftItems.map((item, index) => (
-          <li key={index}>
-            <div>
-              {startIndex + index + 1}. {item.question}
+    <div className="w-full font-bold flex flex-col gap-4  relative">
+      {isLoading && (
+        <div className="w-full absolute inset-0 flex justify-center items-center z-10 bg-white bg-opacity-80">
+          <div className="flex flex-col items-center">
+            <PacmanLoader color="#b0c0e0" size={40} />
+            <div className="font-body mt-2 text-center">
+              문제를 불러오는 중입니다...
             </div>
-            <ul className="pl-5 space-y-2 mt-3">
-              {Object.entries(item.options).map(([key, value]) => (
-                <li key={key}>
-                  ({key}) {value}
-                </li>
-              ))}
-            </ul>
-          </li>
-        ))}
-      </ul>
+          </div>
+        </div>
+      )}
 
-      {/* 오른쪽 컬럼 */}
-      <ul className="flex-1 flex-col space-y-4 pl-4">
-        {rightItems.map((item, index) => (
-          <li key={index}>
-            <div>
-              {startIndex + index + 4}. {item.question}
-            </div>
-            <ul className="pl-5 space-y-2 mt-3">
-              {Object.entries(item.options).map(([key, value]) => (
-                <li key={key}>
-                  ({key}) {value}
-                </li>
-              ))}
-            </ul>
-          </li>
-        ))}
-      </ul>
+      {/* 전체 컨테이너 */}
+      <div className="flex flex-1">
+        {/* 왼쪽 컬럼 */}
+        <ul className="flex-1 flex flex-col pl-4 space-y-4">
+          {leftItems.map((item, index) => (
+            <li key={index}>
+              <div>
+                {startIndex + index + 1}. {item.question}
+              </div>
+              <ul className="pl-5 space-y-2 mt-3">
+                {Object.entries(item.options).map(([key, value]) => (
+                  <li key={key}>
+                    ({key}) {value}
+                  </li>
+                ))}
+              </ul>
+            </li>
+          ))}
+        </ul>
 
+        {/* 오른쪽 컬럼 */}
+        <ul className="flex-1 flex flex-col pl-4 space-y-4">
+          {rightItems.map((item, index) => (
+            <li key={index}>
+              <div>
+                {startIndex + index + 4}. {item.question}
+              </div>
+              <ul className="pl-5 space-y-2 mt-3">
+                {Object.entries(item.options).map(([key, value]) => (
+                  <li key={key}>
+                    ({key}) {value}
+                  </li>
+                ))}
+              </ul>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* 페이지네이션 */}
       <Pagination
         activePage={page}
         itemsCountPerPage={itemsPerPage}

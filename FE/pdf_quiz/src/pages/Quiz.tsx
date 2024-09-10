@@ -139,7 +139,7 @@ const Quiz = () => {
       </div>
 
       <div className="h-4/5 flex flex-row pt-2">
-        <div className="w-4/5 flex-shrink flex-grow flex font-body overflow-auto border-r border-gray-400">
+        <div className="w-4/5  flex font-body overflow-auto border-r border-gray-400">
           <QuizData
             page={page}
             itemsPerPage={itemsPerPage}
