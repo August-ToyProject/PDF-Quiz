@@ -34,7 +34,7 @@ const OMR = ({ quizCount, optionCount, handleOptionClick }: OMRProps) => {
               key={optionIndex}
               onClick={() => handleOptionClick(problemIndex, optionIndex + 1)}
             >
-              <span className="text-lg">
+              <span className="text-m" style={{ fontSize: "18px" }}>
                 {choiceSymbols[optionIndex] || `(${optionIndex + 1})`}
               </span>
             </button>
