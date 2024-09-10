@@ -191,13 +191,16 @@ export default function MyPage() {
     <div className="h-screen w-screen flex flex-col items-center bg-white overflow-x-hidden min-w-[600px]">
       {/* 상단 바 및 사용자 정보 */}
       <div className="w-full h-[60px] border-b-2 border-gray-300 relative flex items-center px-5 mb-4">
-        <img 
-          src={BlueLogo} 
-          alt="Quizgen" 
-          className="w-36 h-14 ml-5 lg:ml-0 lg:relative lg:left-auto lg:transform-none absolute left-1/2 transform -translate-x-1/2 lg:static" />  
+        <img
+          src={BlueLogo}
+          alt="Quizgen"
+          className="w-36 h-14 ml-5 lg:ml-0 lg:relative lg:left-auto lg:transform-none absolute left-1/2 transform -translate-x-1/2 lg:static"
+        />
         {/* 작은 화면일 경우 (반응형) */}
-        <div className="flex lg:hidden my-4 items-center space-x-4 ml-auto">
-          <div className="font-body font-bold">{user?.nickname || "닉네임"}</div>
+        <div className="flex lg:hidden my-4 items-center space-x-4 ml-auto p-2 pl-4 border-2 rounded-full">
+          <div className="font-body font-bold">
+            {user?.nickname || "닉네임"} 님
+          </div>
           <button
             className="font-body p-1 bg-transparent text-xs text-gray-500"
             onClick={handleInfo}
@@ -210,7 +213,7 @@ export default function MyPage() {
           >
             로그아웃
           </button>
-        </div>      
+        </div>
       </div>
       <div className="h-[2px] bg-gray-300 mx-4"></div>
       <div className="flex flex-col lg:flex-row w-full mx-4 lg:space-x-6 space-y-6 lg:space-y-0">
@@ -296,9 +299,11 @@ export default function MyPage() {
                   key={item.id}
                   className="flex justify-between items-center p-2 border border-gray-300 rounded-lg bg-white"
                 >
-                  <button 
+                  <button
                     className="flex items-center font-bold text-sm bg-transparent"
-                    onClick={() => navigate("/listAnswer", {state: {examId: item.id}})}
+                    onClick={() =>
+                      navigate("/listAnswer", { state: { examId: item.id } })
+                    }
                   >
                     {item.title}
                   </button>
