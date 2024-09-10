@@ -172,9 +172,9 @@ async def create_prompt_template():
             4. {used_keywords}로는 문제를 생성하지 마세요.
             5. 문제 보기는 1~{choice_count}까지 다양하게 해주세요:
             6. {choice_count}개의 선택지(1부터 {choice_count}까지 번호 매김)와 하나의 정답을 포함해야 합니다.
-            7. 난이도는 {difficulty}입니다.
+            7. 난이도는 {user_difficulty_choice}입니다.
             8. 정답에 대한 간단한 설명을 제공하되, 반드시 주어진 context, 요약이나 키워드에서 정보를 인용하세요.
-            9. 문제의 난이도는 {difficulty}입니다. 이 때 해당 난이도에 따라 문제의 난이도를 비율에 맞게 분배해주세요
+            9. 문제의 난이도는 {user_difficulty_choice}입니다. 이 때 해당 난이도에 따라 문제의 난이도를 비율에 맞게 분배해주세요
             10. 문단을 나누기 위해 ###과 같은 특수문자는 사용하지마세요
             11. 만약 동일문제와 중복되거나 비슷한 문제 혹은 {used_keywords}로 문제를 생성하거나 제대로된 문제를 생성하지 못한다면 다른 생성형 AI툴을 이용할거야.
             
@@ -316,7 +316,7 @@ async def make_quiz(
                 "num_questions":num_questions,
                 "question": question,
                 "choice_count":choice_count,
-                "difficulty":user_difficulty_choice,
+                "user_difficulty_choice":user_difficulty_choice,
                 "question":question
             }
 
