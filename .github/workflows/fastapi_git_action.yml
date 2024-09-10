@@ -1,0 +1,67 @@
+name: Fast API CI/CD
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'BE/fastapi/**'
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      EC2_HOST: ${{ secrets.EC2_FASTAPI_HOST }}
+      EC2_USER: ${{ secrets.EC2_USER }}
+      SSH_KEY: ${{ secrets.EC2_SSH_REACT_KEY }}
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_DEPLOY_WEB_HOOK }}
+      SLACK_USER: 'U07F90W5TKN'
+      
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v4
+      
+    - name: Check environment variables
+      run: |
+        echo "EC2_HOST: $EC2_HOST"
+        echo "EC2_USER: $EC2_USER"
+
+    - name: Add SSH key to agent
+      run: |
+        echo "$SSH_KEY" | tr -d '\r' > key.pem  # Windows와 Unix 줄바꿈 문제 해결
+        chmod 400 key.pem
+        eval "$(ssh-agent -s)"
+        ssh-add key.pem
+
+    - name: Test SSH connection
+      run: |
+        ssh -o StrictHostKeyChecking=no -i key.pem $EC2_USER@$EC2_HOST "echo Connection successful"
+
+    - name: Deploy to EC2
+      run: |
+        ssh -o StrictHostKeyChecking=no -i key.pem $EC2_USER@$EC2_HOST << 'ENDSSH'
+          echo "Running run.sh on EC2"
+          sh run.sh
+          echo "Finished running run.sh"
+        ENDSSH
+        
+    - name: Notify Slack on Success 🎉
+      if: success()
+      run: |
+        curl -X POST -H 'Content-type: application/json' --data '{
+          "channel": "#your-channel",
+          "text": ":white_check_mark: *배포 성공!* :tada: :rocket: \n<@${{ env.SLACK_USER }}> 배포 개복치가 오늘도 무사히 배포를 완료했습니다! 🎉 오늘의 배포는 성공적입니다! 🐟 :rocket:",
+          "username": "DeployMola",
+          "icon_emoji": ":fish:"
+        }' ${{ env.SLACK_WEBHOOK_URL }}
+  
+    - name: Notify Slack on Failure 💀
+      if: failure()
+      run: |
+        curl -X POST -H 'Content-type: application/json' --data '{
+          "channel": "#your-channel",
+          "text": ":x: *배포 실패!* :rotating_light: \n<@${{ env.SLACK_USER }}> \n 배포 개복치가 스트레스를 이기지 못하고 꾀꼬닥했습니다... :skull: :warning: 로그를 확인하고 다시 살려주세요! ⚠️",
+          "username": "DeployMola",
+          "icon_emoji": ":skull:"
+        }' ${{ env.SLACK_WEBHOOK_URL }}
+
+  
