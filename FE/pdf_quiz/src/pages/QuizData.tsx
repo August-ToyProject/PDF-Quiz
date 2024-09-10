@@ -92,6 +92,8 @@ const QuizData = ({
           setFetchedData((prevData) => {
             const updatedData = [...prevData, ...data];
             setTotalItems(updatedData.length); // 총 아이템 수 업데이트
+
+            console.log("Total items: ", totalItems);
             setTotalPages(Math.ceil(updatedData.length / itemsPerPage));
             setQuizData(updatedData);
             return updatedData;
