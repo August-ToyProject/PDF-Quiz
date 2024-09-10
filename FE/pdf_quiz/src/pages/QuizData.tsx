@@ -68,32 +68,30 @@ const QuizData = ({
           console.log("Data is undefined");
         }
 
-        if (typeof data.options === "string") {
-          data.options = JSON.parse(data.options);
-        }
-        if (typeof data.answer === "string") {
-          data.answer = JSON.parse(data.answer);
-        }
-
-        // 상태 업데이트
-        // setFetchedData((prevData) => {
-        //   // 새로운 데이터 추가
-        //   const updatedData = [...prevData, data];
-        //   console.log("Updated data: ", updatedData);
-
-        //   // 총 페이지 수 계산
-        //   setTotalPages(Math.ceil(updatedData.length / itemsPerPage));
-        //   setQuizData(updatedData);
-        //   return updatedData;
-        // });
         // 데이터가 배열인지 확인
         if (Array.isArray(data)) {
+          data.forEach((item: any) => {
+            if (typeof item.options === "string") {
+              try {
+                item.options = JSON.parse(item.options);
+              } catch (err) {
+                console.error("Failed to parse options:", err);
+              }
+            }
+
+            if (typeof item.answer === "string") {
+              try {
+                item.answer = JSON.parse(item.answer);
+              } catch (err) {
+                console.error("Failed to parse answer:", err);
+              }
+            }
+          });
+
           // 상태 업데이트
           setFetchedData((prevData) => {
             const updatedData = [...prevData, ...data];
             setTotalItems(updatedData.length); // 총 아이템 수 업데이트
-
-            console.log("Total items: ", totalItems);
             setTotalPages(Math.ceil(updatedData.length / itemsPerPage));
             setQuizData(updatedData);
             return updatedData;
@@ -182,7 +180,7 @@ const QuizData = ({
       <Pagination
         activePage={page}
         itemsCountPerPage={itemsPerPage}
-        totalItemsCount={fetchedData.length}
+        totalItemsCount={totalItems}
         hideNavigation={true}
         hideFirstLastPages={true}
         onChange={(newPage) => setPage(newPage)}
