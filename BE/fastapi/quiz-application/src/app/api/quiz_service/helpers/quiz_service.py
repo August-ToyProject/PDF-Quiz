@@ -11,6 +11,8 @@ import random
 import json
 from confluent_kafka import Producer
 import time
+import random
+
 
 # Kafka Producer 설정
 producer_config = {
@@ -169,7 +171,7 @@ async def create_prompt_template():
             3. 절대로 동일문제와 비슷하거나 똑같은 문제는 생성하지 마세요.
             4. {used_keywords}로는 문제를 생성하지 마세요.
             5. 문제 보기는 1~{choice_count}까지 다양하게 해주세요:
-            6. 정답 보기는 1~{choice_count}까지 반드시 각각 1번 이상 넣고 정답 순서를 섞어주세요 :
+            6. 정답 번호는 1~{choice_count}까지 반드시 각각 1번 이상 넣고 정답 순서를 섞어주세요
             7. {choice_count}개의 선택지(1부터 {choice_count}까지 번호 매김)와 하나의 정답을 포함해야 합니다.
             8. 난이도는 {difficulty}입니다.
             9. 정답에 대한 간단한 설명을 제공하되, 반드시 주어진 context, 요약이나 키워드에서 정보를 인용하세요.
@@ -316,6 +318,11 @@ async def make_quiz(
 
             # keyword_chain 실행
             result = await asyncio.to_thread(quiz_chain.invoke, input_data)
+            questions = result.strip().split("\n\n")
+            random.shuffle(questions)
+            
+            result = "\n\n".join(questions)
+            
             used_keywords = used_keywords + ', '.join(keywords[i])
             # Kafka로 퀴즈 및 추가 정보를 전송 (JSON 직렬화 후 UTF-8 인코딩, ensure_ascii=False 추가)
             quiz_data = {
