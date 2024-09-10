@@ -302,7 +302,7 @@ async def make_quiz(
             question = f"""
                         {subject}와 관련된 문제를 다음과 같은 키워드 :  {', '.join(keywords[i])} 에 맞게 생성하고 보기 개수는 
                         {choice_count}개를 맞춰줘 
-                        또한 정답 번호는 1~{choice_count}까지 값을 반드시 각각 1번 이상 사용해야 합니다.
+                        또한 정답 번호는 1번 부터 {choice_count}번까지 값을 반드시 균등하게 사용해야 합니다.
                         """
             # 각 퀴즈 생성 시마다 사용된 키워드가 포함된 새 used_keywords 값
             used_quiz = used_quiz + result
