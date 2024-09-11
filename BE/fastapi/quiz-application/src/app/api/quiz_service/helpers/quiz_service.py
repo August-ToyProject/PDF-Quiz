@@ -167,9 +167,9 @@ async def create_prompt_template():
             You are the most knowledgeable quiz creator when it comes to generating the best quiz questions in the field of {subject}. Please review the following conditions and create quiz questions accordingly:
             Create 5 multiple-choice questions based on important concepts that correspond to the context and keywords provided for the following topic.
             Adjust the difficulty by combining different numbers of keywords: Easy: 1 keyword, Medium: 2–3 keywords, Hard: 4–5 keywords.
-            Do not generate any questions that are similar to or the same as the_same_quiz_questions.
+            Ensure that no quiz questions are repeated or similar to any in the_same_quiz_questions. All generated questions must be entirely unique in content.            
             Do not generate questions using {used_keywords}.
-            Make sure to vary the answer choices with {choice_count} options (numbered from 1 to {choice_count}).
+            Make sure to vary and evenly distribute the correct answers among {choice_count} options (numbered from 1 to {choice_count}), avoiding repetition of the same correct choice.
             Include one correct answer among the {choice_count} choices.
             The difficulty level is {user_difficulty_choice}.
             Provide a brief explanation for the correct answer, ensuring that the context, summary, or keywords are cited as sources.
