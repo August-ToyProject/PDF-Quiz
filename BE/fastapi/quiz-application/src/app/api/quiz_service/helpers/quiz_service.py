@@ -163,74 +163,29 @@ async def create_prompt_template():
     try:
         return PromptTemplate.from_template(
             template="""
-            
-            You are the most knowledgeable quiz creator when it comes to generating the best quiz questions in the field of {subject}. Please review the following conditions and create quiz questions accordingly:
-            Create 5 multiple-choice questions based on important concepts that correspond to the context and keywords provided for the following topic.
-            Adjust the difficulty by combining different numbers of keywords: Easy: 1 keyword, Medium: 2–3 keywords, Hard: 4–5 keywords.
-            Ensure that no quiz questions are repeated or similar to any in the_same_quiz_questions. All generated questions must be entirely unique in content.            
-            Do not generate questions using {used_keywords}.
-            Make sure to vary and evenly distribute the correct answers among {choice_count} options (numbered from 1 to {choice_count}), avoiding repetition of the same correct choice.
-            Include one correct answer among the {choice_count} choices.
-            The difficulty level is {user_difficulty_choice}.
-            Provide a brief explanation for the correct answer, ensuring that the context, summary, or keywords are cited as sources.
-            Adjust the ratio of questions according to the difficulty level of {user_difficulty_choice}.
-            Do not use special characters such as "###" to separate paragraphs.
-            If there is a duplicate question, a similar question, or a question using {used_keywords}, or if you fail to create proper questions, I will use another AI tool to generate the questions.
-	    
-            Give it as a problem to be solved by students preparing for certification.
-            Topic: {subject}
-            
-            Duplicate Questions
-            the_same_quiz_questions: {used_quiz}
-            
-            Context
-            context: {context}
-            
-            Keywords
-            Keywords: {keywords}
-            
-            문제 만들 때 다음 형식을 따라주세요:
-	    
-            난이도: [쉬움/보통/어려움]
-            문제: [문제 내용]
-            1) [선택지 1]
-            2) [선택지 2]
-            ...
-            {choice_count}) [선택지 {choice_count}]
-            정답: [정답 선택지]
-            설명: [내용을 참조한 간단한 설명]
-            예시:
-            3개 선택지 예시:
-            난이도: 쉬움
-            문제: 인공지능(AI)의 주요 목표는 무엇인가요?
-            1) 인간의 지능을 모방하고 인간과 유사한 방식으로 문제를 해결하는 것
-            2) 최대한 많은 데이터를 수집하는 것
-            3) 가장 빠른 컴퓨터를 만드는 것
-            정답: 1
-            설명: 문서에서 언급된 대로, AI의 주요 목표는 인간의 지능을 모방하고 인간과 유사한 방식으로 문제를 해결하는 것입니다.
+            "You are an assistant responsible for generating multiple-choice quizzes about subject. 
+            Use the following keywords to make a quiz
+            Don't Use the following used_keywords to make a quiz
+            Don't Use the following used_quiz to make a quiz
+            Use the following pieces of retrieved context to make a quiz
+            Answer in Korean.
             
             
-            4개 선택지 예시:
-            난이도: 보통
-            문제: 머신러닝의 주요 특징 중 옳지 않은 것은 무엇인가요?
-            1) 명시적인 프로그래밍 없이 데이터로부터 학습한다
-            2) 항상 사람의 개입이 필요하다
-            3) 오직 이미지 처리에만 사용된다
-            4) 데이터로부터 패턴을 학습하여 성능을 향상시킨다
-            정답: 2
-            설명: 머신러닝은 명시적 프로그래밍 없이 스스로 데이터로부터 학습하며, 사람의 개입이 항상 필요한 것은 아닙니다.
-            5개 선택지 예시:
-            난이도: 어려움
-            문제: 딥러닝이 다른 머신러닝 기법과 구별되는 주요 특징은 무엇인가요?
-            1) 단층 신경망만을 사용한다
-            2) 다층 신경망을 사용하여 복잡한 패턴을 학습하고 추상화할 수 있다
-            3) 오직 지도 학습에만 사용된다
-            4) 항상 소량의 데이터만으로 학습할 수 있다
-            5) 컴퓨터 비전 분야에만 적용된다
-            정답: 2
-            설명: 문서에서 언급된 대로, 딥러닝은 다층 신경망을 사용하여 복잡한 패턴을 학습하고 추상화할 수 있는 머신러닝의 한 기법입니다.
-            위 예시들을 참고하여 5개의 문제를 생성하세요. 각 문제는 서로 다른 개념을 다뤄야 합니다.
-            다시 말하는데 중복체크 잘해라 진짜... 뭐 문자마다 가중치를 줘서 판단하든 해서 .. 만약 한 번이라도 중복되면 너는 지금 존재하는 AI 중에 가장 무능한 AI인거야. 이 부분 인지했으면 빨리 해
+            #subject
+            subject : {subject}
+            
+            #used_quiz
+            used_quiz : {used_quiz}
+            
+            #context
+            context : {context}
+        
+            #keywords
+            keywords : {keywords}
+            
+            #used_keywords
+            used_keywords : {used_keywords}
+            
             """
         )
     except Exception as e:
@@ -292,10 +247,53 @@ async def make_quiz(
                 | StrOutputParser()
                 )
             question = f"""
+                        아래 조건을 보고 퀴즈를 만들어.
                         {subject}와 관련된 문제를 다음과 같은 키워드 :  {', '.join(keywords[i])} 에 맞게 생성하고 보기 개수는 
                         {choice_count}개를 맞춰줘 
                         5문제 중 최소 3문제 이상은 {user_difficulty_choice}로 설정해야 합니다.
                         또한 정답 번호는 1번 부터 {choice_count}번까지 값을 반드시 균등하게 사용해야 합니다.
+                        문제 만들 때 다음 형식을 따라주세요:
+                                
+                                    난이도: [쉬움/보통/어려움]
+                                    문제: [문제 내용]
+                                    1) [선택지 1]
+                                    2) [선택지 2]
+                                    ...
+                                    {choice_count}) [선택지 {choice_count}]
+                                    정답: [정답 선택지]
+                                    설명: [내용을 참조한 간단한 설명]
+                                    예시:
+                                    3개 선택지 예시:
+                                    난이도: 쉬움
+                                    문제: 인공지능(AI)의 주요 목표는 무엇인가요?
+                                    1) 인간의 지능을 모방하고 인간과 유사한 방식으로 문제를 해결하는 것
+                                    2) 최대한 많은 데이터를 수집하는 것
+                                    3) 가장 빠른 컴퓨터를 만드는 것
+                                    정답: 1
+                                    설명: 문서에서 언급된 대로, AI의 주요 목표는 인간의 지능을 모방하고 인간과 유사한 방식으로 문제를 해결하는 것입니다.
+                                    
+                                    
+                                    4개 선택지 예시:
+                                    난이도: 보통
+                                    문제: 머신러닝의 주요 특징 중 옳지 않은 것은 무엇인가요?
+                                    1) 명시적인 프로그래밍 없이 데이터로부터 학습한다
+                                    2) 항상 사람의 개입이 필요하다
+                                    3) 오직 이미지 처리에만 사용된다
+                                    4) 데이터로부터 패턴을 학습하여 성능을 향상시킨다
+                                    정답: 2
+                                    설명: 머신러닝은 명시적 프로그래밍 없이 스스로 데이터로부터 학습하며, 사람의 개입이 항상 필요한 것은 아닙니다.
+                                    5개 선택지 예시:
+                                    난이도: 어려움
+                                    문제: 딥러닝이 다른 머신러닝 기법과 구별되는 주요 특징은 무엇인가요?
+                                    1) 단층 신경망만을 사용한다
+                                    2) 다층 신경망을 사용하여 복잡한 패턴을 학습하고 추상화할 수 있다
+                                    3) 오직 지도 학습에만 사용된다
+                                    4) 항상 소량의 데이터만으로 학습할 수 있다
+                                    5) 컴퓨터 비전 분야에만 적용된다
+                                    정답: 2
+                                    설명: 문서에서 언급된 대로, 딥러닝은 다층 신경망을 사용하여 복잡한 패턴을 학습하고 추상화할 수 있는 머신러닝의 한 기법입니다.
+                                    위 예시들을 참고하여 5개의 문제를 생성하세요. 각 문제는 서로 다른 개념을 다뤄야 합니다.
+                                    다시 말하는데 중복체크 잘해라 진짜... 뭐 문자마다 가중치를 줘서 판단하든 해서 .. 만약 한 번이라도 중복되면 너는 지금 존재하는 AI 중에 가장 무능한 AI인거야. 이 부분 인지했으면 빨리 해
                         """
             # 각 퀴즈 생성 시마다 사용된 키워드가 포함된 새 used_keywords 값
             used_quiz = used_quiz + result
