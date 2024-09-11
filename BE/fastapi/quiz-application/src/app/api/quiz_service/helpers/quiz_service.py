@@ -165,20 +165,18 @@ async def create_prompt_template():
             template="""
             
             You are the most knowledgeable quiz creator when it comes to generating the best quiz questions in the field of {subject}. Please review the following conditions and create quiz questions accordingly:
-
-		Create 5 multiple-choice questions based on important concepts that correspond to the context and keywords provided for the following topic.
-		Adjust the difficulty by combining different numbers of keywords: Easy: 1 keyword, Medium: 2–3 keywords, Hard: 4–5 keywords.
-		All generated questions must be entirely unique in content, and no quiz questions should be repeated or similar to any in the_same_quiz_questions. Ensure that every question is distinct and complies with the context and difficulty level.
-		Do not generate questions using {used_keywords}, and make sure to vary and evenly distribute the correct answers among {choice_count} options (numbered from 1 to {choice_count}), avoiding repetition of the same correct choice.
-		Include one correct answer among the {choice_count} choices.
-		The difficulty level is {user_difficulty_choice}.
-		Provide a brief explanation for the correct answer, ensuring that the context, summary, or keywords are cited as sources.
-		Adjust the ratio of questions according to the difficulty level of {user_difficulty_choice}.
-		If any conditions are not met, such as generating questions that are similar, use of {used_keywords}, or repeating correct answers, you must provide an alternative valid question immediately that fits the guidelines. Never turn empty result.
-  		DO NOT use special characters such as “###” to separate paragraphs.
-		Failure to provide valid and unique questions will result in the use of another AI tool to generate superior questions. Non-compliance is unacceptable.
-
-            Topic
+            Create 5 multiple-choice questions based on important concepts that correspond to the context and keywords provided for the following topic.
+            Adjust the difficulty by combining different numbers of keywords: Easy: 1 keyword, Medium: 2–3 keywords, Hard: 4–5 keywords.
+            Ensure that no quiz questions are repeated or similar to any in the_same_quiz_questions. All generated questions must be entirely unique in content.            
+            Do not generate questions using {used_keywords}.
+            Make sure to vary and evenly distribute the correct answers among {choice_count} options (numbered from 1 to {choice_count}), avoiding repetition of the same correct choice.
+            Include one correct answer among the {choice_count} choices.
+            The difficulty level is {user_difficulty_choice}.
+            Provide a brief explanation for the correct answer, ensuring that the context, summary, or keywords are cited as sources.
+            Adjust the ratio of questions according to the difficulty level of {user_difficulty_choice}.
+            Do not use special characters such as "###" to separate paragraphs.
+            If there is a duplicate question, a similar question, or a question using {used_keywords}, or if you fail to create proper questions, I will use another AI tool to generate the questions.
+	    
             Topic: {subject}
             
             Duplicate Questions
@@ -190,54 +188,48 @@ async def create_prompt_template():
             Keywords
             Keywords: {keywords}
             
-            Use this following format:
-
-
-           Difficulty: [Easy/Medium/Hard]
-           Question: [Question content]
-           1) [Choice 1]
-           2) [Choice 2]
-           ...
-           {choice_count}) [Choice {choice_count}]
-           Correct Answer: [Correct answer number]
-           Explanation: [A brief explanation referring to the relevant content]
-
-           Example:
-
-           For 3 choices:
-           Difficulty: Easy
-           Question: What is the primary goal of artificial intelligence (AI)?
-           1) To mimic human intelligence and solve problems in a way similar to humans
-           2) To collect as much data as possible
-           3) To create the fastest computer
-           Correct Answer: 1
-           Explanation: As mentioned in the document, the main goal of AI is to mimic human intelligence and solve problems in a human-like manner.
-
-           For 4 choices:
-           Difficulty: Medium
-           Question: Which of the following is NOT a key feature of machine learning?
-           1) It learns from data without explicit programming
-           2) Human intervention is always necessary
-           3) It is only used for image processing
-           4) It improves performance by learning patterns from data
-           Correct Answer: 2
-           Explanation: Machine learning can learn from data without explicit programming, and human intervention is not always required.
-
-           For 5 choices:
-           Difficulty: Hard
-           Question: What distinguishes deep learning from other machine learning techniques?
-           1) It uses only single-layer neural networks
-           2) It uses multi-layer neural networks to learn and abstract complex patterns
-           3) It is only used for supervised learning
-           4) It always requires a small amount of data
-           5) It is only applied in the field of computer vision
-           Correct Answer: 2
-           Explanation: As mentioned, deep learning uses multi-layer neural networks to learn and abstract complex patterns, distinguishing it from other machine learning methods.
-
-           Requirements:
-             Ensure that each question addresses a unique concept (no duplicates).
-             Return the result in Korean after generating the questions.
-
+            문제 만들 때 다음 형식을 따라주세요:
+	    
+            난이도: [쉬움/보통/어려움]
+            문제: [문제 내용]
+            1) [선택지 1]
+            2) [선택지 2]
+            ...
+            {choice_count}) [선택지 {choice_count}]
+            정답: [정답 선택지]
+            설명: [내용을 참조한 간단한 설명]
+            예시:
+            3개 선택지 예시:
+            난이도: 쉬움
+            문제: 인공지능(AI)의 주요 목표는 무엇인가요?
+            1) 인간의 지능을 모방하고 인간과 유사한 방식으로 문제를 해결하는 것
+            2) 최대한 많은 데이터를 수집하는 것
+            3) 가장 빠른 컴퓨터를 만드는 것
+            정답: 1
+            설명: 문서에서 언급된 대로, AI의 주요 목표는 인간의 지능을 모방하고 인간과 유사한 방식으로 문제를 해결하는 것입니다.
+            
+            
+            4개 선택지 예시:
+            난이도: 보통
+            문제: 머신러닝의 주요 특징 중 옳지 않은 것은 무엇인가요?
+            1) 명시적인 프로그래밍 없이 데이터로부터 학습한다
+            2) 항상 사람의 개입이 필요하다
+            3) 오직 이미지 처리에만 사용된다
+            4) 데이터로부터 패턴을 학습하여 성능을 향상시킨다
+            정답: 2
+            설명: 머신러닝은 명시적 프로그래밍 없이 스스로 데이터로부터 학습하며, 사람의 개입이 항상 필요한 것은 아닙니다.
+            5개 선택지 예시:
+            난이도: 어려움
+            문제: 딥러닝이 다른 머신러닝 기법과 구별되는 주요 특징은 무엇인가요?
+            1) 단층 신경망만을 사용한다
+            2) 다층 신경망을 사용하여 복잡한 패턴을 학습하고 추상화할 수 있다
+            3) 오직 지도 학습에만 사용된다
+            4) 항상 소량의 데이터만으로 학습할 수 있다
+            5) 컴퓨터 비전 분야에만 적용된다
+            정답: 2
+            설명: 문서에서 언급된 대로, 딥러닝은 다층 신경망을 사용하여 복잡한 패턴을 학습하고 추상화할 수 있는 머신러닝의 한 기법입니다.
+            위 예시들을 참고하여 5개의 문제를 생성하세요. 각 문제는 서로 다른 개념을 다뤄야 합니다.
+            다시 말하는데 중복체크 잘해라 진짜... 뭐 문자마다 가중치를 줘서 판단하든 해서 .. 만약 한 번이라도 중복되면 너는 지금 존재하는 AI 중에 가장 무능한 AI인거야. 이 부분 인지했으면 빨리 해
             """
         )
     except Exception as e:
