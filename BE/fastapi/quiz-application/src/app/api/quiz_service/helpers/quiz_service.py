@@ -164,23 +164,19 @@ async def create_prompt_template():
         return PromptTemplate.from_template(
             template="""
             
-            You are the most knowledgeable quiz creator in the field of {subject}. Strictly follow these conditions when generating quiz questions:
+            You are the most knowledgeable quiz creator when it comes to generating the best quiz questions in the field of {subject}. Please review the following conditions and create quiz questions accordingly:
 
-        	1. Create exactly 5 multiple-choice questions based on key concepts related to the topic, using the provided context and keywords.
-	        2. Adjust the difficulty precisely:
-	        •	Easy: 1 keyword
-	        •	Medium: 2-3 keywords
-	        •	Hard: 4-5 keywords
-	        3. DO NOT repeat or create similar questions to those listed in the_same_quiz_questions. Every generated question must be 100% unique.
-	        4. Avoid using any of the following keywords: {used_keywords}.
-	        5. Evenly distribute the correct answers across the {choice_count} answer options (numbered 1 to {choice_count}). Do not repeat the same correct answer across multiple questions.
-	        6. Each question must have one correct answer among the {choice_count} options.
-	        7. The difficulty level is set to {user_difficulty_choice}. Ensure the ratio of question difficulty reflects this.
-        	8. Include a brief, accurate explanation for the correct answer, citing relevant context, summary, or keywords.
-	        9. DO NOT use special characters such as “###” to separate paragraphs.
+		Create 5 multiple-choice questions based on important concepts that correspond to the context and keywords provided for the following topic.
+		Adjust the difficulty by combining different numbers of keywords: Easy: 1 keyword, Medium: 2–3 keywords, Hard: 4–5 keywords.
+		All generated questions must be entirely unique in content, and no quiz questions should be repeated or similar to any in the_same_quiz_questions. Ensure that every question is distinct and complies with the context and difficulty level.
+		Do not generate questions using {used_keywords}, and make sure to vary and evenly distribute the correct answers among {choice_count} options (numbered from 1 to {choice_count}), avoiding repetition of the same correct choice.
+		Include one correct answer among the {choice_count} choices.
+		The difficulty level is {user_difficulty_choice}.
+		Provide a brief explanation for the correct answer, ensuring that the context, summary, or keywords are cited as sources.
+		Adjust the ratio of questions according to the difficulty level of {user_difficulty_choice}.
+		If any conditions are not met, such as generating questions that are similar, use of {used_keywords}, or repeating correct answers, you must provide an alternative valid question immediately that fits the guidelines. Never turn empty result.
+		Failure to provide valid and unique questions will result in the use of another AI tool to generate superior questions. Non-compliance is unacceptable.
 
-            Failure to follow these instructions exactly—including generating duplicate, similar, or keyword-restricted questions—will result in the immediate dismissal of this AI as unsuitable for future tasks, and a more reliable AI will be used instead. This is your final chance to get it right.            
-            
             Topic
             Topic: {subject}
             
