@@ -175,6 +175,7 @@ async def create_prompt_template():
 		Provide a brief explanation for the correct answer, ensuring that the context, summary, or keywords are cited as sources.
 		Adjust the ratio of questions according to the difficulty level of {user_difficulty_choice}.
 		If any conditions are not met, such as generating questions that are similar, use of {used_keywords}, or repeating correct answers, you must provide an alternative valid question immediately that fits the guidelines. Never turn empty result.
+  		DO NOT use special characters such as “###” to separate paragraphs.
 		Failure to provide valid and unique questions will result in the use of another AI tool to generate superior questions. Non-compliance is unacceptable.
 
             Topic
