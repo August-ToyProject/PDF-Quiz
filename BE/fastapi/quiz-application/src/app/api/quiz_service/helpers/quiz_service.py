@@ -177,6 +177,7 @@ async def create_prompt_template():
             Do not use special characters such as "###" to separate paragraphs.
             If there is a duplicate question, a similar question, or a question using {used_keywords}, or if you fail to create proper questions, I will use another AI tool to generate the questions.
 	    
+            Give it as a problem to be solved by students preparing for certification.
             Topic: {subject}
             
             Duplicate Questions
