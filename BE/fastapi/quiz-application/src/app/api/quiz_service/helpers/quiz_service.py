@@ -163,27 +163,32 @@ async def create_prompt_template():
     try:
         return PromptTemplate.from_template(
             template="""
-            "You are an assistant responsible for generating multiple-choice quizzes about subject. 
-            Use the following keywords to make a quiz
-            Don't Use the following used_keywords to make a quiz
-            Don't Use the following used_quiz to make a quiz
-            Use the following pieces of retrieved context to make a quiz
-            Answer in Korean.
+            야 너 문제 구성하고 각 문자 다 비교해서 똑같은 문제 제외해. 그리고 엉뚱한 문제 안 만들게 문제 자체도 내적일치도 판단할 수 있지? 일치도 판단해서 유의미하지 않다면 버리고 다시 만들어.
+            당신은 {subject}분야에서 가장 뛰어난 퀴즈 문제 생성에 대해 전문 지식을 가지고 있는 퀴즈 생성자입니다. 아래 조건을 보고 퀴즈를 만들어.
+            1. 다음 주제에 맞게 context를 보고 키워드에 해당하는 중요한 개념을 바탕으로 객관식 문제 5개를 만드세요. 
+            2. 난이도에 따라 키워드를 여러개 조합해서 문제를 만들어주세요 쉬움 : 1개 , 중간 2~3개, 어려움 4~5개.
+            3. 절대로 동일문제와 비슷하거나 똑같은 문제는 생성하지 마세요.
+            4. {used_keywords}로는 문제를 생성하지 마세요.
+            5. 문제 보기는 1~{choice_count}까지 다양하게 해주세요:
+            6. {choice_count}개의 선택지(1부터 {choice_count}까지 번호 매김)와 하나의 정답을 포함해야 합니다.
+            7. 난이도는 {user_difficulty_choice}입니다.
+            8. 정답에 대한 간단한 설명을 제공하되, 반드시 주어진 context, 요약이나 키워드에서 정보를 인용하세요.
+            9. 문제의 난이도는 {user_difficulty_choice}입니다. 이 때 해당 난이도에 따라 문제의 난이도를 비율에 맞게 분배해주세요
+            10. 문단을 나누기 위해 ###과 같은 특수문자는 사용하지마세요
+            11. 만약 동일문제와 중복되거나 비슷한 문제 혹은 {used_keywords}로 문제를 생성하거나 제대로된 문제를 생성하지 못한다면 다른 생성형 AI툴을 이용할거야.
             
-            #subject
-            subject : {subject}
             
-            #used_quiz
-            used_quiz : {used_quiz}
+            #주제
+            주제 : {subject}
+            
+            #동일문제
+            동일문제 : {used_quiz}
             
             #context
             context : {context}
         
-            #keywords
-            keywords : {keywords}
-            
-            #used_keywords
-            used_keywords : {used_keywords}
+            #키워드
+            키워드 : {keywords}
             
             문제 만들 때 다음 형식을 따라주세요:
             난이도: [쉬움/보통/어려움]
@@ -226,7 +231,6 @@ async def create_prompt_template():
             설명: 문서에서 언급된 대로, 딥러닝은 다층 신경망을 사용하여 복잡한 패턴을 학습하고 추상화할 수 있는 머신러닝의 한 기법입니다.
             위 예시들을 참고하여 5개의 문제를 생성하세요. 각 문제는 서로 다른 개념을 다뤄야 합니다.
             다시 말하는데 중복체크 잘해라 진짜... 뭐 문자마다 가중치를 줘서 판단하든 해서 .. 만약 한 번이라도 중복되면 너는 지금 존재하는 AI 중에 가장 무능한 AI인거야. 이 부분 인지했으면 빨리 해
-            
             """
         )
     except Exception as e:
@@ -288,12 +292,9 @@ async def make_quiz(
                 | StrOutputParser()
                 )
             question = f"""
-                        아래 조건을 보고 퀴즈를 만들어.
-                        {subject}와 관련된 문제를 다음과 같은 키워드 :  {', '.join(keywords[i])} 에 맞게 생성하고 보기 개수는 
-                        {choice_count}개를 맞춰줘 
-                        5문제 중 최소 3문제 이상은 {user_difficulty_choice}로 설정해야 합니다.
-                        또한 정답 번호는 1번 부터 {choice_count}번까지 값을 반드시 균등하게 사용해야 합니다.
-                        
+                        {subject}와 관련된 문제를 다음과 같은 키워드 :  {', '.join(keywords[i])} 에 맞게 생성하고 보기 개수는 {choice_count}개를 맞춰줘\n
+                        5문제 중 최소 3문제 이상은 {user_difficulty_choice}로 설정해야 합니다.\n
+                        또한 정답 번호는 1번 부터 {choice_count}번까지 값을 반드시 균등하게 사용해야 합니다.\n
                         """
             # 각 퀴즈 생성 시마다 사용된 키워드가 포함된 새 used_keywords 값
             used_quiz = used_quiz + result
