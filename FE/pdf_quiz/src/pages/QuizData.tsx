@@ -147,11 +147,15 @@ const QuizData = ({
                 {startIndex + index + 1}. {item.question}
               </div>
               <ul className="pl-5 space-y-2 mt-3">
-                {Object.entries(item.options).map(([key, value]) => (
-                  <li key={key}>
-                    ({key}) {value}
-                  </li>
-                ))}
+                {item.options && Object.entries(item.options).length > 0 ? (
+                  Object.entries(item.options).map(([key, value]) => (
+                    <li key={key}>
+                      ({key}) {value}
+                    </li>
+                  ))
+                ) : (
+                  <li>옵션이 없습니다.</li>
+                )}
               </ul>
             </li>
           ))}
@@ -165,11 +169,15 @@ const QuizData = ({
                 {startIndex + index + 4}. {item.question}
               </div>
               <ul className="pl-5 space-y-2 mt-3">
-                {Object.entries(item.options).map(([key, value]) => (
-                  <li key={key}>
-                    ({key}) {value}
-                  </li>
-                ))}
+                {item.options && Object.entries(item.options).length > 0 ? (
+                  Object.entries(item.options).map(([key, value]) => (
+                    <li key={key}>
+                      ({key}) {value}
+                    </li>
+                  ))
+                ) : (
+                  <li>옵션이 없습니다.</li>
+                )}
               </ul>
             </li>
           ))}
