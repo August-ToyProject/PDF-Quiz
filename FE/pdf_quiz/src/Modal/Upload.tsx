@@ -6,10 +6,10 @@ import { useQuizContext } from "../context/QuizContext";
 import { Tooltip } from "react-tooltip";
 import { SyncLoader } from "react-spinners";
 
-const apiUrl = import.meta.env.VITE_NGROK_URL;
-
 //👇 타입스크립트 에러 방지용 추후 해당 변수가 필요 여부에 따라 삭제 또는 수정해주세요
 // import { error } from "console";
+
+const apiUrl = import.meta.env.VITE_NGROK_URL;
 
 interface ModalProps {
   showModal: boolean;
@@ -215,17 +215,14 @@ export default function Upload({
 
     try {
       navigateToQuiz();
-      const response = await fetch(
-        `${apiUrl}/quiz/generate-quiz`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("accesstoken")}`,
-            "Content-type": "application/json",
-          },
-          body: requestData,
-        }
-      );
+      const response = await fetch(`${apiUrl}/quiz/generate-quiz`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("accesstoken")}`,
+          "Content-type": "application/json",
+        },
+        body: requestData,
+      });
 
       if (response.ok) {
         const result = await response.text();
