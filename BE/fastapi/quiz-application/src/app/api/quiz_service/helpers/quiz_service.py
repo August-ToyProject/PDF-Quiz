@@ -2,6 +2,7 @@ import asyncio
 import json
 import random
 import time
+import re
 
 from confluent_kafka import Producer
 from langchain.chains.summarize import load_summarize_chain
@@ -162,7 +163,7 @@ async def create_prompt_template():
             당신은 {subject} 분야에서 가장 뛰어난 퀴즈 문제 생성에 대해 전문 지식을 가지고 있는 퀴즈 생성자입니다. 아래 조건을 참고하여 자격증 공부를 하는 학습자를 위한 객관식 문제를 만들어 주시기 바랍니다.
             1. 주어진 주제를 바탕으로 retrievered context를 이용해서, keywords에 해당하는 중요한 개념을 근거로 객관식 문제 5개를 생성해 주십시오.\n
             2. 난이도에 따라 키워드를 여러 개 조합하여 문제를 구성해 주세요. 쉬운 문제는 1~2개의 키워드로, 중간 난이도의 문제는 3~5개의 키워드를, 어려운 문제는 5개 이상의 키워드를 사용해 주세요.\n
-            3. 동일하거나 비슷한 문제는 절대로 생성하지 말아 주십시오.\n
+            3. 사용된 문제와 동일하거나 비슷한 문제는 절대로 생성하지 말아 주십시오.\n
             4. 문제를 생성할 때 {used_keywords}와 비슷한 개념이 있으면 안됩니다.\n
             5. {choice_count}개의 선택지(1번부터 {choice_count}번까지 번호를 매김)와 하나의 정답을 포함해 주세요.\n
             -  **정답 번호는 {answer_list}번호 중 하나의 값을 사용하며 반드시 균등하게 사용해야 합니다.**\n
@@ -175,8 +176,8 @@ async def create_prompt_template():
             #주제
             주제 : {subject}
 
-            #동일문제
-            동일문제 : {used_quiz}
+            #사용된 문제
+            사용된 문제 : {used_questions}
 
             #context
             context : {context}
@@ -189,6 +190,7 @@ async def create_prompt_template():
 
             문제 만들 때 다음 형식을 따라주세요:
             난이도: [쉬움/보통/어려움]
+            키워드: [사용된 키워드]
             문제: [문제 내용]
             1) [선택지 1]
             2) [선택지 2]
@@ -199,6 +201,7 @@ async def create_prompt_template():
             예시:
             3개 선택지 예시:
             난이도: 쉬움
+            키워드: 인공지능
             문제: 인공지능(AI)의 주요 목표는 무엇인가요?
             1) 인간의 지능을 모방하고 인간과 유사한 방식으로 문제를 해결하는 것
             2) 최대한 많은 데이터를 수집하는 것
@@ -209,6 +212,7 @@ async def create_prompt_template():
 
             4개 선택지 예시:
             난이도: 보통
+            키워드: 머신러닝
             문제: 머신러닝의 주요 특징 중 옳지 않은 것은 무엇인가요?
             1) 명시적인 프로그래밍 없이 데이터로부터 학습한다
             2) 항상 사람의 개입이 필요하다
@@ -218,6 +222,7 @@ async def create_prompt_template():
             설명: 머신러닝은 명시적 프로그래밍 없이 스스로 데이터로부터 학습하며, 사람의 개입이 항상 필요한 것은 아닙니다.
             5개 선택지 예시:
             난이도: 어려움
+            키워드: 딥러닝
             문제: 딥러닝이 다른 머신러닝 기법과 구별되는 주요 특징은 무엇인가요?
             1) 단층 신경망만을 사용한다
             2) 다층 신경망을 사용하여 복잡한 패턴을 학습하고 추상화할 수 있다
@@ -247,13 +252,14 @@ async def make_quiz(
     user_difficulty_choice=None
 ):
     try:
-        # difficulties, weights = await get_weighted_difficulties(user_difficulty_choice)
+        pattern = r"문제:\s(.*?)\s\n"
+        used_questions = ""
         required_quiz_count = num_questions
         num_questions = num_questions // 5
         answer_list = [1, 2, 3, 4, 5]
+        difficulty_list = ["쉬움", "보통", "어려움"]
 
         result = ""
-        used_quiz = ""
         used_keywords = ""
         # used_keywords는 반복문 밖에서 초기화하지 않고, 매번 새로운 값으로 설정
         for i in range(num_questions):
@@ -277,7 +283,7 @@ async def make_quiz(
                     context=RunnablePassthrough(),
                     keywords=RunnablePassthrough(),
                     used_keywords=RunnablePassthrough(),
-                    used_quiz=RunnablePassthrough(),
+                    used_questions=RunnablePassthrough(),
                     subject=RunnablePassthrough(),
                     num_questions=RunnablePassthrough(),
                     choice_count=RunnablePassthrough(),
@@ -290,17 +296,16 @@ async def make_quiz(
                 | StrOutputParser()
                 )
             question = f"""
-                        {subject}와 관련된 문제를 다음과 같은 키워드 :  {', '.join(keywords[i])} 에 맞게 생성하고 문제 보기 개수는 {choice_count}개를 맞춰줘\n
-                        **5문제 중 최소 3문제 이상은 {user_difficulty_choice}로 설정해야 합니다.**\n
+                        {subject}와 관련된 문제를 다음과 같은 키워드 :  {', '.join(keywords[i])} 에 맞게 생성하고 문제 선택지 개수는 {choice_count}개를 맞춰줘
+                        **5문제 중 최소 3문제 이상은 {difficulty_list[user_difficulty_choice-1]}로 설정해야 합니다.**
                         """
             # 각 퀴즈 생성 시마다 사용된 키워드가 포함된 새 used_keywords 값
-            used_quiz = used_quiz + result
 
             input_data = {
                 "context":retriever,
                 "keywords": ', '.join(keywords[i]),
                 "used_keywords": used_keywords,
-                "used_quiz":used_quiz,
+                "used_questions":used_questions,
                 "subject": subject,
                 "num_questions":num_questions,
                 "question": question,
@@ -316,6 +321,7 @@ async def make_quiz(
             random.shuffle(questions)
 
             result = "\n\n".join(questions)
+            used_questions = used_questions + ', '.join(re.findall(pattern, result))
 
             used_keywords = used_keywords + ', '.join(keywords[i])
             # Kafka로 퀴즈 및 추가 정보를 전송 (JSON 직렬화 후 UTF-8 인코딩, ensure_ascii=False 추가)
