@@ -1,18 +1,15 @@
-from langchain.chains.summarize import load_summarize_chain
-from langchain_community.vectorstores import FAISS
-from langchain_openai import OpenAIEmbeddings
-from langchain.prompts import PromptTemplate
-from langchain_core.output_parsers import StrOutputParser
-from langchain_core.runnables import RunnablePassthrough
-from langchain_core.runnables import RunnableParallel
-from langchain_openai import ChatOpenAI
 import asyncio
-import random
 import json
-from confluent_kafka import Producer
-import time
 import random
+import time
 
+from confluent_kafka import Producer
+from langchain.chains.summarize import load_summarize_chain
+from langchain.prompts import PromptTemplate
+from langchain_community.vectorstores import FAISS
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.runnables import RunnableParallel, RunnablePassthrough
+from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 
 # Kafka Producer 설정
 producer_config = {
@@ -25,9 +22,9 @@ async def load_vector(index_path: str):
     embeddings = OpenAIEmbeddings()
     # 동기 메서드를 비동기 컨텍스트에서 실행
     vector_store = await asyncio.to_thread(
-        FAISS.load_local, 
-        index_path, 
-        embeddings, 
+        FAISS.load_local,
+        index_path,
+        embeddings,
         allow_dangerous_deserialization=True
     )
     return vector_store
@@ -44,7 +41,7 @@ async def get_subject_from_summary_docs(
             2. 너무 구체적인 세부사항 대신, 전체적인 주제나 도메인을 파악하세요.
             3. 예시: '데이터베이스', '소프트웨어 개발', '마케팅 전략' 등.
             4. 주제를 하나의 단어 또는 짧은 구문으로 요약해 제시해주세요.
-            
+
             #context를:
             {context}
             """
@@ -57,23 +54,23 @@ async def get_subject_from_summary_docs(
         )
         question = "해당 문서의 주제는?"
         subject = subject_chain.invoke(question)
-        
+
         return subject
     except Exception as e:
         raise e
 
 async def summarize_document(
-    docs, 
+    docs,
     model_name="gpt-4o-mini",
     temperature = 0
     ):
     try:
         llm = ChatOpenAI(
-            model_name=model_name, 
+            model_name=model_name,
             temperature=temperature
             )
         chain = load_summarize_chain(
-            llm, 
+            llm,
             chain_type="map_reduce"
             )
         summary = await chain.arun(docs)
@@ -105,16 +102,16 @@ async def get_keyword_from_summary(
 
         #요약:
         {summary}
-        
+
         #contenxt:
         {context}
-        
+
         #주제:
         {subject}
 
         키워드 (중요도 순):"""
         )
-        
+
         # RunnableParallel을 이용해 여러 값을 병렬로 처리
         keyword_chain = (
             RunnableParallel(
@@ -142,9 +139,9 @@ async def get_keyword_from_summary(
         # keyword_chain 실행
         keywords = keyword_chain.invoke(input_data)
         keyword_list = [kw.strip() for kw in keywords.split(',')]
-        
+
         num_groups = num_questions//5
-        
+
         ret = []
         start = 0
         for _ in range(num_groups):
@@ -155,7 +152,7 @@ async def get_keyword_from_summary(
     except Exception as e:
         raise e
 
-    
+
 async def create_prompt_template():
     try:
         return PromptTemplate.from_template(
@@ -173,16 +170,16 @@ async def create_prompt_template():
 
             #주제
             주제 : {subject}
-            
+
             #동일문제
             동일문제 : {used_quiz}
-            
+
             #context
             context : {context}
-        
+
             #키워드
             키워드 : {keywords}
-            
+
             문제 만들 때 다음 형식을 따라주세요:
             난이도: [쉬움/보통/어려움]
             문제: [문제 내용]
@@ -201,8 +198,8 @@ async def create_prompt_template():
             3) 가장 빠른 컴퓨터를 만드는 것
             정답: 1
             설명: 문서에서 언급된 대로, AI의 주요 목표는 인간의 지능을 모방하고 인간과 유사한 방식으로 문제를 해결하는 것입니다.
-            
-            
+
+
             4개 선택지 예시:
             난이도: 보통
             문제: 머신러닝의 주요 특징 중 옳지 않은 것은 무엇인가요?
@@ -230,6 +227,7 @@ async def create_prompt_template():
 
 import random
 
+
 async def make_quiz(
     retriever,
     keywords,
@@ -243,16 +241,17 @@ async def make_quiz(
 ):
     try:
         # difficulties, weights = await get_weighted_difficulties(user_difficulty_choice)
+        required_quiz_count = num_questions
         num_questions = num_questions // 5
-        
+
         result = ""
         used_quiz = ""
         used_keywords = ""
         # used_keywords는 반복문 밖에서 초기화하지 않고, 매번 새로운 값으로 설정
         for i in range(num_questions):
             # 가중치를 적용하여 난이도 선택
-            # difficulty = random.choices(difficulties, weights=weights, k=1)[0]                
-            quiz_prompt = await create_prompt_template() 
+            # difficulty = random.choices(difficulties, weights=weights, k=1)[0]
+            quiz_prompt = await create_prompt_template()
             openai_llm = ChatOpenAI(model_name="gpt-4o-mini", temperature=0.8)
             quiz_chain = (
                 RunnableParallel(
@@ -271,10 +270,10 @@ async def make_quiz(
                 | StrOutputParser()
                 )
             question = f"""
-                        {subject}와 관련된 문제를 다음과 같은 키워드 :  {', '.join(keywords[i])} 에 맞게 생성하고 보기 개수는 {choice_count}개를 맞춰줘\n
-                        
-                        5문제 중 최소 3문제 이상은 {user_difficulty_choice}로 설정해야 합니다.\n
-                        또한 정답 번호는 1번 부터 {choice_count}번까지 값을 반드시 균등하게 사용해야 합니다.\n
+                        {subject}와 관련된 문제를 다음과 같은 키워드 :  {', '.join(keywords[i])} 에 맞게 생성하고 문제 보기 개수는 {choice_count}개를 맞춰줘\n
+
+                        **5문제 중 최소 3문제 이상은 {user_difficulty_choice}로 설정해야 합니다.**\n
+                        **정답 번호는 1번 부터 {choice_count}번까지 값을 반드시 균등하게 사용해야 합니다.**\n
                         """
             # 각 퀴즈 생성 시마다 사용된 키워드가 포함된 새 used_keywords 값
             used_quiz = used_quiz + result
@@ -296,15 +295,18 @@ async def make_quiz(
             result = await asyncio.to_thread(quiz_chain.invoke, input_data)
             questions = result.strip().split("\n\n")
             random.shuffle(questions)
-            
+
             result = "\n\n".join(questions)
-            
+
             used_keywords = used_keywords + ', '.join(keywords[i])
             # Kafka로 퀴즈 및 추가 정보를 전송 (JSON 직렬화 후 UTF-8 인코딩, ensure_ascii=False 추가)
             quiz_data = {
                 'user_idx': user_idx,
                 'email': email,
                 'index_path': index_path,
+                'required_quiz_count': required_quiz_count,
+                'current_quiz_number': (i+1)*5,
+
                 'question': result.strip()
             }
             # Kafka 메시지 전송을 비동기적으로 처리
