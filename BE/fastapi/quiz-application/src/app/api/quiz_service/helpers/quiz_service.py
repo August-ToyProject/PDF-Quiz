@@ -63,21 +63,22 @@ async def get_subject_from_summary_docs(
 async def summarize_document(
     docs,
     model_name="gpt-4o-mini",
-    temperature = 0
-    ):
+    temperature=0
+):
     try:
         llm = ChatOpenAI(
             model_name=model_name,
             temperature=temperature
-            )
+        )
         chain = load_summarize_chain(
             llm,
             chain_type="map_reduce"
-            )
-        summary = await chain.arun(docs)
+        )
+        summary = await chain.ainvoke(docs)
         return llm, summary
     except Exception as e:
         raise e
+
 
 async def get_keyword_from_summary(
     llm,
@@ -159,16 +160,17 @@ async def create_prompt_template():
         return PromptTemplate.from_template(
             template="""
             당신은 {subject} 분야에서 가장 뛰어난 퀴즈 문제 생성에 대해 전문 지식을 가지고 있는 퀴즈 생성자입니다. 아래 조건을 참고하여 자격증 공부를 하는 학습자를 위한 객관식 문제를 만들어 주시기 바랍니다.
-            1. 주어진 주제를 바탕으로 context를 읽고, 키워드에 해당하는 중요한 개념을 근거로 객관식 문제 5개를 생성해 주십시오.
-            2. 난이도에 따라 키워드를 여러 개 조합하여 문제를 구성해 주세요. 쉬운 문제는 1~2개의 키워드로, 중간 난이도의 문제는 3~5개의 키워드를, 어려운 문제는 5개 이상의 키워드를 사용해 주세요.
-            3. 동일하거나 비슷한 문제는 절대로 생성하지 말아 주십시오.
-            4. {used_keywords}로는 문제를 만들지 말아 주세요.
-            5. {choice_count}개의 선택지(1번부터 {choice_count}번까지 번호를 매김)와 하나의 정답을 포함해 주세요.
-            6. 난이도는 {user_difficulty_choice}입니다.
-            7. 각 문제의 정답에 대해 간단한 설명을 추가해 주시되, 반드시 주어진 context와 키워드에서 정보를 인용해 주세요.
-            8. 문제의 난이도는 {user_difficulty_choice}이며, 난이도에 맞게 문제의 난이도를 적절히 분배해 주십시오.
-            9. 문단을 나누기 위해 ###과 같은 특수문자는 사용하지 말아 주세요.
-            10. 형식을 제외한 다른 대답은 하지마세요.
+            1. 주어진 주제를 바탕으로 retrievered context를 이용해서, keywords에 해당하는 중요한 개념을 근거로 객관식 문제 5개를 생성해 주십시오.\n
+            2. 난이도에 따라 키워드를 여러 개 조합하여 문제를 구성해 주세요. 쉬운 문제는 1~2개의 키워드로, 중간 난이도의 문제는 3~5개의 키워드를, 어려운 문제는 5개 이상의 키워드를 사용해 주세요.\n
+            3. 동일하거나 비슷한 문제는 절대로 생성하지 말아 주십시오.\n
+            4. 문제를 생성할 때 {used_keywords}와 비슷한 개념이 있으면 안됩니다.\n
+            5. {choice_count}개의 선택지(1번부터 {choice_count}번까지 번호를 매김)와 하나의 정답을 포함해 주세요.\n
+            -  **정답 번호는 {answer_list}번호 중 하나의 값을 사용하며 반드시 균등하게 사용해야 합니다.**\n
+            6. 난이도는 {user_difficulty_choice}입니다.\n
+            7. 각 문제의 정답에 대해 간단한 설명을 추가해 주시되, 반드시 주어진 context와 키워드에서 정보를 인용해 주세요.\n
+            8. 문제의 난이도는 {user_difficulty_choice}이며, 난이도에 맞게 문제의 난이도를 적절히 분배해 주십시오.\n
+            9. 문단을 나누기 위해 ###과 같은 특수문자는 사용하지 말아 주세요.\n
+            10. 형식을 제외한 다른 대답은 하지마세요.\n
 
             #주제
             주제 : {subject}
@@ -179,8 +181,11 @@ async def create_prompt_template():
             #context
             context : {context}
 
-            #키워드
-            키워드 : {keywords}
+            #keywords
+            keywords : {keywords}
+
+            #answer_list
+            answer_list : {answer_list}
 
             문제 만들 때 다음 형식을 따라주세요:
             난이도: [쉬움/보통/어려움]
@@ -245,6 +250,7 @@ async def make_quiz(
         # difficulties, weights = await get_weighted_difficulties(user_difficulty_choice)
         required_quiz_count = num_questions
         num_questions = num_questions // 5
+        answer_list = [1, 2, 3, 4, 5]
 
         result = ""
         used_quiz = ""
@@ -276,7 +282,8 @@ async def make_quiz(
                     num_questions=RunnablePassthrough(),
                     choice_count=RunnablePassthrough(),
                     user_difficulty_choice=RunnablePassthrough(),
-                    question=RunnablePassthrough()
+                    question=RunnablePassthrough(),
+                    answer_list=RunnablePassthrough()
                 )
                 | quiz_prompt
                 | llm
@@ -284,9 +291,7 @@ async def make_quiz(
                 )
             question = f"""
                         {subject}와 관련된 문제를 다음과 같은 키워드 :  {', '.join(keywords[i])} 에 맞게 생성하고 문제 보기 개수는 {choice_count}개를 맞춰줘\n
-
                         **5문제 중 최소 3문제 이상은 {user_difficulty_choice}로 설정해야 합니다.**\n
-                        **정답 번호는 1번 부터 {choice_count}번까지 값을 반드시 균등하게 사용해야 합니다.**\n
                         """
             # 각 퀴즈 생성 시마다 사용된 키워드가 포함된 새 used_keywords 값
             used_quiz = used_quiz + result
@@ -301,7 +306,8 @@ async def make_quiz(
                 "question": question,
                 "choice_count":choice_count,
                 "user_difficulty_choice":user_difficulty_choice,
-                "question":question
+                "question":question,
+                "answer_list": ', '.join(map(str, answer_list))
             }
 
             #quiz_chain 실행
