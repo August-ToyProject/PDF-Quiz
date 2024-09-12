@@ -330,7 +330,10 @@ export default function Upload({
             className="cursor-pointer absolute top-3 right-2 "
             style={{ width: "16px", height: "16px", marginTop: "-8px" }}
           />
-          <div className="flex flex-col mt-14 ml-8 space-y-5">
+          <div className="flex flex-col mt-8 ml-8 mr-5 space-y-3">
+            <div className="text-sm font-bold">
+              * PDF 페이지 수가 적을 경우, 중복된 문제가 생성될 수 있습니다.
+            </div>
             {/* 주제 */}
             <div className="flex items-center">
               <span className="mr-2 font-bold">시험지 제목</span>
@@ -344,7 +347,7 @@ export default function Upload({
             </div>
             {/* 난이도 */}
             <div className="flex items-center">
-              <span className="mr-2 font-bold">난이도</span>
+              <span className="mr-3 font-bold">난이도</span>
               <select
                 className="p-2 border border-gray-300 rounded ml-4 "
                 value={difficulty}
