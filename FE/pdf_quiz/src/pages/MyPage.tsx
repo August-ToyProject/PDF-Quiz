@@ -375,7 +375,10 @@ export default function MyPage() {
                 createCalendarSquares(months[selectedMonth].days)}
             </div>
           </div>
-        </div>
+          {/* 광고 배너 */}
+          <div className="mt-2 p-4 border border-gray-300 rounded-lg bg-gray-50 overflow-y-auto h-80 flex-grow">
+          </div>
+        </div>        
       </div>
       <Upload showModal={showModal} closeModal={closeModal} />
       {folderModalOpen && (
