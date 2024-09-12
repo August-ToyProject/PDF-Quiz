@@ -254,18 +254,18 @@ async def make_quiz(
             # 가중치를 적용하여 난이도 선택
             # difficulty = random.choices(difficulties, weights=weights, k=1)[0]
             quiz_prompt = await create_prompt_template()
-            # llm = ChatOpenAI(
-            #     model_name="gpt-4o-mini",
-            #     temperature=0.2)
+            llm = ChatOpenAI(
+                model_name="gpt-4o-mini",
+                temperature=0.3)
 
             """
             claude-3-haiku-20240307
             claude-3-5-sonnet-20240620
             """
-            llm = ChatAnthropic(
-                model="claude-3-5-sonnet-20240620",
-                temperature=0.2,
-            )
+            #llm = ChatAnthropic(
+                #model="claude-3-5-sonnet-20240620",
+                #temperature=0.2,
+            #)
             quiz_chain = (
                 RunnableParallel(
                     context=RunnablePassthrough(),
