@@ -35,6 +35,23 @@ export default function Answer() {
     return cnt;
   }, 0);
 
+  const formatTime = (timeInSeconds: number) => {
+    const hours = Math.floor(timeInSeconds / 3600)
+      .toString()
+      .padStart(2, "0");
+    const minutes = Math.floor((timeInSeconds % 3600) / 60)
+      .toString()
+      .padStart(2, "0");
+    const seconds = (timeInSeconds % 60).toString().padStart(2, "0");
+    return { hours, minutes, seconds };
+  };
+  
+  const formattedElapsedTime = formatTime(
+    (elapsedTime?.hours || 0) * 3600 +
+    (elapsedTime?.minutes || 0) * 60 +
+    (elapsedTime?.seconds || 0)
+  );
+
   return (
     <div className="w-screen h-screen flex flex-col bg-white">
       <div className="flex justify-center my-5 text-gray-400 font-bold text-xl">
@@ -52,7 +69,8 @@ export default function Answer() {
                   <div className="flex items-center h-10 bg-gray-50 border-t-2 border-b-2 border-gray-300">
                     <div
                       className={`flex items-center justify-center flex-grow-0 min-w-[5vw] h-full border-r-2 border-b-1 border-gray-300 font-bold text-gray-100
-                        ${ isCorrect ? "bg-green-400" : "bg-red-400" }`}
+                        ${ isCorrect ? "bg-green-400" : "bg-red-400" }
+                        text-sm md:text-base`}
                     >
                       문제 {index + 1}
                     </div>
@@ -98,8 +116,7 @@ export default function Answer() {
               정답 : {correctAnswersCount} / {quizCount}
             </div>
             <div className="mr-4 font-bold">
-              시간 : {elapsedTime?.hours || "00"}:{elapsedTime?.minutes || "00"}
-              :{elapsedTime?.seconds || "00"}
+              시간 : {formattedElapsedTime.hours}:{formattedElapsedTime.minutes}:{formattedElapsedTime.seconds}
             </div>
           </div>
           <div className="flex justify-end mt-4">
