@@ -31,9 +31,11 @@ const QuizData = ({
 }: PageProps) => {
   // props로 상태 및 함수 받음
   const [fetchedData, setFetchedData] = useState<QuizDataProps[]>([]); // 데이터를 저장할 상태
-  const { setQuizData } = useQuizContext();
+  const { setQuizData, quizCount, isQuizDataComplete, setIsQuizDataComplete } =
+    useQuizContext();
   const [isLoading, setIsLoading] = useState(true);
   const [totalItems, setTotalItems] = useState<number>(0);
+  const [lastEventId, setLastEventId] = useState<string>("");
 
   useEffect(() => {
     let eventSource: EventSource | null = null;
@@ -42,7 +44,7 @@ const QuizData = ({
     let retryCount = 0;
     const maxRetries = 3;
 
-    const connectSSE = () => {
+    const connectSSE = (lastEventId: string) => {
       if (retryCount >= maxRetries) {
         console.log(
           `최대 재시도 횟수(${maxRetries})에 도달하여 더 이상 재연결을 시도하지 않습니다.`
@@ -55,6 +57,7 @@ const QuizData = ({
         {
           headers: {
             Authorization: "Bearer " + localStorage.getItem("accesstoken"),
+            lastEventId: lastEventId,
           },
           //라이브러리 디폴트 타임아웃 - 45초 (45000ms) 인 것을 임의로 조정
           heartbeatTimeout: 12000000,
@@ -65,12 +68,17 @@ const QuizData = ({
         console.log("SSE 연결이 성공적으로 열렸습니다.");
         retryCount = 0; // 연결이 성공하면 재시도 횟수 초기화
       };
+
       eventSource.addEventListener("sse", (event: MessageEvent) => {
         try {
           console.log("event가 생성됨", event);
           setIsLoading(false);
           const data = JSON.parse(event.data);
+          console.log("Event.data: ", event.data);
           console.log("Received data: ", data);
+
+          const newLastEventId = event.lastEventId;
+          setLastEventId(newLastEventId || "");
 
           if (!data) {
             console.log("Data is empty");
@@ -102,41 +110,41 @@ const QuizData = ({
               return item;
             });
 
-            // 데이터가 배열인지 확인
-            //     if (Array.isArray(data)) {
-            //       data.forEach((item: any) => {
-            //         if (typeof item.options === "string") {
-            //           try {
-            //             item.options = JSON.parse(item.options);
-            //           } catch (err) {
-            //             console.error("Failed to parse options:", err);
-            //           }
-            //         }
-
-            //         if (typeof item.answer === "string") {
-            //           try {
-            //             item.answer = JSON.parse(item.answer);
-            //           } catch (err) {
-            //             console.error("Failed to parse answer:", err);
-            //           }
-            //         }
-            //       });
-
-            //     } else {
-            //       console.log("Expected array but got: ", data);
-            //     }
-            //   } catch (err) {
-            //     console.error("Parsing error: ", err);
-            //   }
-            // });
-
             // 상태 업데이트
             setFetchedData((prevData) => {
+              if (!processedData || processedData.length === 0) {
+                console.log("Received data is empty or invalid");
+                return prevData; // 이전 데이터를 그대로 유지
+              }
+
               const updatedData = [...prevData, ...processedData];
               setTotalItems(updatedData.length); // 총 아이템 수 업데이트
-              setQuizData(updatedData);
               setTotalPages(Math.ceil(updatedData.length / itemsPerPage));
-              setQuizData(updatedData);
+              // 데이터 처리 시 약간의 지연을 추가
+              setTimeout(() => {
+                setQuizData(updatedData);
+                console.log("Updated data: ", updatedData);
+
+                if (updatedData.length == quizCount) {
+                  console.log(
+                    "모든 데이터를 받아왔습니다. SSE 연결을 종료합니다."
+                  );
+                  setIsQuizDataComplete(true); // 데이터 수신 완료 표시
+
+                  setTimeout(() => {
+                    eventSource?.close();
+                  }, 0);
+                } else if (
+                  isQuizDataComplete &&
+                  updatedData.length < quizCount
+                ) {
+                  // 데이터가 완전히 수신되지 않았을 때 재연결 시도
+                  console.log("아직 모든 데이터를 받지 못했습니다.");
+                  // 마지막 이벤트 ID 업데이트
+                  setLastEventId(lastEventId);
+                  connectSSE(lastEventId);
+                }
+              }, 1000); // 1초 지연을 추가하여 데이터가 잘 처리되는지 확인
               return updatedData;
             });
           } else {
@@ -151,20 +159,21 @@ const QuizData = ({
       eventSource.onerror = (err: Event) => {
         console.error("EventSource error: ", err);
         eventSource?.close();
+        setIsQuizDataComplete(false); // 데이터 수신 미완료 표시
 
         retryCount += 1; // 재연결 시도 횟수 증가
         if (retryCount < maxRetries) {
           retryTimeout = setTimeout(() => {
             console.log(`Reconnecting... (${retryCount}/${maxRetries})`);
-            connectSSE(); // 재연결 시도
-          }, 5000); // 5초 후 재연결 시도
+            connectSSE(lastEventId); // 재연결 시도
+          }, 30000); // 30초 후 재연결 시도
         } else {
           console.log("재연결 횟수를 초과하여 더 이상 시도하지 않습니다.");
         }
       };
     };
 
-    connectSSE();
+    connectSSE(lastEventId);
 
     // Clean up event source when the component unmounts
     return () => {

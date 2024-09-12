@@ -51,6 +51,7 @@ export default function Upload({
     setTimeLimitHour,
     timeLimitMinute,
     setTimeLimitMinute,
+    isQuizDataComplete,
   } = useQuizContext();
 
   const navigate = useNavigate();
@@ -225,10 +226,13 @@ export default function Upload({
       });
 
       if (response.ok) {
-        const result = await response.text();
-        console.log(result);
-        setErrors(null);
-        console.log("Generation successful:", result);
+        if (isQuizDataComplete) {
+          const result = await response.text();
+          console.log(result);
+          setErrors(null);
+
+          console.log("Generation successful:", result);
+        }
       } else if (response.status === 400) {
         const result = await response.json();
         setUploadMessage(result.message);

@@ -28,6 +28,7 @@ interface QuizContextType {
   quizData: QuizItem[];
   elapsedTime: ElapsedTime | null;
   setTime: number;
+  isQuizDataComplete: boolean;
   setTitle: React.Dispatch<React.SetStateAction<string>>;
   setUserAnswers: React.Dispatch<React.SetStateAction<number[][]>>;
   setQuizData: React.Dispatch<React.SetStateAction<QuizItem[]>>;
@@ -37,6 +38,7 @@ interface QuizContextType {
   setOptionCount: React.Dispatch<React.SetStateAction<number>>;
   setTimeLimitHour: React.Dispatch<React.SetStateAction<number>>;
   setTimeLimitMinute: React.Dispatch<React.SetStateAction<number>>;
+  setIsQuizDataComplete: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 interface ElapsedTime {
@@ -58,6 +60,7 @@ export const QuizProvider: React.FC<{ children: ReactNode }> = ({
   const [timeLimitMinute, setTimeLimitMinute] = useState<number>(0);
   const [quizData, setQuizData] = useState<QuizItem[]>([]);
   const [userAnswers, setUserAnswers] = useState<number[][]>([]);
+  const [isQuizDataComplete, setIsQuizDataComplete] = useState(false);
 
   const [elapsedTime, setElapsedTime] = useState<ElapsedTime | null>(null);
   const [setTime] = useState<number>(3600);
@@ -84,6 +87,8 @@ export const QuizProvider: React.FC<{ children: ReactNode }> = ({
         elapsedTime,
         setElapsedTime,
         setTime,
+        isQuizDataComplete,
+        setIsQuizDataComplete,
       }}
     >
       {children}
