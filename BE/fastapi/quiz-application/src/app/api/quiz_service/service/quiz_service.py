@@ -18,7 +18,7 @@ async def generate_quiz(request: QuizRequest):
         #-- vector 스토어 꺼내오기
         vector_store = await load_vector(request.index_path)
         retriever = vector_store.as_retriever()
-        docs = vector_store.similarity_search("", k=min(request.num_questions * 5, 10))
+        docs = vector_store.similarity_search("", k=min(request.num_questions * 10, 10))
 
         #-- 문서 요약
         llm, summary = await summarize_document(docs, temperature=0.1)
