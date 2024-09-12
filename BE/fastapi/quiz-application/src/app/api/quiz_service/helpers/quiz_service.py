@@ -6,6 +6,7 @@ import time
 from confluent_kafka import Producer
 from langchain.chains.summarize import load_summarize_chain
 from langchain.prompts import PromptTemplate
+from langchain_anthropic import ChatAnthropic
 from langchain_community.vectorstores import FAISS
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnableParallel, RunnablePassthrough
@@ -159,7 +160,7 @@ async def create_prompt_template():
             template="""
             당신은 {subject} 분야에서 가장 뛰어난 퀴즈 문제 생성에 대해 전문 지식을 가지고 있는 퀴즈 생성자입니다. 아래 조건을 참고하여 자격증 공부를 하는 학습자를 위한 객관식 문제를 만들어 주시기 바랍니다.
             1. 주어진 주제를 바탕으로 context를 읽고, 키워드에 해당하는 중요한 개념을 근거로 객관식 문제 5개를 생성해 주십시오.
-            2. 난이도에 따라 키워드를 여러 개 조합하여 문제를 구성해 주세요. 쉬운 문제는 1개의 키워드로, 중간 난이도의 문제는 2~3개의 키워드를, 어려운 문제는 4~5개의 키워드를 사용해 주세요.
+            2. 난이도에 따라 키워드를 여러 개 조합하여 문제를 구성해 주세요. 쉬운 문제는 1~2개의 키워드로, 중간 난이도의 문제는 3~5개의 키워드를, 어려운 문제는 5개 이상의 키워드를 사용해 주세요.
             3. 동일하거나 비슷한 문제는 절대로 생성하지 말아 주십시오.
             4. {used_keywords}로는 문제를 만들지 말아 주세요.
             5. {choice_count}개의 선택지(1번부터 {choice_count}번까지 번호를 매김)와 하나의 정답을 포함해 주세요.
@@ -167,6 +168,7 @@ async def create_prompt_template():
             7. 각 문제의 정답에 대해 간단한 설명을 추가해 주시되, 반드시 주어진 context와 키워드에서 정보를 인용해 주세요.
             8. 문제의 난이도는 {user_difficulty_choice}이며, 난이도에 맞게 문제의 난이도를 적절히 분배해 주십시오.
             9. 문단을 나누기 위해 ###과 같은 특수문자는 사용하지 말아 주세요.
+            10. 형식을 제외한 다른 대답은 하지마세요.
 
             #주제
             주제 : {subject}
@@ -252,7 +254,17 @@ async def make_quiz(
             # 가중치를 적용하여 난이도 선택
             # difficulty = random.choices(difficulties, weights=weights, k=1)[0]
             quiz_prompt = await create_prompt_template()
-            openai_llm = ChatOpenAI(model_name="gpt-4o-mini", temperature=0.8)
+            llm = ChatOpenAI(
+                model_name="gpt-4o-mini",
+                temperature=0.2)
+
+            """
+            claude-3-haiku-20240307
+            """
+            # llm = ChatAnthropic(
+            #     model="claude-3-haiku-20240307",
+            #     temperature=0.2,
+            # )
             quiz_chain = (
                 RunnableParallel(
                     context=RunnablePassthrough(),
@@ -266,7 +278,7 @@ async def make_quiz(
                     question=RunnablePassthrough()
                 )
                 | quiz_prompt
-                | openai_llm
+                | llm
                 | StrOutputParser()
                 )
             question = f"""
@@ -291,7 +303,7 @@ async def make_quiz(
                 "question":question
             }
 
-            # keyword_chain 실행
+            #quiz_chain 실행
             result = await asyncio.to_thread(quiz_chain.invoke, input_data)
             questions = result.strip().split("\n\n")
             random.shuffle(questions)
