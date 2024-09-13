@@ -3,9 +3,11 @@ package com.quizapplication.dto.response.quiz;
 import com.quizapplication.domain.quiz.Quiz;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
 @Getter
 @Builder
+@ToString
 public class QuizResponse {
 
     private Long quizId;

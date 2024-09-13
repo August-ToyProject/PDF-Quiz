@@ -27,7 +27,8 @@ public class JwtFilter extends OncePerRequestFilter {
             "/webjars",
             "/favicon.ico",
             "/api/v1/find-user", "/api/v1/find-pwd",
-            "/actuator/health");
+            "/actuator/health",
+            "/actuator/info");
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)

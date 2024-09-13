@@ -7,6 +7,7 @@ import com.quizapplication.config.security.handler.LoginFailureHandler;
 import com.quizapplication.config.security.handler.LoginSuccessHandler;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -53,8 +54,8 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource getCorsConfiguration() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOriginPatterns(Arrays.asList("*"));
-        config.setAllowedMethods(Collections.singletonList("*"));
+        config.setAllowedOrigins(Collections.singletonList("https://quizgen.site"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         config.setAllowCredentials(true);
         config.setAllowedHeaders(Collections.singletonList("*"));
         config.addExposedHeader("Authorization");
