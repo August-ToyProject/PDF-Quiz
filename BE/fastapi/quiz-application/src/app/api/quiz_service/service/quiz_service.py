@@ -1,6 +1,7 @@
 import asyncio
 
 from fastapi import HTTPException
+from langchain_openai import ChatOpenAI
 
 from src.app.api.quiz_service.helpers.quiz_service import (
     create_prompt_template,
@@ -20,8 +21,13 @@ async def generate_quiz(request: QuizRequest):
         retriever = vector_store.as_retriever()
         docs = vector_store.similarity_search("", k=min(request.num_questions * 10, 10))
 
+        llm = ChatOpenAI(
+            model="gpt-4o-mini",
+            temperature=0.2
+        )
+
         #-- 문서 요약
-        llm, summary = await summarize_document(docs, temperature=0.1)
+        # llm, summary = await summarize_document(docs, temperature=0.1)
 
         #-- 주제 선정
         subject = await get_subject_from_summary_docs(llm, retriever)
@@ -29,7 +35,7 @@ async def generate_quiz(request: QuizRequest):
         #-- 중요 키워드 추출
         keywords = await get_keyword_from_summary(
             llm,
-            summary,
+            # summary,
             retriever=retriever,
             subject=subject,
             num_questions=request.num_questions,
@@ -38,11 +44,13 @@ async def generate_quiz(request: QuizRequest):
 
         #-- 퀴즈 chain and make quiz
         quiz = await make_quiz(
+            llm=llm,
             retriever=retriever,
             subject=subject,
             keywords=keywords,
             num_questions=request.num_questions,
-            choice_count=request.choice_count,
+            #선지 개수는 5개로 통일 
+            choice_count=5,
             user_difficulty_choice=request.difficulty,
             user_idx=request.user_idx,
             email=request.email,

@@ -51,6 +51,7 @@ export default function Upload({
     setTimeLimitHour,
     timeLimitMinute,
     setTimeLimitMinute,
+    isQuizDataComplete,
   } = useQuizContext();
 
   const navigate = useNavigate();
@@ -149,6 +150,12 @@ export default function Upload({
         setIsSelectDisabled(false);
         console.log("Upload successful:", result);
 
+        // 업로드 성공 시 버튼에서 애니메이션 제거
+        const button = document.querySelector('#PDFUploadButton') as HTMLButtonElement;
+        if (button) {
+          button.classList.remove('animate-color-change');
+        }
+
         const indexPath = result.indexPath;
         setPath(indexPath); // indexPath를 state에 저장
         console.log("indexPath:", indexPath);
@@ -225,10 +232,13 @@ export default function Upload({
       });
 
       if (response.ok) {
-        const result = await response.text();
-        console.log(result);
-        setErrors(null);
-        console.log("Generation successful:", result);
+        if (isQuizDataComplete) {
+          const result = await response.text();
+          console.log(result);
+          setErrors(null);
+
+          console.log("Generation successful:", result);
+        }
       } else if (response.status === 400) {
         const result = await response.json();
         setUploadMessage(result.message);
@@ -244,6 +254,24 @@ export default function Upload({
       setUploadMessage("An error occurred while processing the request.");
       setErrors("Network error occurred.");
       console.error(errors, error);
+    }
+  };
+
+  const handleMouseEnter = () => {
+    if (isSelectDisabled) {
+      const button = document.querySelector('#PDFUploadButton') as HTMLButtonElement;
+      if (button) {
+        button.focus();
+        button.classList.add('animate-color-change');
+      }
+    }
+  };
+
+  const handleMouseLeave = () => {
+    const button = document.querySelector('#PDFUploadButton') as HTMLButtonElement;
+    if (button) {
+      button.blur();
+      button.classList.remove('animate-color-change'); // 애니메이션 제거
     }
   };
 
@@ -305,6 +333,7 @@ export default function Upload({
             )}
           </div>
           <button
+            id="PDFUploadButton"
             className="mt-4 px-4 py-2 bg-blue-600 text-white rounded"
             data-tooltip-id="PDFUpload"
             onClick={handlePDFUploadClick}
@@ -323,10 +352,14 @@ export default function Upload({
             src={closeIcon}
             alt="Close"
             onClick={closeModal}
-            className="cursor-pointer absolute top-3 right-2 "
+            className="cursor-pointer absolute top-3 right-2"
             style={{ width: "16px", height: "16px", marginTop: "-8px" }}
           />
-          <div className="flex flex-col mt-14 ml-8 space-y-5">
+          <div 
+            className="flex flex-col mt-16 ml-8 space-y-5" 
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+          >
             {/* 주제 */}
             <div className="flex items-center">
               <span className="mr-2 font-bold">시험지 제목</span>
@@ -340,7 +373,7 @@ export default function Upload({
             </div>
             {/* 난이도 */}
             <div className="flex items-center">
-              <span className="mr-2 font-bold">난이도</span>
+              <span className="mr-7 font-bold">난이도</span>
               <select
                 className="p-2 border border-gray-300 rounded ml-4 "
                 value={difficulty}
@@ -354,7 +387,7 @@ export default function Upload({
             </div>
             {/* 시험 문제 수 / 선지 수 선택 */}
             <div className="flex items-center">
-              <span className="mr-2 font-bold">시험 문제</span>
+              <span className="mr-6 font-bold">시험 문제</span>
               <select
                 className="p-2 border border-gray-300 rounded"
                 value={quizCount}
@@ -373,7 +406,7 @@ export default function Upload({
                 <option value="50">50</option>
               </select>
             </div>
-            <div>
+            {/* <div>
               <span className="mr-2 font-bold">선지 개수</span>
               <select
                 className="p-2 border border-gray-300 rounded"
@@ -384,10 +417,10 @@ export default function Upload({
                 <option value="4">4</option>
                 <option value="5">5</option>
               </select>
-            </div>
+            </div> */}
             {/* 제한 시간 선택 */}
             <div className="flex items-center">
-              <span className="mr-2 font-bold">제한 시간</span>
+              <span className="mr-6 font-bold">제한 시간</span>
               <select
                 className="p-2 border border-gray-300 rounded"
                 value={timeLimitHour}

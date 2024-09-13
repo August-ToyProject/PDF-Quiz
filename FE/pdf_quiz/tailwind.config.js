@@ -7,6 +7,19 @@ export default {
         title: ["SUSE", "sans-serif"],
         body: ["Nanum Gothic", "sans-serif"],
       },
+      margin: {
+        '30': '7.5rem',
+        '19': '4.75rem',
+      },
+    },
+    keyframes: {
+      'color-change': {
+          '0%, 100%': { backgroundColor: '#2563EB' }, // 파란색 (blue-700)
+          '50%': { backgroundColor: '#60A5FA' }, // 더 밝은 파란색 (blue-500)
+      },
+    },
+    animation: {
+      'color-change': 'color-change 1s infinite',
     },
   },
   plugins: [],
