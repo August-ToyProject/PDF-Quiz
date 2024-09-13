@@ -7,6 +7,9 @@ export default {
         title: ["SUSE", "sans-serif"],
         body: ["Nanum Gothic", "sans-serif"],
       },
+      margin: {
+        '30': '7.5rem',
+      },
     },
     keyframes: {
       'color-change': {

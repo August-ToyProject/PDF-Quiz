@@ -98,6 +98,11 @@ export default function MyPage() {
     };
   }, [dropdownOpen]);
 
+  useEffect(() => {
+    const currentMonth = new Date().getMonth(); // 0부터 시작하는 월 (1월은 0, 12월은 11)
+    setSelectedMonth(currentMonth);
+  }, []);
+
   // 로그아웃
   const handleLogout = async () => {
     try {
@@ -188,7 +193,7 @@ export default function MyPage() {
     .slice(0, 10);
 
   return (
-    <div className="h-screen w-screen flex flex-col items-center bg-white overflow-x-hidden min-w-[600px]">
+    <div className="h-screen w-screen flex flex-col items-center bg-white min-w-[600px]">
       {/* 상단 바 및 사용자 정보 */}
       <div className="w-full h-[60px] border-b-2 border-gray-300 relative flex items-center px-5 mb-4">
         <img
@@ -216,7 +221,7 @@ export default function MyPage() {
         </div>
       </div>
       <div className="h-[2px] bg-gray-300 mx-4"></div>
-      <div className="flex flex-col lg:flex-row w-full mx-4 lg:space-x-6 space-y-6 lg:space-y-0">
+      <div className="flex flex-col lg:flex-row w-full mx-4 lg:space-x-6 space-y-6">
         <div className="flex flex-col items-center w-full mt-4 lg:hidden">
           <button
             className="font-body bg-blue-600 text-white font-bold p-2 w-[580px] rounded-lg"
@@ -264,7 +269,7 @@ export default function MyPage() {
           </div> */}
         </div>
 
-        <div className="flex-grow h-full max-w-xl w-full lg:max-w-2xl mx-auto min-w-[300px]">
+        <div className="flex-grow h-auto max-w-xl w-full mx-auto min-w-[300px]">
           {/* 폴더 리스트 */}
           <div className="font-body text-blue-600 text-lg mb-2 font-black">
             폴더 리스트
@@ -349,12 +354,25 @@ export default function MyPage() {
         </div>
 
         {/* 캘린더 */}
-        <div className="flex-grow max-w-2xl lg:flex-none lg:w-98 overflow-hidden mx-auto">
-          <div className="text-blue-600 text-lg mb-2 font-black">캘린더</div>
+        <div className="relative max-w-xl flex-grow w-full overflow-hidden mx-auto">
+          <div className="flex justify-between">
+            <div className="text-blue-600 text-lg mb-2 font-black xs:ml-24">캘린더</div>
+            <div className="flex justfy-between">
+              <div className="text-blue-600 text-sm mt-2 font-black xs:ml-24 mr-4">현재: 0</div>
+              <div className="text-blue-600 text-sm mt-2 font-black xs:ml-24 mr-4">최대: 0</div>
+            </div>
+          </div>
           <div
-            className="bg-blue-600 rounded-lg p-2 border border-gray-300 w-full mb-28"
+            className="relative bg-blue-600 rounded-lg p-2 border border-gray-300 w-auto md:max-w-xl mb-10 mx-auto opacity-50"
             style={{ height: "12rem" }}
           >
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="absolute inset-0 w-full h-full">
+              </div>
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <div className="text-red-600 text-2xl font-bold mt-2 z-40">준비중</div>
+              </div>
+            </div>
             <div className="flex justify-between mb-2">
               {months.map((month, index) => (
                 <button
@@ -370,15 +388,15 @@ export default function MyPage() {
                 </button>
               ))}
             </div>
-            <div className="grid grid-cols-8 mb-2 ml-3 justify-center">
+            <div className="grid grid-cols-11 mt-6 ml-4">
               {selectedMonth !== null &&
                 createCalendarSquares(months[selectedMonth].days)}
             </div>
           </div>
           {/* 광고 배너 */}
-          <div className="mt-2 p-4 border border-gray-300 rounded-lg bg-gray-50 overflow-y-auto h-80 flex-grow">
-          </div>
-        </div>        
+          {/* <div className="mt-2 p-4 border border-gray-300 rounded-lg bg-gray-50 overflow-y-auto h-80 flex-grow">
+          </div> */}
+        </div>
       </div>
       <Upload showModal={showModal} closeModal={closeModal} />
       {folderModalOpen && (
