@@ -7,6 +7,7 @@ import { fetchUserNickname, logoutUser } from "../api/ApiUser";
 import { deleteQuiz, fetchQuizzes } from "../api/ApiQuiz";
 import BlueLogo from "../assets/Logo_blue.svg";
 import Banner from "../assets/Banner2.png";
+import search from "../assets/search.png";
 
 export interface ListQuiz {
   id: number;
@@ -291,6 +292,11 @@ export default function MyPage() {
               onChange={(e) => setSearchTerm(e.target.value)}
               className="p-2 w-full border border-gray-300 rounded-lg pl-3 pr-10"
             />
+            <img
+              src={search}
+              alt="Search"
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5"
+            />
           </div>
 
           {/* 퀴즈 리스트 */}
@@ -354,7 +360,7 @@ export default function MyPage() {
         </div>
 
         {/* 캘린더 */}
-        <div className="relative max-w-xl flex-grow w-full overflow-hidden mx-auto">
+        <div className="relative max-w-xl flex-grow justify-center w-full overflow-hidden mx-auto lg:pr-4 lg:mr-6">
           <div className="flex justify-between">
             <div className="text-blue-600 text-lg mb-2 font-black xs:ml-24">캘린더</div>
             <div className="flex justfy-between">
@@ -363,7 +369,7 @@ export default function MyPage() {
             </div>
           </div>
           <div
-            className="relative bg-blue-600 rounded-lg p-2 border border-gray-300 w-auto md:max-w-xl mb-10 mx-auto opacity-50"
+            className="relative bg-blue-600 rounded-lg p-2 border border-gray-300 w-auto mb-4 lg:mb-19 mx-auto opacity-50"
             style={{ height: "12rem" }}
           >
             <div className="absolute inset-0 flex items-center justify-center">
@@ -394,8 +400,9 @@ export default function MyPage() {
             </div>
           </div>
           {/* 광고 배너 */}
-          {/* <div className="mt-2 p-4 border border-gray-300 rounded-lg bg-gray-50 overflow-y-auto h-80 flex-grow">
-          </div> */}
+          <div className="text-blue-600 text-lg font-black xs:ml-24">컨텐츠 준비중</div>
+          <div className="mt-2 p-4 border border-gray-300 rounded-lg bg-gray-50 overflow-y-auto h-80 flex-grow">
+          </div>
         </div>
       </div>
       <Upload showModal={showModal} closeModal={closeModal} />

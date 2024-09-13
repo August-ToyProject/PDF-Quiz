@@ -9,6 +9,7 @@ export default {
       },
       margin: {
         '30': '7.5rem',
+        '19': '4.75rem',
       },
     },
     keyframes: {
