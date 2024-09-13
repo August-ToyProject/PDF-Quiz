@@ -5,5 +5,5 @@ class QuizRequest(BaseModel):
     email:str
     index_path: str
     num_questions: int = 5
-    choice_count:int = 4
+    choice_count:int = 5
     difficulty:int = 1
