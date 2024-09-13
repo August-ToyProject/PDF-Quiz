@@ -72,7 +72,11 @@ const QuizData = ({
       eventSource.addEventListener("sse", (event: MessageEvent) => {
         try {
           console.log("event가 생성됨", event);
-          setIsLoading(false);
+          setIsLoading(true);
+
+          if (event.data !== '{"data":"connected!"}') {
+            setIsLoading(false);
+          }
           const data = JSON.parse(event.data);
           console.log("Event.data: ", event.data);
           console.log("Received data: ", data);
@@ -130,10 +134,7 @@ const QuizData = ({
                     "모든 데이터를 받아왔습니다. SSE 연결을 종료합니다."
                   );
                   setIsQuizDataComplete(true); // 데이터 수신 완료 표시
-
-                  setTimeout(() => {
-                    eventSource?.close();
-                  }, 0);
+                  eventSource?.close();
                 } else if (
                   isQuizDataComplete &&
                   updatedData.length < quizCount
