@@ -37,27 +37,27 @@ public class AsyncService {
     private final EmitterService emitterService;
     private final EmitterRepository emitterRepository;
 
-//    @Async
-//    public CompletableFuture<Void>  processQuizAsync(String kafkaMessage) {
-//        try {
-//            // 비동기적으로 처리할 로직
-//            parseQuiz(kafkaMessage);
-//        } catch (Exception e) {
-//            log.error("Error processing Kafka message in async method", e);
-//        }
-//        return CompletableFuture.completedFuture(null);
-//    }
-
-//    @Async
-    public void  processQuizAsync(String kafkaMessage) {
+    @Async
+    public CompletableFuture<Void>  processQuizAsync(String kafkaMessage) {
         try {
             // 비동기적으로 처리할 로직
             parseQuiz(kafkaMessage);
         } catch (Exception e) {
             log.error("Error processing Kafka message in async method", e);
         }
-//        return CompletableFuture.completedFuture(null);
+        return CompletableFuture.completedFuture(null);
     }
+
+//    @Async
+//    public void  processQuizAsync(String kafkaMessage) {:
+//        try {
+//            // 비동기적으로 처리할 로직
+//            parseQuiz(kafkaMessage);
+//        } catch (Exception e) {
+//            log.error("Error processing Kafka message in async method", e);
+//        }
+////        return CompletableFuture.completedFuture(null);
+//    }
 
     // 문제 처리
     public void parseQuiz(String kafkaMessage) throws JsonProcessingException {
