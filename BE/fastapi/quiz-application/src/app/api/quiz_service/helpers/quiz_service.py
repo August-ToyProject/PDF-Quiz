@@ -4,7 +4,7 @@ import random
 import re
 import time
 
-from confluent_kafka import Producer
+from aiokafka import AIOKafkaProducer
 from langchain.chains.summarize import load_summarize_chain
 from langchain.prompts import PromptTemplate
 from langchain_anthropic import ChatAnthropic
@@ -13,12 +13,6 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnableParallel, RunnablePassthrough
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 
-# Kafka Producer 설정
-producer_config = {
-    'bootstrap.servers': 'localhost:9092',  # Kafka 브로커 주소
-    'client.id': 'fastapi-producer',         # 클라이언트 ID
-}
-producer = Producer(producer_config)
 
 async def load_vector(index_path: str):
     embeddings = OpenAIEmbeddings()
@@ -68,7 +62,7 @@ async def summarize_document(
 ):
     try:
         llm = ChatOpenAI(
-            model_name=model_name,
+            model=model_name,
             temperature=temperature
         )
         chain = load_summarize_chain(
@@ -284,6 +278,8 @@ async def make_quiz(
     choice_count=4,
 ):
     try:
+        producer = AIOKafkaProducer(bootstrap_servers='localhost:9092')
+        await producer.start()
         question_pattern = r"문제:\s(.*?)\s\n"
         keywords_pattern = r"키워드:\s(.*?)\s\n"
 
@@ -355,7 +351,7 @@ async def make_quiz(
             used_questions = used_questions + ', '.join(re.findall(question_pattern, result))
             used_keywords = used_keywords + ', '.join(re.findall(keywords_pattern, result))
             result = re.sub(keywords_pattern, '', result)
-            # Kafka로 퀴즈 및 추가 정보를 전송 (JSON 직렬화 후 UTF-8 인코딩, ensure_ascii=False 추가)
+
             quiz_data = {
                 'user_idx': user_idx,
                 'email': email,
@@ -365,9 +361,10 @@ async def make_quiz(
                 'question': result.strip()
             }
             # Kafka 메시지 전송을 비동기적으로 처리
-            await asyncio.to_thread(producer.produce, 'quiz_topic', json.dumps(quiz_data, ensure_ascii=False).encode('utf-8'))
+            json_data = json.dumps(quiz_data, ensure_ascii=False)
+            await producer.send_and_wait('quiz_topic', json_data.encode('utf-8'))
 
-        await asyncio.to_thread(producer.flush)
+        await producer.stop()
         return {"status": "Quizzes sent to Kafka"}
     except Exception as e:
         raise e
