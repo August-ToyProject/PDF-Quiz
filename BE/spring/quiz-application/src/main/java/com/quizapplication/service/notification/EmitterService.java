@@ -26,7 +26,7 @@ public class EmitterService {
     private final TokenProvider tokenProvider;
     private final MemberRepository memberRepository;
 
-    private static final Long DEFAULT_TIMEOUT = 400000L;
+    private static final Long DEFAULT_TIMEOUT = 1200000L;
 
 //    /**
 //     * 서버의 이벤트를 클라이언트에게 보내는 메소드
@@ -64,22 +64,22 @@ public class EmitterService {
      }
 
 
-    /**
-     * 사용자 아이디를 기반으로 이벤트 Emitter 생성
-     * @param id - 사용자 아이디
-     * @return SseEmitter - 생선된 이벤트 Emitter
-     */
+//    /**
+//     * 사용자 아이디를 기반으로 이벤트 Emitter 생성
+//     * @param id - 사용자 아이디
+//     * @return SseEmitter - 생선된 이벤트 Emitter
+//     */
 
-    private SseEmitter createEmitter(String id) {
-        SseEmitter emitter = new SseEmitter(DEFAULT_TIMEOUT);
-        emitterRepository.save(id, emitter);
-        log.info("Emitter created. [userId={}]", id);
-        // Emitter가 완료될 때(모든 데이터가 성공적으로 전송된 상태) Emitter를 삭제한다.
-        emitter.onCompletion(() -> emitterRepository.deleteById(id));
-        // Emitter가 타임아웃 되었을 때(지정된 시간동안 어떠한 이벤트도 전송되지 않았을 때) Emitter를 삭제한다.
-        emitter.onTimeout(() -> emitterRepository.deleteById(id));
-        return emitter;
-    }
+//    private SseEmitter createEmitter(String id) {
+//        SseEmitter emitter = new SseEmitter(DEFAULT_TIMEOUT);
+//        emitterRepository.save(id, emitter);
+//        log.info("Emitter created. [userId={}]", id);
+//        // Emitter가 완료될 때(모든 데이터가 성공적으로 전송된 상태) Emitter를 삭제한다.
+//        emitter.onCompletion(() -> emitterRepository.deleteById(id));
+//        // Emitter가 타임아웃 되었을 때(지정된 시간동안 어떠한 이벤트도 전송되지 않았을 때) Emitter를 삭제한다.
+//        emitter.onTimeout(() -> emitterRepository.deleteById(id));
+//        return emitter;
+//    }
 
 
 //    @Scheduled(fixedRate = 180000) // 3분마다 heartbeat 메세지 전달.
@@ -100,7 +100,7 @@ public class EmitterService {
         String accessToken = tokenProvider.getAccessToken(request);
         String email = tokenProvider.getClaims(accessToken).getSubject();
         String userId = String.valueOf(memberRepository.findByEmail(email).getId());
-        String emitterId = userId + "_" + System.currentTimeMillis();
+        String emitterId = userId + "_" + System.nanoTime();
         SseEmitter emitter = emitterRepository.save(emitterId, new SseEmitter(DEFAULT_TIMEOUT));
 
         log.info("emitterId : {} 사용자 emitter 연결 ", emitterId);
@@ -121,11 +121,8 @@ public class EmitterService {
         if (hasLostData(lastEventId)) {
             Map<String, Object> events = emitterRepository.findAllEventCacheStartWithById(userId);
             log.info("sendLostData: {}", events);
-            long lastEventIdNumeric = Long.parseLong(lastEventId.replace("_", ""));
             events.entrySet().stream()
-                    .filter(entry -> {
-                        long entryIdNumeric = Long.parseLong(entry.getKey().replace("_", ""));
-                        return lastEventIdNumeric < entryIdNumeric;})
+                    .filter(entry -> lastEventId.compareTo(entry.getKey()) < 0)
                     .forEach(entry -> sendToClient(emitter, entry.getKey(), entry.getValue()));
         }
 

@@ -44,7 +44,6 @@ public class EmitterRepository {
      */
     public void saveEventCache(String emitterId, Object event) {
         eventCache.put(emitterId, event);
-//        eventCache.computeIfAbsent(emitterId, k -> new ArrayList<>()).add(event);
     }
 
     public Map<String, SseEmitter> findAllEmitters() {
