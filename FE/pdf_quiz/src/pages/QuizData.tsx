@@ -144,6 +144,17 @@ const QuizData = ({
                   // 마지막 이벤트 ID 업데이트
                   setLastEventId(lastEventId);
                   connectSSE(lastEventId);
+                } else if (updatedData.length > quizCount) {
+                  console.log(
+                    "퀴즈 데이터 수신이 완료되었으나, 요청한 문제 수보다 더 많은 데이터를 받았습니다."
+                  );
+                  console.log(
+                    "모든 데이터를 받아왔습니다. SSE 연결을 종료합니다."
+                  );
+                  const finalData = updatedData.slice(0, quizCount); // quizCount 개수만큼 데이터 잘라서 사용
+                  setQuizData(finalData); // 잘라낸 데이터를 상태로 저장
+                  setIsQuizDataComplete(true); // 데이터 수신 완료 표시
+                  eventSource?.close();
                 }
               }, 1000); // 1초 지연을 추가하여 데이터가 잘 처리되는지 확인
               return updatedData;
