@@ -1,8 +1,8 @@
 import asyncio
 import json
 import random
-import time
 import re
+import time
 
 from confluent_kafka import Producer
 from langchain.chains.summarize import load_summarize_chain
@@ -83,7 +83,7 @@ async def summarize_document(
 
 async def get_keyword_from_summary(
     llm,
-    summary,
+    # summary,
     subject,
     retriever,
     num_questions=5,
@@ -93,7 +93,7 @@ async def get_keyword_from_summary(
         total_keyword = num_questions * num_keywords
         keyword_prompt = PromptTemplate.from_template(
             template="""
-        주어진 요약과 문서의 내용을 바탕으로 가장 중요하고 관련성 높은 {n}개의 키워드를 추출해 주시기 바랍니다. 추출 시 다음 지침을 준수해 주시면 감사하겠습니다:
+        주어진 문서의 내용을 바탕으로 가장 중요하고 관련성 높은 {n}개의 키워드를 추출해 주시기 바랍니다. 추출 시 다음 지침을 준수해 주시면 감사하겠습니다:
         1. 키워드는 문서의 주제, 핵심 개념, 그리고 중요한 용어를 대표해야 합니다.
         2. 각 키워드는 유일해야 하며, 개념적으로 비슷한 키워드는 하나의 키워드로 통합해 주십시오.
         3. 단일 단어뿐만 아니라 짧은 구문도 포함될 수 있습니다.
@@ -103,8 +103,6 @@ async def get_keyword_from_summary(
         7. 각 키워드는 쉼표로 구분해 주시고, 마지막에는 마침표를 찍지 말아 주십시오.
 
 
-        #요약:
-        {summary}
 
         #contenxt:
         {context}
@@ -119,7 +117,6 @@ async def get_keyword_from_summary(
         keyword_chain = (
             RunnableParallel(
                 context=RunnablePassthrough(),
-                summary=RunnablePassthrough(),
                 subject=RunnablePassthrough(),
                 n=RunnablePassthrough(),
                 question=RunnablePassthrough()
@@ -133,14 +130,13 @@ async def get_keyword_from_summary(
         question = f"{subject}와 가장 관련도가 높은 {total_keyword}개의 키워드를 알려줘"
         input_data = {
             "context":retriever,
-            "summary": summary,
             "subject": subject,
             "n": total_keyword,
             "question": question
         }
 
         # keyword_chain 실행
-        keywords = keyword_chain.invoke(input_data)
+        keywords = await keyword_chain.ainvoke(input_data)
         keyword_list = [kw.strip() for kw in keywords.split(',')]
 
         num_groups = num_questions//5
@@ -198,39 +194,74 @@ async def create_prompt_template():
             {choice_count}) [선택지 {choice_count}]
             정답: [정답 선택지]
             설명: [내용을 참조한 간단한 설명]
+
             예시:
-            3개 선택지 예시:
+            예시 1 (쉬움)
+
             난이도: 쉬움
-            키워드: 인공지능
-            문제: 인공지능(AI)의 주요 목표는 무엇인가요?
-            1) 인간의 지능을 모방하고 인간과 유사한 방식으로 문제를 해결하는 것
-            2) 최대한 많은 데이터를 수집하는 것
-            3) 가장 빠른 컴퓨터를 만드는 것
-            정답: 1
-            설명: 문서에서 언급된 대로, AI의 주요 목표는 인간의 지능을 모방하고 인간과 유사한 방식으로 문제를 해결하는 것입니다.
+            키워드: 인공지능, 데이터
+            문제: 인공지능(AI)은 주로 무엇을 사용하여 학습하나요?
+            1) 규칙을 미리 설정한 알고리즘
+            2) 다양한 종류의 데이터를
+            3) 인터넷에서 수집된 정보
+            4) 사용자의 피드백
+            5) 특정 프로그래밍 언어
+            정답: 2
+            설명: 인공지능은 주로 데이터를 사용하여 학습하며, 이를 통해 패턴을 인식하고 예측을 수행합니다.
 
+            예시 2 (보통)
 
-            4개 선택지 예시:
             난이도: 보통
-            키워드: 머신러닝
-            문제: 머신러닝의 주요 특징 중 옳지 않은 것은 무엇인가요?
-            1) 명시적인 프로그래밍 없이 데이터로부터 학습한다
-            2) 항상 사람의 개입이 필요하다
-            3) 오직 이미지 처리에만 사용된다
-            4) 데이터로부터 패턴을 학습하여 성능을 향상시킨다
+            키워드: 머신러닝, 지도 학습, 비지도 학습
+            문제: 머신러닝에서 '지도 학습'과 '비지도 학습'의 주요 차이점은 무엇인가요?
+            1) 지도 학습은 레이블이 있는 데이터를 사용하고, 비지도 학습은 레이블이 없는 데이터를 사용한다
+            2) 비지도 학습은 항상 더 복잡한 모델을 사용한다
+            3) 지도 학습은 데이터를 처리하지 않고, 비지도 학습은 데이터를 처리한다
+            4) 비지도 학습은 사람이 직접 알고리즘을 설계해야 한다
+            5) 지도 학습은 항상 더 정확한 결과를 도출한다
+            정답: 1
+            설명: 지도 학습은 레이블이 있는 데이터를 사용하여 학습하고, 비지도 학습은 레이블이 없는 데이터를 바탕으로 패턴을 찾습니다.
+
+            예시 3 (보통)
+
+            난이도: 보통
+            키워드: 딥러닝, CNN, 이미지 인식
+            문제: 딥러닝에서 CNN(합성곱 신경망)은 주로 어떤 작업에 사용되나요?
+            1) 자연어 처리
+            2) 이미지 인식
+            3) 강화 학습
+            4) 기계 번역
+            5) 소리 분석
             정답: 2
-            설명: 머신러닝은 명시적 프로그래밍 없이 스스로 데이터로부터 학습하며, 사람의 개입이 항상 필요한 것은 아닙니다.
-            5개 선택지 예시:
+            설명: CNN(합성곱 신경망)은 딥러닝에서 이미지 인식과 관련된 작업에 주로 사용됩니다.
+
+            예시 4 (어려움)
+
             난이도: 어려움
-            키워드: 딥러닝
-            문제: 딥러닝이 다른 머신러닝 기법과 구별되는 주요 특징은 무엇인가요?
-            1) 단층 신경망만을 사용한다
-            2) 다층 신경망을 사용하여 복잡한 패턴을 학습하고 추상화할 수 있다
-            3) 오직 지도 학습에만 사용된다
-            4) 항상 소량의 데이터만으로 학습할 수 있다
-            5) 컴퓨터 비전 분야에만 적용된다
+            키워드: 자연어 처리, 딥러닝, BERT, 사전 학습 모델, 토큰화
+            문제: BERT와 같은 사전 학습된 자연어 처리 모델이 사용하는 주요 기법 중 하나인 '토큰화'는 무엇을 의미하나요?
+            1) 문장을 단어 단위로 분리하는 과정
+            2) 데이터를 분석하여 패턴을 찾는 과정
+            3) 문장의 문법 구조를 분석하는 과정
+            4) 이미지 데이터를 분리하는 과정
+            5) 모델이 데이터를 학습하는 과정
+            정답: 1
+            설명: 토큰화는 문장을 단어, 부분 단어 또는 서브워드 단위로 분리하여 모델이 학습할 수 있도록 하는 과정입니다.
+
+            예시 5 (어려움)
+
+            난이도: 어려움
+            키워드: 강화 학습, Q-러닝, 정책 탐색, 보상 함수, 마르코프 결정 과정
+            문제: 강화 학습에서 Q-러닝 알고리즘이 사용하는 '보상 함수'의 역할은 무엇인가요?
+            1) 에이전트가 학습해야 할 최적의 행동을 미리 정의한다
+            2) 에이전트가 특정 행동을 취했을 때 받는 피드백을 수치화하여 다음 행동을 결정하도록 돕는다
+            3) 환경에서 최적의 상태를 찾기 위해 데이터를 분류하는 역할을 한다
+            4) 에이전트의 행동을 예측하기 위해 통계를 계산한다
+            5) 에이전트가 학습할 수 있도록 환경에서 얻은 데이터를 전처리한다
             정답: 2
+            설명: 보상 함수는 에이전트가 환경과 상호작용하며 특정 행동을 취했을 때 그 행동이 얼마나 좋은지에 대한 피드백을 수치로 반환하는 역할을 합니다.
             설명: 문서에서 언급된 대로, 딥러닝은 다층 신경망을 사용하여 복잡한 패턴을 학습하고 추상화할 수 있는 머신러닝의 한 기법입니다.
+
             위 예시들을 참고하여 5개의 문제를 생성하세요. 각 문제는 서로 다른 개념을 다뤄야 합니다.
             """
         )
@@ -241,19 +272,21 @@ import random
 
 
 async def make_quiz(
+    llm,
     retriever,
     keywords,
     subject,
     user_idx,
     email,
     index_path,
+    user_difficulty_choice,
     num_questions=5,
     choice_count=4,
-    user_difficulty_choice=None
 ):
     try:
-        pattern = r"문제:\s(.*?)\s\n"
-        used_questions = ""
+        question_pattern = r"문제:\s(.*?)\s\n"
+        keywords_pattern = r"키워드:\s(.*?)\s\n"
+
         required_quiz_count = num_questions
         num_questions = num_questions // 5
         answer_list = [1, 2, 3, 4, 5]
@@ -261,14 +294,12 @@ async def make_quiz(
 
         result = ""
         used_keywords = ""
-        # used_keywords는 반복문 밖에서 초기화하지 않고, 매번 새로운 값으로 설정
+        used_questions = ""
         for i in range(num_questions):
-            # 가중치를 적용하여 난이도 선택
-            # difficulty = random.choices(difficulties, weights=weights, k=1)[0]
             quiz_prompt = await create_prompt_template()
-            llm = ChatOpenAI(
-                model_name="gpt-4o-mini",
-                temperature=0.3)
+            # llm = ChatOpenAI(
+            #     model="gpt-4o-mini",
+            #     temperature=0.3)
 
             """
             claude-3-haiku-20240307
@@ -321,9 +352,9 @@ async def make_quiz(
             random.shuffle(questions)
 
             result = "\n\n".join(questions)
-            used_questions = used_questions + ', '.join(re.findall(pattern, result))
-
-            used_keywords = used_keywords + ', '.join(keywords[i])
+            used_questions = used_questions + ', '.join(re.findall(question_pattern, result))
+            used_keywords = used_keywords + ', '.join(re.findall(keywords_pattern, result))
+            result = re.sub(keywords_pattern, '', result)
             # Kafka로 퀴즈 및 추가 정보를 전송 (JSON 직렬화 후 UTF-8 인코딩, ensure_ascii=False 추가)
             quiz_data = {
                 'user_idx': user_idx,
@@ -331,7 +362,6 @@ async def make_quiz(
                 'index_path': index_path,
                 'required_quiz_count': required_quiz_count,
                 'current_quiz_number': (i+1)*5,
-
                 'question': result.strip()
             }
             # Kafka 메시지 전송을 비동기적으로 처리
