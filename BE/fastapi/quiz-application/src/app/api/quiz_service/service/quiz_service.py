@@ -49,7 +49,8 @@ async def generate_quiz(request: QuizRequest):
             subject=subject,
             keywords=keywords,
             num_questions=request.num_questions,
-            choice_count=request.choice_count,
+            #선지 개수는 5개로 통일 
+            choice_count=5,
             user_difficulty_choice=request.difficulty,
             user_idx=request.user_idx,
             email=request.email,
