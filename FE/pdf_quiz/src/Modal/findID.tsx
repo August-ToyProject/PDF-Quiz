@@ -23,7 +23,7 @@ const UserIDInfo = ({ showModal, closeModal, name, userId }: ModalProps) => {
       >
         <div className="flex flex-col items-center mb-5">
           {/* Todo: 문제별로 상태 체크해서 답안 없는 문제 counting 해서 넣기 */}
-          <div>{name} 님의 아이디는 다음과 같습니다</div>
+          {/* <div>{name} 님의 아이디는 다음과 같습니다</div> */}
           <div>아이디: {userId}</div>
         </div>
         <div className="flex flex-row gap-2">
