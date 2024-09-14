@@ -96,10 +96,10 @@ const Login = () => {
     navigate("/mypage");
   };
 
-  //아이디 비밀번호 찾기 페이지로 이동
-  // const navigateToFindIDPW = () => {
-  //   navigate("/findAccount");
-  // };
+  // 아이디 비밀번호 찾기 페이지로 이동
+  const navigateToFindIDPW = () => {
+    navigate("/findAccount");
+  };
 
   return (
     <div className="w-full h-screen grid grid-cols-3">
@@ -146,9 +146,9 @@ const Login = () => {
           )}
 
           <div className="w-full flex flex-row gap-7 justify-center">
-            {/* <a className="bg-white cursor-pointer" onClick={navigateToFindIDPW}>
+            <a className="bg-white cursor-pointer" onClick={navigateToFindIDPW}>
               아이디/비밀번호 찾기
-            </a> */}
+            </a>
             <a className="bg-white cursor-pointer" onClick={navigateToSignUp}>
               회원가입
             </a>
