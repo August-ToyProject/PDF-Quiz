@@ -1,6 +1,7 @@
 import UseQuery from "../Hooks/UseQuery";
 import { useState } from "react";
 import UserIDInfo from "../Modal/findID";
+const apiUrl = import.meta.env.VITE_NGROK_URL;
 
 export default function FindAccount() {
   const query = UseQuery();
@@ -24,7 +25,7 @@ export default function FindAccount() {
   const findID = async () => {
     try {
       const response = await fetch(
-        `http://43.201.129.54:8080/api/v1/find-user?email=${email}`,
+        `${apiUrl}/find-user?email=${email}`,
         {
           method: "GET",
           headers: {
