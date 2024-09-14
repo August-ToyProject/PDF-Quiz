@@ -1,6 +1,8 @@
 import UseQuery from "../Hooks/UseQuery";
 import { useState } from "react";
 import UserIDInfo from "../Modal/findID";
+import FindPwModal from "../Modal/FindPwModal";
+
 const apiUrl = import.meta.env.VITE_NGROK_URL;
 
 export default function FindAccount() {
@@ -10,10 +12,13 @@ export default function FindAccount() {
   interface InputData {
     name: string;
     email: string;
+    id: string;
   }
 
-  const [name, setName] = useState<InputData["name"]>();
-  const [email, setEmail] = useState<InputData["email"]>();
+  const [idName, setIdName] = useState<InputData["name"]>();
+  const [idEmail, setIdEmail] = useState<InputData["email"]>();
+  const [pwUserId, setPwUserId] = useState<InputData["id"]>();
+  const [pwEmail, setPwEmail] = useState<InputData["email"]>(); 
 
   const [showModal, setShowModal] = useState(false); // 모달
   const [userData, setUserData] = useState<{ userId: string } | null>(null); // 사용자 데이터 상태
@@ -25,14 +30,18 @@ export default function FindAccount() {
   const findID = async () => {
     try {
       const response = await fetch(
-        `${apiUrl}/find-user?email=${email}`,
+        `${apiUrl}/find-user?email=${idEmail}`,
         {
           method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          // headers: {
+          //   "Content-Type": "application/json",
+          // },
         }
       );
+      if (!response.ok) {
+        alert("입력하신 이메일에 해당하는 사용자가 없습니다.");
+        return;
+      }
 
       const data = await response.json();
       setUserData(data);
@@ -40,6 +49,33 @@ export default function FindAccount() {
       console.error("Error during login:, ", error);
     }
   };
+  
+  const findPW = async () => {
+    try {
+      console.log('pw', pwEmail)
+      const response = await fetch(
+        `${apiUrl}/find-user?email=${pwEmail}`,
+        {
+          method: "GET",
+        }
+      );
+      if (!response.ok) {
+        alert("입력하신 이메일에 해당하는 사용자가 없습니다.");
+        return;
+      }
+
+      const data = await response.json();
+      setUserData(data);
+
+      if(data.userId === pwUserId){
+        openModal();
+      }else{
+        alert("입력하신 아이디 또는 이메일이 일치하지 않습니다.")
+      }
+    } catch (error) {
+      console.error("Error during login:, ", error);
+    }
+  }
 
   const handleSubmit = (e: React.FormEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -47,7 +83,12 @@ export default function FindAccount() {
       findID();
       openModal();
     }
+    if (activeTab === "password"){
+      findPW();
+    }
   };
+
+  
 
   return (
     <div className="h-screen w-full flex flex-col gap-5 justify-center items-center bg-white">
@@ -84,8 +125,8 @@ export default function FindAccount() {
                 type="text"
                 className="w-full p-3 border border-gray-300 rounded-3xl"
                 name="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                value={idName}
+                onChange={(e) => setIdName(e.target.value)}
               />
             </label>
             <label className="w-3/5 flex flex-row justify-center gap-2 items-center">
@@ -94,8 +135,8 @@ export default function FindAccount() {
                 type="text"
                 className="w-full p-3 border border-gray-300 rounded-3xl"
                 name="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={idEmail}
+                onChange={(e) => setIdEmail(e.target.value)}
               />
             </label>
             <div className="w-full flex justify-center">
@@ -111,7 +152,7 @@ export default function FindAccount() {
               <UserIDInfo
                 showModal={showModal}
                 closeModal={closeModal}
-                name={name || ""}
+                name={idName || ""}
                 userId={userData.userId}
               />
             )}
@@ -129,19 +170,13 @@ export default function FindAccount() {
               <p> ✅ 본인 확인 후 비밀번호를 재설정 할 수 있습니다.</p>
             </div>
             <label className="w-full flex flex-row justify-center gap-2 items-center">
-              <span className="w-1/5">이름</span>
-              <input
-                type="text"
-                className="w-full p-3 border border-gray-300 rounded-3xl"
-                name="name"
-              />
-            </label>
-            <label className="w-full flex flex-row justify-center gap-2 items-center">
               <span className="w-1/5">아이디</span>
               <input
                 type="text"
                 className="w-full p-3 border border-gray-300 rounded-3xl"
                 name="id"
+                value={pwUserId}
+                onChange={(e) => setPwUserId(e.target.value)} 
               />
             </label>
 
@@ -151,16 +186,22 @@ export default function FindAccount() {
                 type="text"
                 className="w-full p-3 border border-gray-300 rounded-3xl"
                 name="email"
+                value={pwEmail}
+                onChange={(e) => setPwEmail(e.target.value)}
               />
             </label>
             <div className="w-full flex justify-center">
               <button
                 className="p-3 bg-blue-600 text-white font-black rounded-3xl"
                 type="submit"
+                onClick={handleSubmit}
               >
                 비밀번호 재설정하기
               </button>
             </div>
+            {showModal && (
+              <FindPwModal showModal={showModal} closeModal={closeModal} userEmail={pwEmail || ""} />
+            )}
           </div>
         )}
       </div>
