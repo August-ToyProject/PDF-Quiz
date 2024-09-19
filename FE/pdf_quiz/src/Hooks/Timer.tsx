@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useQuizContext } from "../context/QuizContext";
 
 interface TimerProps {
   hour: number;
@@ -10,6 +11,8 @@ const Timer = ({ hour, minute }: TimerProps) => {
   const [minutes, setMinutes] = useState<number>(minute);
   const [seconds, setSeconds] = useState<number>(0);
 
+  const { isTimerStarted } = useQuizContext();
+
   useEffect(() => {
     // hour와 minute이 변경될 때마다 상태를 초기화합니다.
     setHours(hour);
@@ -18,25 +21,29 @@ const Timer = ({ hour, minute }: TimerProps) => {
   }, [hour, minute]);
 
   useEffect(() => {
-    const countdown = setInterval(() => {
-      if (seconds > 0) {
-        setSeconds((seconds) => seconds - 1);
-      } else if (minutes > 0) {
-        setMinutes((minutes) => minutes - 1);
-        setSeconds(59);
-      } else if (hours > 0) {
-        setHours((hours) => hours - 1);
-        setMinutes(59);
-        setSeconds(59);
-      } else {
-        clearInterval(countdown);
-        alert("Time is up!");
-      }
-    }, 1000);
+    if (!isTimerStarted) return;
 
-    // Cleanup function to clear the interval when the component unmounts
-    return () => clearInterval(countdown);
-  }, [seconds, minutes, hours]);
+    if (isTimerStarted) {
+      const countdown = setInterval(() => {
+        if (seconds > 0) {
+          setSeconds((seconds) => seconds - 1);
+        } else if (minutes > 0) {
+          setMinutes((minutes) => minutes - 1);
+          setSeconds(59);
+        } else if (hours > 0) {
+          setHours((hours) => hours - 1);
+          setMinutes(59);
+          setSeconds(59);
+        } else {
+          clearInterval(countdown);
+          alert("Time is up!");
+        }
+      }, 1000);
+
+      // Cleanup function to clear the interval when the component unmounts
+      return () => clearInterval(countdown);
+    }
+  }, [seconds, minutes, hours, isTimerStarted]);
   return (
     <div>
       <h6>

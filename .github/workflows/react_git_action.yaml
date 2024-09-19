@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - 'FE/**'
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -28,6 +29,16 @@ jobs:
       run: |
         cd FE/pdf_quiz
         npm run build
+
+    - name: Notify Slack on Failure 💀 (Build Step)
+      if: failure()
+      run: |
+        curl -X POST -H 'Content-type: application/json' --data '{
+          "channel": "#your-channel",
+          "text": ":x: *빌드 실패!* :rotating_light: \n<@${{ env.SLACK_USER_1 }}> <@${{ env.SLACK_USER_2 }}>\n 배포 개복치가 스트레스를 이기지 못하고 빌드 단계에서 무너졌습니다... :skull: :warning: 로그를 확인하고 다시 살려주세요! ⚠️",
+          "username": "DeployMola",
+          "icon_emoji": ":skull:"
+        }' ${{ secrets.SLACK_DEPLOY_WEB_HOOK }}
 
   deploy:
     runs-on: ubuntu-latest
@@ -87,5 +98,3 @@ jobs:
           "username": "DeployMola",
           "icon_emoji": ":skull:"
         }' ${{ env.SLACK_WEBHOOK_URL }}
-
-  
