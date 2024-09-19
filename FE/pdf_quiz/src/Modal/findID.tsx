@@ -6,7 +6,7 @@ interface ModalProps {
   userId: string;
 }
 
-const UserIDInfo = ({ showModal, closeModal, name, userId }: ModalProps) => {
+const UserIDInfo = ({ showModal, closeModal, userId }: ModalProps) => {
   const navigate = useNavigate();
 
   const navigateToLogin = () => {
