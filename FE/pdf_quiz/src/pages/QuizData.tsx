@@ -31,8 +31,14 @@ const QuizData = ({
 }: PageProps) => {
   // props로 상태 및 함수 받음
   const [fetchedData, setFetchedData] = useState<QuizDataProps[]>([]); // 데이터를 저장할 상태
-  const { setQuizData, quizCount, isQuizDataComplete, setIsQuizDataComplete } =
-    useQuizContext();
+  const {
+    setQuizData,
+    quizCount,
+    isQuizDataComplete,
+    setIsQuizDataComplete,
+    isTimerStarted,
+    setIsTimerStarted,
+  } = useQuizContext();
   const [isLoading, setIsLoading] = useState(true);
   const [totalItems, setTotalItems] = useState<number>(0);
   const [lastEventId, setLastEventId] = useState<string>("");
@@ -71,12 +77,13 @@ const QuizData = ({
 
       eventSource.addEventListener("sse", (event: MessageEvent) => {
         try {
-          console.log("event가 생성됨", event);
           setIsLoading(true);
 
           if (event.data !== '{"data":"connected!"}') {
             setIsLoading(false);
           }
+
+          console.log("event가 생성됨", event);
           const data = JSON.parse(event.data);
           console.log("Event.data: ", event.data);
           console.log("Received data: ", data);
@@ -121,13 +128,17 @@ const QuizData = ({
                 return prevData; // 이전 데이터를 그대로 유지
               }
 
-              const updatedData = [...prevData, ...processedData];
+              let updatedData = [...prevData, ...processedData];
               setTotalItems(updatedData.length); // 총 아이템 수 업데이트
               setTotalPages(Math.ceil(updatedData.length / itemsPerPage));
               // 데이터 처리 시 약간의 지연을 추가
               setTimeout(() => {
                 setQuizData(updatedData);
                 console.log("Updated data: ", updatedData);
+
+                if (!isTimerStarted && updatedData.length > 1) {
+                  setIsTimerStarted(true);
+                }
 
                 if (updatedData.length == quizCount) {
                   console.log(
@@ -151,8 +162,8 @@ const QuizData = ({
                   console.log(
                     "모든 데이터를 받아왔습니다. SSE 연결을 종료합니다."
                   );
-                  const finalData = updatedData.slice(0, quizCount); // quizCount 개수만큼 데이터 잘라서 사용
-                  setQuizData(finalData); // 잘라낸 데이터를 상태로 저장
+                  updatedData = updatedData.slice(0, quizCount); // quizCount 개수만큼 데이터 잘라서 사용
+                  setQuizData(updatedData); // 잘라낸 데이터를 상태로 저장
                   setIsQuizDataComplete(true); // 데이터 수신 완료 표시
                   eventSource?.close();
                 }
