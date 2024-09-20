@@ -28,21 +28,21 @@ public class OAuthAttribute {
 
     public static OAuthAttribute of(SocialType socialType,
                                     String userNameAttributeName, Map<String, Object> attributes) {
-//        if (socialType == SocialType.NAVER) {
-//            return ofNaver(userNameAttributeName, attributes);
-//        }
-//        if (socialType == SocialType.KAKAO) {
-//            return ofKakao(userNameAttributeName, attributes);
-//        }
+        if (socialType == SocialType.NAVER) {
+            return ofNaver(userNameAttributeName, attributes);
+        }
+        if (socialType == SocialType.KAKAO) {
+            return ofKakao(userNameAttributeName, attributes);
+        }
         return ofGoogle(userNameAttributeName, attributes);
     }
 
-//    private static OAuthAttribute ofKakao(String userNameAttributeName, Map<String, Object> attributes) {
-//        return OAuthAttribute.builder()
-//                .nameAttributeKey(userNameAttributeName)
-//                .oAuth2UserInfo(new KakaoOAuth2UserInfo(attributes))
-//                .build();
-//    }
+    private static OAuthAttribute ofKakao(String userNameAttributeName, Map<String, Object> attributes) {
+        return OAuthAttribute.builder()
+                .nameAttributeKey(userNameAttributeName)
+                .oAuth2UserInfo(new KakaoOAuth2UserInfo(attributes))
+                .build();
+    }
 
     public static OAuthAttribute ofGoogle(String userNameAttributeName, Map<String, Object> attributes) {
         return OAuthAttribute.builder()
@@ -51,12 +51,12 @@ public class OAuthAttribute {
                 .build();
     }
 
-//    public static OAuthAttribute ofNaver(String userNameAttributeName, Map<String, Object> attributes) {
-//        return OAuthAttribute.builder()
-//                .nameAttributeKey(userNameAttributeName)
-//                .oAuth2UserInfo(new NaverOAuth2UserInfo(attributes))
-//                .build();
-//    }
+    public static OAuthAttribute ofNaver(String userNameAttributeName, Map<String, Object> attributes) {
+        return OAuthAttribute.builder()
+                .nameAttributeKey(userNameAttributeName)
+                .oAuth2UserInfo(new NaverOAuth2UserInfo(attributes))
+                .build();
+    }
 
     public Member toEntity(SocialType socialType, OAuth2UserInfo oauth2UserInfo) {
         return Member.builder()
