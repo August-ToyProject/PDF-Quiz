@@ -9,6 +9,7 @@ import FindAccount from "./pages/FindAccount.tsx";
 import Review from "./pages/ReviewNote.tsx";
 import InfoPage from "./pages/InfoPage.tsx";
 import ListAnswer from "./pages/ListAnswer.tsx";
+import GoogleRedirect from "./pages/GoogleRedirect.tsx";
 
 function App() {
   return (
@@ -16,6 +17,10 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Login />} />
+          <Route
+            path="/login/oauth2/code/google"
+            element={<GoogleRedirect />}
+          />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/mypage" element={<MyPage />} />
           <Route path="/quiz" element={<Quiz />} />
@@ -23,7 +28,7 @@ function App() {
           <Route path="/findAccount" element={<FindAccount />} />
           <Route path="/review" element={<Review />} />
           <Route path="/info" element={<InfoPage />} />
-          <Route path="/listAnswer" element={<ListAnswer />}/>
+          <Route path="/listAnswer" element={<ListAnswer />} />
         </Routes>
       </BrowserRouter>
     </QuizProvider>
