@@ -2,8 +2,11 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ServiceName from "../assets/Logo.svg";
 import ServiceLogo from "../assets/ServiceLogo.png";
+import GoogleLogo from "../assets/Google.png";
 
 const apiUrl = import.meta.env.VITE_NGROK_URL;
+const clientId = import.meta.env.VITE_GOOGLE_AUTH_CLIENT_ID;
+const redirectUri = import.meta.env.VITE_GOOGLE_AUTH_REDIRECT_URI;
 
 interface loginData {
   id: string;
@@ -72,6 +75,14 @@ const Login = () => {
     } catch (error) {
       console.error("Error during login:, ", error);
     }
+  };
+
+  const GoogleLogin = () => {
+    window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?
+		client_id=${clientId}
+		&redirect_uri=${redirectUri}
+		&response_type=code
+		&scope=email profile`;
   };
 
   //아이디, 비밀번호 입력값 업데이트
@@ -153,12 +164,19 @@ const Login = () => {
               회원가입
             </a>
           </div>
-          <div className="w-full flex justify-center">
+          <div className="w-full flex flex-col justify-center space-y-4 items-center">
             <button
-              className="p-2 bg-blue-600 text-white font-black rounded"
+              className="p-2 w-24 bg-blue-600 text-white font-black rounded"
               type="submit"
             >
               로그인
+            </button>
+            <button
+              className="w-60 flex flex-row justify-center space-x-2"
+              onClick={GoogleLogin}
+            >
+              <img src={GoogleLogo} alt="google" className="w-6 h-6" />
+              <div>Sign in with Google</div>
             </button>
           </div>
         </form>
