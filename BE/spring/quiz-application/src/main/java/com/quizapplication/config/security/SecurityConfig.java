@@ -54,7 +54,9 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource getCorsConfiguration() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Collections.singletonList("https://quizgen.site"));
+//        config.setAllowedOrigins(Collections.singletonList("https://quizgen.site"));
+//        config.setAllowedOrigins(Collections.singletonList("*"));
+        config.setAllowedOriginPatterns(Collections.singletonList("*"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         config.setAllowCredentials(true);
         config.setAllowedHeaders(Collections.singletonList("*"));

@@ -46,64 +46,64 @@ public class MemberServiceImpl implements MemberService {
     private final QuizRepository quizRepository;
     private final PasswordEncoder passwordEncoder;
 
-//    @PostConstruct
-//    public void init() {
-//        Member member1 = Member.builder()
-//                .userId("kyun9151")
-//                .email("kyun9151@gmail.com")
-//                .username("김명균")
-//                .nickname("hodu1")
-//                .role(ROLE_USER)
-//                .password(passwordEncoder.encode("12345678"))
-//                .build();
-//
-//
-//        Member member2 = Member.builder()
-//                .userId("kyun9152")
-//                .email("kyun9152@gmail.com")
-//                .username("박준용")
-//                .nickname("hodu2")
-//                .role(ROLE_USER)
-//                .password(passwordEncoder.encode("12345678"))
-//                .build();
-//
-//        Member member3 = Member.builder()
-//                .userId("kyun9153")
-//                .email("kyun9153@gmail.com")
-//                .username("최병우")
-//                .nickname("hodu3")
-//                .role(ROLE_USER)
-//                .password(passwordEncoder.encode("12345678"))
-//                .build();
-//
-//        Member member4 = Member.builder()
-//                .userId("kyun9154")
-//                .email("kyun9154@gmail.com")
-//                .username("김덕빈")
-//                .nickname("hodu4")
-//                .role(ROLE_USER)
-//                .password(passwordEncoder.encode("12345678"))
-//                .build();
-//
-//        Member member5 = Member.builder()
-//                .userId("kyun9155")
-//                .email("kyun9155@gmail.com")
-//                .username("김명균5")
-//                .nickname("hodu5")
-//                .role(ROLE_USER)
-//                .password(passwordEncoder.encode("12345678"))
-//                .build();
-//        Quiz quiz1 = Quiz.builder()
-//                .answer("{\"3\": \"교차 관심사(cross-cutting concerns)를 모듈화하는 것\"}")
-//                .description("AOP의 주요 목적은 교차 관심사(cross-cutting concerns)를 모듈화하여 코드의 가독성과 유지보수성을 높이는 것입니다.")
-//                .difficulty("어려움")
-//                .options(
-//                        "{\"1\": \"코드의 재사용성을 높이는 것\", \"2\": \"애플리케이션의 성능을 향상시키는 것\", \"3\": \"교차 관심사(cross-cutting concerns)를 모듈화하는 것\", \"4\": \"데이터베이스와의 연결을 단순화하는 것\", \"5\": \"사용자 인터페이스(UI)를 개선하는 것\"}")
-//                .member(member1)
-//                .build();
-//        memberRepository.saveAll(List.of(member1, member2, member3, member4, member5));
-//        quizRepository.save(quiz1);
-//    }
+    @PostConstruct
+    public void init() {
+        Member member1 = Member.builder()
+                .userId("kyun9151")
+                .email("kyun9151@gmail.com")
+                .username("김명균")
+                .nickname("hodu1")
+                .role(ROLE_USER)
+                .password(passwordEncoder.encode("12345678"))
+                .build();
+
+
+        Member member2 = Member.builder()
+                .userId("kyun9152")
+                .email("kyun9152@gmail.com")
+                .username("박준용")
+                .nickname("hodu2")
+                .role(ROLE_USER)
+                .password(passwordEncoder.encode("12345678"))
+                .build();
+
+        Member member3 = Member.builder()
+                .userId("kyun9153")
+                .email("kyun9153@gmail.com")
+                .username("최병우")
+                .nickname("hodu3")
+                .role(ROLE_USER)
+                .password(passwordEncoder.encode("12345678"))
+                .build();
+
+        Member member4 = Member.builder()
+                .userId("kyun9154")
+                .email("kyun9154@gmail.com")
+                .username("김덕빈")
+                .nickname("hodu4")
+                .role(ROLE_USER)
+                .password(passwordEncoder.encode("12345678"))
+                .build();
+
+        Member member5 = Member.builder()
+                .userId("kyun9155")
+                .email("kyun9155@gmail.com")
+                .username("김명균5")
+                .nickname("hodu5")
+                .role(ROLE_USER)
+                .password(passwordEncoder.encode("12345678"))
+                .build();
+        Quiz quiz1 = Quiz.builder()
+                .answer("{\"3\": \"교차 관심사(cross-cutting concerns)를 모듈화하는 것\"}")
+                .description("AOP의 주요 목적은 교차 관심사(cross-cutting concerns)를 모듈화하여 코드의 가독성과 유지보수성을 높이는 것입니다.")
+                .difficulty("어려움")
+                .options(
+                        "{\"1\": \"코드의 재사용성을 높이는 것\", \"2\": \"애플리케이션의 성능을 향상시키는 것\", \"3\": \"교차 관심사(cross-cutting concerns)를 모듈화하는 것\", \"4\": \"데이터베이스와의 연결을 단순화하는 것\", \"5\": \"사용자 인터페이스(UI)를 개선하는 것\"}")
+                .member(member1)
+                .build();
+        memberRepository.saveAll(List.of(member1, member2, member3, member4, member5));
+        quizRepository.save(quiz1);
+    }
     @Override
     @Transactional
     public MemberResponse signup(SignupDto signupDto) {
