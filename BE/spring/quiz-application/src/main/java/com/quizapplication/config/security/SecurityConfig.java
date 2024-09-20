@@ -2,6 +2,9 @@ package com.quizapplication.config.security;
 
 import com.quizapplication.config.jwt.JwtFilter;
 import com.quizapplication.config.jwt.TokenProvider;
+import com.quizapplication.config.oauth.handler.OAuth2LoginFailureHandler;
+import com.quizapplication.config.oauth.handler.OAuth2LoginSuccessHandler;
+import com.quizapplication.config.oauth.service.CustomOAuth2MemberService;
 import com.quizapplication.config.redis.RedisService;
 import com.quizapplication.config.security.handler.LoginFailureHandler;
 import com.quizapplication.config.security.handler.LoginSuccessHandler;
@@ -31,6 +34,9 @@ public class SecurityConfig {
 
     private final TokenProvider tokenProvider;
     private final RedisService redisService;
+    private final CustomOAuth2MemberService oAuth2MemberService;
+    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+    private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -42,6 +48,10 @@ public class SecurityConfig {
                 .headers((e) -> e.frameOptions((a) -> a.sameOrigin()))
                 .authorizeHttpRequests((requests) -> requests.anyRequest().permitAll())
                 .cors(cors -> cors.configurationSource(getCorsConfiguration()))
+                .oauth2Login((oauth2) -> oauth2.userInfoEndpoint(
+                                userInfoEndpointConfig -> userInfoEndpointConfig.userService(oAuth2MemberService))
+                        .successHandler(oAuth2LoginSuccessHandler)
+                        .failureHandler(oAuth2LoginFailureHandler))
                 .with(new CustomFilterConfigurer(), Customizer.withDefaults());
         return http.build();
     }
@@ -55,7 +65,6 @@ public class SecurityConfig {
     CorsConfigurationSource getCorsConfiguration() {
         CorsConfiguration config = new CorsConfiguration();
 //        config.setAllowedOrigins(Collections.singletonList("https://quizgen.site"));
-//        config.setAllowedOrigins(Collections.singletonList("*"));
         config.setAllowedOriginPatterns(Collections.singletonList("*"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         config.setAllowCredentials(true);
