@@ -4,8 +4,9 @@ on:
   push:
     branches:
       - main
+      - development  # development 브랜치로 변경
     paths:
-      - 'FE/**'
+        - 'FE/**'
 
 jobs:
   build:
@@ -33,36 +34,51 @@ jobs:
     - name: Notify Slack on Failure 💀 (Build Step)
       if: failure()
       run: |
-        curl -X POST -H 'Content-type: application/json' --data '{
-          "channel": "#your-channel",
-          "text": ":x: *빌드 실패!* :rotating_light: \n<@${{ env.SLACK_USER_1 }}> <@${{ env.SLACK_USER_2 }}>\n 배포 개복치가 스트레스를 이기지 못하고 빌드 단계에서 무너졌습니다... :skull: :warning: 로그를 확인하고 다시 살려주세요! ⚠️",
-          "username": "DeployMola",
-          "icon_emoji": ":skull:"
-        }' ${{ secrets.SLACK_DEPLOY_WEB_HOOK }}
+        if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+          CHANNEL="#your-channel-main"
+          MESSAGE=":x: *빌드 실패!* :rotating_light: \n<@${{ env.SLACK_USER_1 }}> <@${{ env.SLACK_USER_2 }}>\n 배포 개복치가 스트레스를 이기지 못하고 빌드 단계에서 무너졌습니다... :skull: :warning: 로그를 확인하고 다시 살려주세요! ⚠️"
+        else
+          CHANNEL="#your-channel-development"
+          MESSAGE=":x: *development 빌드 실패!* :rotating_light: \n<@${{ env.SLACK_USER_1 }}> <@${{ env.SLACK_USER_2 }}>\n development 환경에서 빌드에 실패했습니다. 확인 부탁드립니다!"
+        fi
+        
+        # 특수 문자 및 제어 문자 제거 처리
+        CLEANED_MESSAGE=$(echo "$MESSAGE" | sed 's/["\x08]//g' | sed 's/[\n\r]/ /g')
+
+        curl -X POST -H 'Content-type: application/json' --data "{
+          \"channel\": \"$CHANNEL\",
+          \"text\": \"$CLEANED_MESSAGE\",
+          \"username\": \"DeployMola\",
+          \"icon_emoji\": \":skull:\"
+        }" ${{ secrets.SLACK_DEPLOY_WEB_HOOK }}
 
   deploy:
     runs-on: ubuntu-latest
     needs: build
     env:
-      EC2_HOST: ${{ secrets.EC2_REACT_HOST }}
-      EC2_USER: ${{ secrets.EC2_USER }}
-      SSH_KEY: ${{ secrets.EC2_SSH_REACT_KEY }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_DEPLOY_WEB_HOOK }}
       SLACK_USER_1: 'U07FB0CTK8V'
-      SLACK_USER_2: 'U07F5U2HV1C'  # 두 번째 사용자 ID 추가
-      
+      SLACK_USER_2: 'U07F5U2HV1C'
+
     steps:
     - name: Check out code
       uses: actions/checkout@v4
       
-    - name: Check environment variables
+    - name: Set EC2 host and user based on branch
       run: |
-        echo "EC2_HOST: $EC2_HOST"
-        echo "EC2_USER: $EC2_USER"
-
+        if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+          export EC2_HOST=${{ secrets.EC2_REACT_HOST }}
+          export EC2_USER=ubuntu
+        else
+          export EC2_HOST=${{ secrets.EC2_REACT_HOST_DEV }}
+          export EC2_USER=root
+        fi
+        echo "Using EC2_HOST: $EC2_HOST"
+        echo "Using EC2_USER: $EC2_USER"
+      
     - name: Add SSH key to agent
       run: |
-        echo "$SSH_KEY" | tr -d '\r' > key.pem  # Windows와 Unix 줄바꿈 문제 해결
+        echo "${{ secrets.EC2_SSH_REACT_KEY }}" | tr -d '\r' > key.pem  # Windows와 Unix 줄바꿈 문제 해결
         chmod 400 key.pem
         eval "$(ssh-agent -s)"
         ssh-add key.pem
@@ -78,23 +94,45 @@ jobs:
           sh run.sh
           echo "Finished running run.sh"
         ENDSSH
-        
+
     - name: Notify Slack on Success 🎉
       if: success()
       run: |
-        curl -X POST -H 'Content-type: application/json' --data '{
-          "channel": "#your-channel",
-          "text": ":white_check_mark: *배포 성공!* :tada: :rocket: \n<@${{ env.SLACK_USER_1 }}> <@${{ env.SLACK_USER_2 }}> 배포 개복치가 오늘도 무사히 배포를 완료했습니다! 🎉 오늘의 배포는 성공적입니다! 🐟 :rocket:",
-          "username": "DeployMola",
-          "icon_emoji": ":fish:"
-        }' ${{ env.SLACK_WEBHOOK_URL }}
-  
+        if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+          CHANNEL="#your-channel-main"
+          MESSAGE=":white_check_mark: *배포 성공!* :tada: :rocket: \n<@${{ env.SLACK_USER_1 }}> <@${{ env.SLACK_USER_2 }}> 배포 개복치가 오늘도 무사히 배포를 완료했습니다! 🎉 오늘의 배포는 성공적입니다! 🐟 :rocket:"
+        else
+          CHANNEL="#your-channel-development"
+          MESSAGE=":white_check_mark: *development 배포 성공!* :tada: \n<@${{ env.SLACK_USER_1 }}> <@${{ env.SLACK_USER_2 }}> development 환경에서 배포가 완료되었습니다! :rocket:"
+        fi
+
+        # 특수 문자 및 제어 문자 제거 처리
+        CLEANED_MESSAGE=$(echo "$MESSAGE" | sed 's/["\x08]//g' | sed 's/[\n\r]/ /g')
+
+        curl -X POST -H 'Content-type: application/json' --data "{
+          \"channel\": \"$CHANNEL\",
+          \"text\": \"$CLEANED_MESSAGE\",
+          \"username\": \"DeployMola\",
+          \"icon_emoji\": \":fish:\"
+        }" ${{ secrets.SLACK_DEPLOY_WEB_HOOK }}
+
     - name: Notify Slack on Failure 💀
       if: failure()
       run: |
-        curl -X POST -H 'Content-type: application/json' --data '{
-          "channel": "#your-channel",
-          "text": ":x: *배포 실패!* :rotating_light: \n<@${{ env.SLACK_USER_1 }}> <@${{ env.SLACK_USER_2 }}>\n 배포 개복치가 스트레스를 이기지 못하고 꾀꼬닥했습니다... :skull: :warning: 로그를 확인하고 다시 살려주세요! ⚠️",
-          "username": "DeployMola",
-          "icon_emoji": ":skull:"
-        }' ${{ env.SLACK_WEBHOOK_URL }}
+        if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+          CHANNEL="#your-channel-main"
+          MESSAGE=":x: *배포 실패!* :rotating_light: \n<@${{ env.SLACK_USER_1 }}> <@${{ env.SLACK_USER_2 }}>\n 배포 개복치가 스트레스를 이기지 못하고 꾀꼬닥했습니다... :skull: :warning: 로그를 확인하고 다시 살려주세요! ⚠️"
+        else
+          CHANNEL="#your-channel-development"
+          MESSAGE=":x: *development 배포 실패!* :rotating_light: \n<@${{ env.SLACK_USER_1 }}> <@${{ env.SLACK_USER_2 }}>\n development 환경에서 배포에 실패했습니다. 확인 부탁드립니다!"
+        fi
+
+        # 특수 문자 및 제어 문자 제거 처리
+        CLEANED_MESSAGE=$(echo "$MESSAGE" | sed 's/["\x08]//g' | sed 's/[\n\r]/ /g')
+
+        curl -X POST -H 'Content-type: application/json' --data "{
+          \"channel\": \"$CHANNEL\",
+          \"text\": \"$CLEANED_MESSAGE\",
+          \"username\": \"DeployMola\",
+          \"icon_emoji\": \":skull:\"
+        }" ${{ secrets.SLACK_DEPLOY_WEB_HOOK }}
