@@ -51,6 +51,7 @@ jobs:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_DEPLOY_WEB_HOOK }}
       SLACK_USER_1: 'U07FB0CTK8V'
       SLACK_USER_2: 'U07F5U2HV1C'  # 두 번째 사용자 ID 추가
+      BRANCH_NAME: ${{ github.ref == 'refs/heads/main' && '운영서버' || '개발서버' }}
       
     steps:
     - name: Check out code
@@ -80,22 +81,42 @@ jobs:
           echo "Finished running run.sh"
         ENDSSH
         
-    - name: Notify Slack on Success 🎉
-      if: success()
+    - name: Notify Slack on Success 🎉 (운영서버)
+      if: success() && github.ref == 'refs/heads/main'
       run: |
         curl -X POST -H 'Content-type: application/json' --data '{
           "channel": "#your-channel",
-          "text": ":white_check_mark: *배포 성공!* :tada: :rocket: \n<@${{ env.SLACK_USER_1 }}> <@${{ env.SLACK_USER_2 }}> 배포 개복치가 오늘도 무사히 배포를 완료했습니다! 🎉 오늘의 배포는 성공적입니다! 🐟 :rocket:",
+          "text": ":white_check_mark: *운영 서버 배포 성공!* :tada: :rocket: \n<@${{ env.SLACK_USER_1 }}> <@${{ env.SLACK_USER_2 }}> 배포 개복치가 `운영 서버`에 무사히 배포를 완료했습니다! 🏆 \n오늘도 운영 서버는 순조롭게 진행되었습니다! 🚀",
           "username": "DeployMola",
-          "icon_emoji": ":fish:"
+          "icon_emoji": ":trophy:"
         }' ${{ env.SLACK_WEBHOOK_URL }}
   
-    - name: Notify Slack on Failure 💀
-      if: failure()
+    - name: Notify Slack on Success 🎉 (개발서버)
+      if: success() && github.ref != 'refs/heads/main'
       run: |
         curl -X POST -H 'Content-type: application/json' --data '{
           "channel": "#your-channel",
-          "text": ":x: *배포 실패!* :rotating_light: \n<@${{ env.SLACK_USER_1 }}> <@${{ env.SLACK_USER_2 }}>\n 배포 개복치가 스트레스를 이기지 못하고 꾀꼬닥했습니다... :skull: :warning: 로그를 확인하고 다시 살려주세요! ⚠️",
+          "text": ":white_check_mark: *개발 서버 배포 성공!* :tada: :construction_worker: \n<@${{ env.SLACK_USER_1 }}> <@${{ env.SLACK_USER_2 }}> 배포 개복치가 `개발 서버`에 성공적으로 배포되었습니다! 🔧 \n개발 환경이 정상적으로 업데이트되었습니다! 🛠",
           "username": "DeployMola",
-          "icon_emoji": ":skull:"
+          "icon_emoji": ":construction_worker:"
+        }' ${{ env.SLACK_WEBHOOK_URL }}
+  
+    - name: Notify Slack on Failure 💀 (운영서버)
+      if: failure() && github.ref == 'refs/heads/main'
+      run: |
+        curl -X POST -H 'Content-type: application/json' --data '{
+          "channel": "#your-channel",
+          "text": ":x: *운영 서버 배포 실패!* :rotating_light: \n<@${{ env.SLACK_USER_1 }}> <@${{ env.SLACK_USER_2 }}>\n `운영 서버` 배포가 실패했습니다... :skull: \n문제를 빨리 해결해주세요! ⚠️",
+          "username": "DeployMola",
+          "icon_emoji": ":fire:"
+        }' ${{ env.SLACK_WEBHOOK_URL }}
+  
+    - name: Notify Slack on Failure 💀 (개발서버)
+      if: failure() && github.ref != 'refs/heads/main'
+      run: |
+        curl -X POST -H 'Content-type: application/json' --data '{
+          "channel": "#your-channel",
+          "text": ":x: *개발 서버 배포 실패!* :rotating_light: \n<@${{ env.SLACK_USER_1 }}> <@${{ env.SLACK_USER_2 }}>\n `개발 서버` 배포가 실패했습니다... :skull: \n개발 환경을 다시 살펴봐야 합니다! ⚠️",
+          "username": "DeployMola",
+          "icon_emoji": ":wrench:"
         }' ${{ env.SLACK_WEBHOOK_URL }}
