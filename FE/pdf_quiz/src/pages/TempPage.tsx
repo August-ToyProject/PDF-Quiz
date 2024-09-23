@@ -338,273 +338,273 @@ export default function TempPage() {
         }
     };
     
-  return (
-    <div className="min-h-screen w-screen flex flex-col items-center">
-        <div className="flex flex-col w-full min-h-full">
-            <div className="flex justify-between">
-                <div className="font-black text-blue-600 lg:text-[3vw] lg:mx-[2vw] lg:my-[2vh] text-[5vw] mx-[2vw] my-[3vw] p-2">
-                    QuizGen
-                </div>
-                <div className="flex-row mx-[2vw] my-[2vh]">
-                    <button className="bg-transparent font-black lg:text-[2vw] text-[3.5vw] p-2 focus:outline-none focus:border-none">
-                        Home
-                    </button>
-                    <button className="bg-transparent font-black lg:text-[2vw] text-[3.5vw] p-2 focus:outline-none focus:border-none">
-                        Help
-                    </button>
-                    <button className="bg-transparent font-black lg:text-[2vw] text-[3.5vw] p-2 focus:outline-none focus:border-none">
-                        MyPage
-                    </button>
-                    <button className="lg:bg-blue-600 lg:rounded-full lg:py-2 font-black lg:text-white lg:text-[2vw] text-[3.5vw] py-1 bg-transparent text-blue-600">
-                        Note
-                    </button>
-                </div>
-            </div>
-            <div className="lg:flex lg:flex-row h-full">
-                {/* 좌측 옵션 */}
-                <div className="flex flex-col lg:mx-[3vw] lg:my-[16vh] lg:h-full lg:w-[15vw] mx-[6vw]">
-                    <div className="mt-2 lg:p-4 border border-gray-300 rounded-lg lg:w-[18vw] lg:h-[35vh] h-[21vh] flex flex-col lg:items-center">
-                        <div className="flex flex-row lg:flex-col items-center">
-                            <div className="w-[14vh] h-[15vh] rounded-full border-2 border-gray-300 my-[3vh] mx-[6vw]">
-                                <img src={ServiceLogo} alt="Service Logo" className="w-[14vh] h-[15vh] object-cover" />
-                            </div>
-                            <div className="flex flex-col">
-                                <div className="font-body font-bold text-center lg:text-[2vw] mb-4">
-                                    {user?.nickname || "닉네임"}
-                                </div>
-                                <div className="flex justify-center space-x-4">
-                                    <button className="font-body px-2 lg:w-[7vw] lg:h-[4vh] h-[5vh] bg-gray-50 border border-gray-300 lg:text-[1.3vw] text-gray-500 rounded-lg flex items-center justify-center" onClick={handleInfo}>
-                                        내 정보
-                                    </button>
-                                    <button className="font-body px-2 lg:w-[7vw] lg:h-[4vh] h-[5vh] bg-gray-50 border border-gray-300 lg:text-[1.3vw] text-gray-500 rounded-lg flex items-center justify-center" onClick={handleLogout}>
-                                        로그아웃
-                                    </button>
-                                </div>
-                            </div>
-                        </div> 
-                        {/* <div className="font-body text-center lg:text-[1.5vw] text-gray-400">
-                            이름
-                        </div> */}
+    return (
+        <div className="min-h-screen w-screen flex flex-col items-center">
+            <div className="flex flex-col w-full min-h-full">
+                <div className="flex justify-between">
+                    <div className="font-black text-blue-600 lg:text-[3vw] lg:mx-[2vw] lg:my-[2vh] text-[5vw] mx-[2vw] my-[3vw] p-2">
+                        QuizGen
+                    </div>
+                    <div className="flex-row mx-[2vw] my-[2vh]">
+                        <button className="bg-transparent font-black lg:text-[2vw] text-[3.5vw] p-2 focus:outline-none focus:border-none">
+                            Home
+                        </button>
+                        <button className="bg-transparent font-black lg:text-[2vw] text-[3.5vw] p-2 focus:outline-none focus:border-none">
+                            Help
+                        </button>
+                        <button className="bg-transparent font-black lg:text-[2vw] text-[3.5vw] p-2 focus:outline-none focus:border-none">
+                            MyPage
+                        </button>
+                        <button className="lg:bg-blue-600 lg:rounded-full lg:py-2 font-black lg:text-white lg:text-[2vw] text-[3.5vw] py-1 bg-transparent text-blue-600">
+                            Note
+                        </button>
                     </div>
                 </div>
-                <div className="lg:mx-[5vw] lg:my-[7vh] my-[3vh] mx-[6vw] flex flex-col">
-                    <div className="flex lg:flex-row flex-col">
-                        <div className="flex flex-col lg:mt-[5vh]">
-                            <img src={top_text} alt="상단문구" className="lg:w-[36.83vw] lg:h-[9.39vh] my-[3vh] hidden lg:block" />
-                            <img src={bottom_text} alt="하단문구" className="lg:w-[40.67vw] lg:h-[7.04vh] hidden lg:block" />
-                            <div className="flex justify-center mt-[2vh]">
-                                <button className="bg-blue-600 lg:mt-[2vh] lg:text-[2.5vw] font-black text-white font-bold lg:p-2 rounded-full lg:w-[21.92vw] lg:h-[7.16vh] w-full shadow-md shadow-gray-400" onClick={openModal}>
-                                    PDF Upload
+                <div className="lg:flex lg:flex-row h-full">
+                    {/* 좌측 옵션 */}
+                    <div className="flex flex-col lg:mx-[3vw] lg:my-[16vh] lg:min-h-full lg:w-[15vw] mx-[6vw]">
+                        <div className="mt-2 lg:p-4 border-2 border-gray-300 rounded-lg h-[21vh] flex flex-col lg:items-center lg:w-[14vw] lg:h-[40vh]">
+                            <div className="flex flex-row lg:flex-col items-center">
+                                <div className="w-[17vh] h-[18vh] rounded-full border-2 border-gray-300 my-[3vh] mx-[6vw]">
+                                    <img src={ServiceLogo} alt="Service Logo" className="w-[17vh] h-[18vh] object-cover" />
+                                </div>
+                                <div className="flex flex-col mt-[2vh]">
+                                    <div className="font-body font-bold text-center lg:text-[1.5vw] mb-[2vh]">
+                                        {user?.nickname || "닉네임"}
+                                    </div>
+                                    <div className="flex justify-center space-x-2">
+                                        <button className="font-body px-1 h-[5vh] bg-gray-50 border border-gray-300 text-gray-500 rounded-md flex items-center justify-center lg:w-[6vw] lg:h-[3.5vh] lg:text-[1.2vw]" onClick={handleInfo}>
+                                            내 정보
+                                        </button>
+                                        <button className="font-body px-1 h-[5vh] bg-gray-50 border border-gray-300 text-gray-500 rounded-md flex items-center justify-center lg:w-[6vw] lg:h-[3.5vh] lg:text-[1.2vw]" onClick={handleLogout}>
+                                            로그아웃
+                                        </button>
+                                    </div>
+                                </div>
+                            </div> 
+                            {/* <div className="font-body text-center lg:text-[1.5vw] text-gray-400">
+                                이름
+                            </div> */}
+                        </div>
+                    </div>
+                    <div className="my-[3vh] mx-[6vw] flex flex-col lg:mx-[5vw] lg:my-[7vh]">
+                        <div className="flex lg:flex-row flex-col">
+                            <div className="flex flex-col lg:mt-[5vh]">
+                                <img src={top_text} alt="상단문구" className=" my-[3vh] hidden lg:block lg:w-[36.83vw] lg:h-[10vh]" />
+                                <img src={bottom_text} alt="하단문구" className="hidden lg:block lg:w-[40.67vw] lg:h-[7.5vh]" />
+                                <div className="flex justify-center mt-[2vh]">
+                                    <button className="bg-blue-600 font-black text-white font-bold rounded-full w-full shadow-md shadow-gray-400 lg:mt-[2vh] lg:text-[1.6vw] lg:p-2 lg:w-[21.92vw] lg:h-[7.16vh]" onClick={openModal}>
+                                        PDF Upload
+                                    </button>
+                                </div>
+                            </div>
+                            <img src={center_image} alt="중앙이미지" className="lg:w-[30vw] lg:h-[45vh] hidden lg:block" />
+                        </div>
+                        <div className="flex flex-col lg:h-[45vh] lg:mt-[5vh] mt-[2vh] w-full">
+                            <div className="flex justify-between items-center border-b-2 border-gray-300 border-dashed">
+                                <div className="text-gray-400 lg:text-[2vw] text-[5vw] font-bold">
+                                    Quiz List
+                                </div>
+                                <button
+                                    onClick={toggleDropdown}
+                                    className="focus:outline-none bg-transparent focus:outline-none focus:border-none p-1 lg:hidden"
+                                >
+                                    {showDropdown ? (
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            className="h-5 w-5 text-gray-400 font-bold focus:outline-none focus:border-none"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth="2"
+                                                d="M19 9l-7 7-7-7"
+                                            />
+                                        </svg>
+                                    ) : (
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            className="h-5 w-5 text-gray-400 font-bold focus:outline-none focus:border-none"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth="2"
+                                                d="M15 19l-7-7 7-7"
+                                            />
+                                        </svg>
+                                    )}
                                 </button>
                             </div>
-                        </div>
-                        <img src={center_image} alt="중앙이미지" className="lg:w-[30vw] lg:h-[40vh] hidden lg:block" />
-                    </div>
-                    <div className="flex flex-col lg:h-[45vh] lg:mt-[5vh] mt-[2vh] w-full">
-                        <div className="flex justify-between items-center border-b-2 border-gray-300 border-dashed">
-                            <div className="text-gray-400 lg:text-[2vw] text-[5vw] font-bold">
-                                Quiz List
-                            </div>
-                            <button
-                                onClick={toggleDropdown}
-                                className="focus:outline-none bg-transparent focus:outline-none focus:border-none p-1 lg:hidden"
+                            <div
+                            className={`transition-all duration-300 overflow-hidden lg:max-h-full ${
+                                showDropdown ? "max-h-full" : "max-h-0"
+                                }`}
                             >
-                                {showDropdown ? (
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        className="h-5 w-5 text-gray-400 font-bold focus:outline-none focus:border-none"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth="2"
-                                            d="M19 9l-7 7-7-7"
+                                <div className="flex flex-col lg:flex-row items-center lg:justify-between mt-[2vh]">
+                                    <div className="relative">
+                                        <input
+                                            type="text"
+                                            placeholder="Search"
+                                            value={searchTerm}
+                                            onChange={(e) => setSearchTerm(e.target.value)}
+                                            className="w-[80vw] h-[4vh] text-[3vw] p-2 border border-gray-300 rounded-full lg:p-3 lg:w-[40vw] lg:h-[4vh] lg:text-[1.5vw]"
                                         />
-                                    </svg>
-                                ) : (
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        className="h-5 w-5 text-gray-400 font-bold focus:outline-none focus:border-none"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth="2"
-                                            d="M15 19l-7-7 7-7"
-                                        />
-                                    </svg>
-                                )}
-                            </button>
-                        </div>
-                        <div
-                        className={`transition-all duration-300 overflow-hidden lg:max-h-full ${
-                            showDropdown ? "max-h-full" : "max-h-0"
-                            }`}
-                        >
-                            <div className="flex flex-col lg:flex-row items-center lg:justify-between mt-[2vh]">
-                                <div className="relative">
-                                    <input
-                                        type="text"
-                                        placeholder="Search"
-                                        value={searchTerm}
-                                        onChange={(e) => setSearchTerm(e.target.value)}
-                                        className="w-[80vw] h-[4vh] text-[3vw] p-2 border border-gray-300 rounded-full lg:p-3 lg:w-[40vw] lg:h-[4vh] lg:text-[1.5vw]"
-                                    />
-                                </div>
-                                <div className="flex lg:items-center">
-                                    <button className="lg:text-[1.2vw] text-[3vw] text-gray-500 font-bold bg-transparent lg:p-[0.5vw] focus:outline-none focus:border-none" onClick={() => setShowFolderModal(true)}>
-                                        폴더추가
-                                    </button>
-                                    <button className="lg:text-[1.2vw] text-[3vw] text-gray-500 font-bold bg-transparent lg:p-[0.5vw] focus:outline-none focus:border-none" onClick={() => openActionModal("move")}>
-                                        이동
-                                    </button>
-                                    <button className="lg:text-[1.2vw] text-[3vw] text-gray-500 font-bold bg-transparent lg:p-[0.5vw] focus:outline-none focus:border-none" onClick={() => openActionModal("edit")}>
-                                        수정
-                                    </button>
-                                    <button className="lg:text-[1.2vw] text-[3vw] text-gray-500 font-bold bg-transparent lg:p-[0.5vw] focus:outline-none focus:border-none" onClick={() => openActionModal("delete")}>
-                                        삭제
-                                    </button>
-                                    <button className="lg:text-[1.2vw] text-[3vw] text-gray-500 font-bold bg-transparent lg:p-[0.5vw] focus:outline-none focus:border-none" onClick={handleResetClick}>
-                                        뒤로
-                                    </button>
-                                    <button className="lg:text-[1.2vw] text-[3vw] text-gray-500 font-bold bg-transparent lg:p-[0.5vw] focus:outline-none focus:border-none">
-                                        도움말
-                                    </button>
-                                </div>
-                            </div>
-                            <div className="flex flex-wrap gap-4 mt-[2vh] overflow-y-auto h-[30vh]">
-                            {[...folders, ...filteredQuizzes]
-                                .filter((item) =>
-                                "name" in item
-                                    ? item.name.toLowerCase().includes(searchTerm.toLowerCase())
-                                    : item.title.toLowerCase().includes(searchTerm.toLowerCase())
-                                )
-                                .map((item) =>
-                                "name" in item ? (
-                                    // 폴더 버튼
-                                    !selectedFolder && (
-                                        <button
-                                            key={item.id}
-                                            className="relative flex items-center border w-full mx-[6vw] h-[5vh] border-gray-300 rounded-lg bg-blue-100 lg:items-start lg:flex-col lg:p-2 lg:mx-[0vw] lg:w-[16vw] lg:h-[10vh]"
-                                            onClick={() => handleFolderClick(item.id)}
-                                        >
-                                            <div className="hidden lg:block absolute top-0 right-0 mt-1 mr-1">
-                                                <img src={star_gray} alt="즐겨찾기x" className="w-[1.2vw] h-[1.2vw]" />
-                                            </div>
-                                            <div className="text-left font-bold text-sm lg:text-base bg-transparent lg:ml-[1.2vw] lg:mt-[1.5vh]">
-                                                {item.name}
-                                            </div>
+                                    </div>
+                                    <div className="flex lg:items-center">
+                                        <button className="lg:text-[1.2vw] text-[3vw] text-gray-500 font-bold bg-transparent lg:p-[0.5vw] focus:outline-none focus:border-none" onClick={() => setShowFolderModal(true)}>
+                                            폴더추가
                                         </button>
-                                    )) : (
-                                        // 퀴즈 버튼
-                                        <button
-                                            key={item.id}
-                                            className="relative flex flex-row items-center border border-gray-300 rounded-lg bg-white mx-[6vw] w-full h-[5vh] lg:flex-col lg:mx-[0vw] lg:p-1 lg:w-[16vw] lg:h-[10vh]"
-                                            onClick={() => navigate("/listAnswer", { state: { examId: item.id } })}
-                                        >
-                                            <div className="hidden lg:block absolute top-0 right-0 mt-1 mr-1">
-                                                <img src={star_gray} alt="즐겨찾기x" className="w-[1.2vw] h-[1.2vw]" />
-                                            </div>
-                                            <div className="flex flex-row items-center justify-between w-full lg:items-start lg:flex-col lg:mt-[2vh]">
-                                                <div className="text-left font-bold text-sm lg:text-base bg-transparent lg:mb-[1vh] lg:ml-[1.2vw]">
-                                                    {item.title}
-                                                </div>
-                                                <div className=" flex flex-row justify-end text-gray-500 text-sm lg:justify-between lg:mx-[1.2vw]">
-                                                    <div className="lg:mr-[1vw]">{formatDate(item.examDate)}</div>
-                                                    <div className="ml-[1vw] hidden lg:block">19/25</div>
-                                                </div>
-                                            </div>
+                                        <button className="lg:text-[1.2vw] text-[3vw] text-gray-500 font-bold bg-transparent lg:p-[0.5vw] focus:outline-none focus:border-none" onClick={() => openActionModal("move")}>
+                                            이동
                                         </button>
+                                        <button className="lg:text-[1.2vw] text-[3vw] text-gray-500 font-bold bg-transparent lg:p-[0.5vw] focus:outline-none focus:border-none" onClick={() => openActionModal("edit")}>
+                                            수정
+                                        </button>
+                                        <button className="lg:text-[1.2vw] text-[3vw] text-gray-500 font-bold bg-transparent lg:p-[0.5vw] focus:outline-none focus:border-none" onClick={() => openActionModal("delete")}>
+                                            삭제
+                                        </button>
+                                        <button className="lg:text-[1.2vw] text-[3vw] text-gray-500 font-bold bg-transparent lg:p-[0.5vw] focus:outline-none focus:border-none" onClick={handleResetClick}>
+                                            뒤로
+                                        </button>
+                                        <button className="lg:text-[1.2vw] text-[3vw] text-gray-500 font-bold bg-transparent lg:p-[0.5vw] focus:outline-none focus:border-none">
+                                            도움말
+                                        </button>
+                                    </div>
+                                </div>
+                                <div className="flex flex-wrap gap-4 mt-[2vh] overflow-y-auto h-[30vh]">
+                                {[...folders, ...filteredQuizzes]
+                                    .filter((item) =>
+                                    "name" in item
+                                        ? item.name.toLowerCase().includes(searchTerm.toLowerCase())
+                                        : item.title.toLowerCase().includes(searchTerm.toLowerCase())
                                     )
-                                )}
-                            </div>
-                        </div>
-                        {/* 폴더 생성 모달 */}
-                        {showFolderModal && (
-                            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                                <div className="bg-white p-6 rounded-lg flex flex-col items-center">
-                                    <div className="font-bold text-[5vw] mb-[2vh] lg:text-[1.5vw]">폴더생성</div>
-                                    <img src={folderImage} alt="폴더" className="w-24 h-24 mb-4" />
-                                    <input
-                                        type="text"
-                                        placeholder="폴더 이름을 입력하세요"
-                                        value={newFolderName}
-                                        onChange={(e) => setNewFolderName(e.target.value)}
-                                        className="border border-gray-300 p-2 rounded mb-4 text-center"
-                                    />
-                                    <div className="flex space-x-4">
-                                        <button className="bg-blue-600 text-white px-4 py-2 rounded" onClick={handleFolderCreate}>
-                                            생성
-                                        </button>
-                                        <button className="bg-gray-500 text-white px-4 py-2 rounded" onClick={() => setShowFolderModal(false)}>
-                                            취소
-                                        </button>
-                                    </div>
+                                    .map((item) =>
+                                    "name" in item ? (
+                                        // 폴더 버튼
+                                        !selectedFolder && (
+                                            <button
+                                                key={item.id}
+                                                className="relative flex items-center border w-full mx-[6vw] h-[5vh] border-gray-300 rounded-lg bg-blue-100 lg:items-start lg:flex-col lg:p-2 lg:mx-[0vw] lg:w-[16vw] lg:h-[10vh]"
+                                                onClick={() => handleFolderClick(item.id)}
+                                            >
+                                                <div className="hidden lg:block absolute top-0 right-0 mt-1 mr-1">
+                                                    <img src={star_gray} alt="즐겨찾기x" className="w-[1.2vw] h-[1.2vw]" />
+                                                </div>
+                                                <div className="text-left font-bold text-sm lg:text-[1vw] bg-transparent lg:ml-[1.2vw] lg:mt-[1vh]">
+                                                    {item.name}
+                                                </div>
+                                            </button>
+                                        )) : (
+                                            // 퀴즈 버튼
+                                            <button
+                                                key={item.id}
+                                                className="relative flex flex-row items-center border border-gray-300 rounded-lg bg-white mx-[6vw] w-full h-[5vh] lg:flex-col lg:mx-[0vw] lg:p-1 lg:w-[16vw] lg:h-[10vh]"
+                                                onClick={() => navigate("/listAnswer", { state: { examId: item.id } })}
+                                            >
+                                                <div className="hidden lg:block absolute top-0 right-0 mt-1 mr-1">
+                                                    <img src={star_gray} alt="즐겨찾기x" className="w-[1.2vw] h-[1.2vw]" />
+                                                </div>
+                                                <div className="flex flex-row items-center justify-between w-full lg:items-start lg:flex-col lg:mt-[1vh]">
+                                                    <div className="text-left font-bold text-sm lg:text-[1vw] bg-transparent lg:mb-[1vh] lg:ml-[1.2vw]">
+                                                        {item.title}
+                                                    </div>
+                                                    <div className=" flex flex-row justify-end text-gray-500 text-[1.1vw] lg:justify-between lg:mx-[1.2vw]">
+                                                        <div className="lg:mr-[1vw]">{formatDate(item.examDate)}</div>
+                                                        <div className="ml-[1vw] hidden lg:block">19/25</div>
+                                                    </div>
+                                                </div>
+                                            </button>
+                                        )
+                                    )}
                                 </div>
                             </div>
-                        )}
-                    </div>
-                    <div className="flex flex-col my-[5vh] w-full lg:h-[30vh] lg:my-[5vh]">
-                        <div className="text-gray-400 text-[5vw] font-bold border-b-2 border-gray-300 border-dashed lg:text-[2vw]">
-                            Calender
+                            {/* 폴더 생성 모달 */}
+                            {showFolderModal && (
+                                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                                    <div className="bg-white p-6 rounded-lg flex flex-col items-center">
+                                        <div className="font-bold text-[5vw] mb-[2vh] lg:text-[1.5vw]">폴더생성</div>
+                                        <img src={folderImage} alt="폴더" className="w-24 h-24 mb-4" />
+                                        <input
+                                            type="text"
+                                            placeholder="폴더 이름을 입력하세요"
+                                            value={newFolderName}
+                                            onChange={(e) => setNewFolderName(e.target.value)}
+                                            className="border border-gray-300 p-2 rounded mb-4 text-center"
+                                        />
+                                        <div className="flex space-x-4">
+                                            <button className="bg-blue-600 text-white px-4 py-2 rounded" onClick={handleFolderCreate}>
+                                                생성
+                                            </button>
+                                            <button className="bg-gray-500 text-white px-4 py-2 rounded" onClick={() => setShowFolderModal(false)}>
+                                                취소
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                         </div>
-                        {/* 캘린더 */}
-                        <div className="relative flex-grow justify-center w-full h-full mt-[2vh]">
-                            <div className="flex flex-col lg:flex-row justify-between">
-                                <div className="grid grid-cols-7 w-full ml-[1vw] lg:w-[28.58vw] lg:h-[19.17vh] lg:ml-[6vw]">
-                                    {selectedMonth !== null && createCalendarSquares(months[selectedMonth].days)}
-                                </div>
-                                <div className="grid grid-cols-6 my-[4vh] bg-gray-100 rounded-lg p-2 lg:grid-cols-2 lg:my-[0vh] lg:p-0 lg:bg-white">
-                                    {months.map((month, index) => (
-                                        <button
-                                            key={index}
-                                            className={`px-1 py-1 text-base rounded font-bold ${
-                                                selectedMonth === index
-                                                ? "bg-blue-600 text-white font-bold rounded-lg"
-                                                : "bg-transparent text-gray-500 font-bold"
-                                            }`}
-                                            onClick={() => setSelectedMonth(index)}
-                                        >
-                                            {month.name}
-                                        </button>
-                                    ))}
-                                </div>
-                                <div className="flex flex-row justify-center lg:flex-col lg:justify-start lg:items-end lg:mr-[5vw]">
-                                    <div className="text-blue-600 font-bold text-[4vw] mx-[3vw] lg:mx-[0vw] lg:text-[1vw] lg:text-gray-500">
-                                        TOTAL : 0
+                        <div className="flex flex-col my-[5vh] w-full lg:h-[30vh] lg:my-[5vh]">
+                            <div className="text-gray-400 text-[5vw] font-bold border-b-2 border-gray-300 border-dashed lg:text-[2vw]">
+                                Calender
+                            </div>
+                            {/* 캘린더 */}
+                            <div className="relative flex-grow justify-center w-full h-full mt-[2vh]">
+                                <div className="flex flex-col lg:flex-row justify-between">
+                                    <div className="grid grid-cols-7 w-full ml-[1vw] lg:w-[28.58vw] lg:h-[19.17vh] lg:ml-[6vw]">
+                                        {selectedMonth !== null && createCalendarSquares(months[selectedMonth].days)}
                                     </div>
-                                    <div className="text-blue-600 font-bold text-[4vw] mx-[3vw] lg:mx-[0vw] lg:text-[1vw] lg:text-gray-500">
-                                        COUNT : 0
+                                    <div className="grid grid-cols-6 my-[4vh] bg-gray-100 rounded-lg p-2 lg:grid-cols-2 lg:my-[0vh] lg:p-0 lg:bg-white">
+                                        {months.map((month, index) => (
+                                            <button
+                                                key={index}
+                                                className={`px-1 py-1 text-base rounded font-bold ${
+                                                    selectedMonth === index
+                                                    ? "bg-blue-600 text-white font-bold rounded-lg"
+                                                    : "bg-transparent text-gray-500 font-bold"
+                                                }`}
+                                                onClick={() => setSelectedMonth(index)}
+                                            >
+                                                {month.name}
+                                            </button>
+                                        ))}
                                     </div>
-                                    <div className="text-blue-600 font-bold text-[4vw] mx-[3vw] lg:mx-[0vw] lg:text-[1vw] lg:text-gray-500">
-                                        RANK : C
+                                    <div className="flex flex-row justify-center lg:flex-col lg:justify-start lg:items-end lg:mr-[5vw]">
+                                        <div className="text-blue-600 font-bold text-[4vw] mx-[3vw] lg:mx-[0vw] lg:text-[1vw] lg:text-gray-500">
+                                            TOTAL : 0
+                                        </div>
+                                        <div className="text-blue-600 font-bold text-[4vw] mx-[3vw] lg:mx-[0vw] lg:text-[1vw] lg:text-gray-500">
+                                            COUNT : 0
+                                        </div>
+                                        <div className="text-blue-600 font-bold text-[4vw] mx-[3vw] lg:mx-[0vw] lg:text-[1vw] lg:text-gray-500">
+                                            RANK : C
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>                
+                    </div>                
+                </div>
+                <Footer/>
             </div>
-            <Footer/>
+            <Upload showModal={showModal} closeModal={closeModal} />
+            {showActionModal && (
+                <ActionModal 
+                    items={modalMode === "move" ? items.filter((item) => "title" in item) : items}
+                    onClose={closeActionModal} 
+                    mode={modalMode} 
+                    onDelete={handleDelete}
+                    folders={folders}
+                    setQuiz={setQuiz}
+                    setFolders={setFolders} 
+                />
+            )}
         </div>
-        <Upload showModal={showModal} closeModal={closeModal} />
-        {showActionModal && (
-            <ActionModal 
-                items={modalMode === "move" ? items.filter((item) => "title" in item) : items}
-                onClose={closeActionModal} 
-                mode={modalMode} 
-                onDelete={handleDelete}
-                folders={folders}
-                setQuiz={setQuiz}
-                setFolders={setFolders} 
-            />
-        )}
-    </div>
-  );
+    );
 }
