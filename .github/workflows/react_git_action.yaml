@@ -47,7 +47,7 @@ jobs:
     env:
       EC2_HOST: ${{ github.ref == 'refs/heads/main' && secrets.EC2_REACT_HOST || secrets.EC2_REACT_HOST_DEV }}
       EC2_USER: ${{ github.ref == 'refs/heads/main' && secrets.EC2_USER || 'root' }}
-      SSH_KEY: ${{ github.ref == 'refs/heads/main' && secrets.EC2_SSH_REACT_KEY || secrets.EC2_SSH_REACT_DEV_KEY }}
+      SSH_KEY: ${{ github.ref == 'refs/heads/main' && secrets.EC2_SSH_REACT_KEY || secrets.EC2_SSH_REACT_KEY }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_DEPLOY_WEB_HOOK }}
       SLACK_USER_1: 'U07FB0CTK8V'
       SLACK_USER_2: 'U07F5U2HV1C'  # 두 번째 사용자 ID 추가
