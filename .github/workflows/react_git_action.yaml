@@ -6,7 +6,7 @@ on:
       - main
       - development  # development 브랜치로 변경
     paths:
-        - 'FE/**'
+      - 'FE/**'
 
 jobs:
   build:
@@ -59,7 +59,7 @@ jobs:
     steps:
     - name: Check out code
       uses: actions/checkout@v4
-      
+
     - name: Set EC2 host and user based on branch
       run: |
         if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
@@ -71,7 +71,7 @@ jobs:
         fi
         echo "Using EC2_HOST: $EC2_HOST"
         echo "Using EC2_USER: $EC2_USER"
-      
+
     - name: Add SSH key to agent
       run: |
         echo "${{ secrets.EC2_SSH_REACT_KEY }}" | tr -d '\r' > key.pem  # Windows와 Unix 줄바꿈 문제 해결
@@ -124,3 +124,4 @@ jobs:
           \"username\": \"DeployMola\",
           \"icon_emoji\": \":skull:\"
         }" ${{ secrets.SLACK_DEPLOY_WEB_HOOK }}
+
