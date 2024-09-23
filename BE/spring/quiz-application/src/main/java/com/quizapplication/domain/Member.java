@@ -34,16 +34,16 @@ public class Member extends BaseTimeEntity {
     @Column(name = "member_id")
     private Long id;
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true)
     private String userId;
 
     @Column(unique = true, nullable = false)
     private String email;
 
-    @Column(nullable = false)
+//    @Column(nullable = false)
     private String username;
 
-    @Column(unique = true)
+//    @Column(unique = true)
     private String nickname;
 
     @Column(nullable = false)
@@ -63,6 +63,13 @@ public class Member extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Folder> folders = new ArrayList<>();
+
+    @Enumerated(EnumType.STRING)
+    private SocialType socialType;
+
+    // 로그인한 소셜 타입의 식별자 값 (일반 로그인인 경우 null)
+    private String socialId;
+
 
     public void passwordEncoding(PasswordEncoder passwordEncoder) {
         this.password = passwordEncoder.encode(password);
