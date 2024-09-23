@@ -6,7 +6,7 @@ on:
       - main
       - development  # development 브랜치로 변경
     paths:
-      - 'FE/**'
+        - 'FE/**'
 
 jobs:
   build:
@@ -41,9 +41,13 @@ jobs:
           CHANNEL="#your-channel-development"
           MESSAGE=":x: *development 빌드 실패!* :rotating_light: \n<@${{ env.SLACK_USER_1 }}> <@${{ env.SLACK_USER_2 }}>\n development 환경에서 빌드에 실패했습니다. 확인 부탁드립니다!"
         fi
+        
+        # 특수 문자 및 제어 문자 제거 처리
+        CLEANED_MESSAGE=$(echo "$MESSAGE" | sed 's/["\x08]//g' | sed 's/[\n\r]/ /g')
+
         curl -X POST -H 'Content-type: application/json' --data "{
           \"channel\": \"$CHANNEL\",
-          \"text\": \"$MESSAGE\",
+          \"text\": \"$CLEANED_MESSAGE\",
           \"username\": \"DeployMola\",
           \"icon_emoji\": \":skull:\"
         }" ${{ secrets.SLACK_DEPLOY_WEB_HOOK }}
@@ -59,7 +63,7 @@ jobs:
     steps:
     - name: Check out code
       uses: actions/checkout@v4
-
+      
     - name: Set EC2 host and user based on branch
       run: |
         if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
@@ -71,7 +75,7 @@ jobs:
         fi
         echo "Using EC2_HOST: $EC2_HOST"
         echo "Using EC2_USER: $EC2_USER"
-
+      
     - name: Add SSH key to agent
       run: |
         echo "${{ secrets.EC2_SSH_REACT_KEY }}" | tr -d '\r' > key.pem  # Windows와 Unix 줄바꿈 문제 해결
@@ -101,9 +105,13 @@ jobs:
           CHANNEL="#your-channel-development"
           MESSAGE=":white_check_mark: *development 배포 성공!* :tada: \n<@${{ env.SLACK_USER_1 }}> <@${{ env.SLACK_USER_2 }}> development 환경에서 배포가 완료되었습니다! :rocket:"
         fi
+
+        # 특수 문자 및 제어 문자 제거 처리
+        CLEANED_MESSAGE=$(echo "$MESSAGE" | sed 's/["\x08]//g' | sed 's/[\n\r]/ /g')
+
         curl -X POST -H 'Content-type: application/json' --data "{
           \"channel\": \"$CHANNEL\",
-          \"text\": \"$MESSAGE\",
+          \"text\": \"$CLEANED_MESSAGE\",
           \"username\": \"DeployMola\",
           \"icon_emoji\": \":fish:\"
         }" ${{ secrets.SLACK_DEPLOY_WEB_HOOK }}
@@ -118,10 +126,13 @@ jobs:
           CHANNEL="#your-channel-development"
           MESSAGE=":x: *development 배포 실패!* :rotating_light: \n<@${{ env.SLACK_USER_1 }}> <@${{ env.SLACK_USER_2 }}>\n development 환경에서 배포에 실패했습니다. 확인 부탁드립니다!"
         fi
+
+        # 특수 문자 및 제어 문자 제거 처리
+        CLEANED_MESSAGE=$(echo "$MESSAGE" | sed 's/["\x08]//g' | sed 's/[\n\r]/ /g')
+
         curl -X POST -H 'Content-type: application/json' --data "{
           \"channel\": \"$CHANNEL\",
-          \"text\": \"$MESSAGE\",
+          \"text\": \"$CLEANED_MESSAGE\",
           \"username\": \"DeployMola\",
           \"icon_emoji\": \":skull:\"
         }" ${{ secrets.SLACK_DEPLOY_WEB_HOOK }}
-
