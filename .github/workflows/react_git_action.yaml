@@ -6,7 +6,7 @@ on:
       - main
       - development  # development 브랜치로 변경
     paths:
-        - 'FE/**'
+      - 'FE/**'
 
 jobs:
   build:
@@ -63,7 +63,7 @@ jobs:
     steps:
     - name: Check out code
       uses: actions/checkout@v4
-      
+
     - name: Set EC2 host and user based on branch
       run: |
         if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
