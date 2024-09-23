@@ -9,6 +9,7 @@ import FindAccount from "./pages/FindAccount.tsx";
 import Review from "./pages/ReviewNote.tsx";
 import InfoPage from "./pages/InfoPage.tsx";
 import ListAnswer from "./pages/ListAnswer.tsx";
+import TempPage from "./pages/TempPage.tsx";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Route path="/review" element={<Review />} />
           <Route path="/info" element={<InfoPage />} />
           <Route path="/listAnswer" element={<ListAnswer />}/>
+          <Route path="/temp" element={<TempPage />}/>
         </Routes>
       </BrowserRouter>
     </QuizProvider>
