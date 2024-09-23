@@ -4,7 +4,9 @@ on:
   push:
     branches:
       - main
-      - dev  # main과 dev 브랜치에 대해 트리거
+      - development  # development 브랜치로 변경
+    paths:
+        - 'FE/**'
 
 jobs:
   build:
@@ -36,8 +38,8 @@ jobs:
           CHANNEL="#your-channel-main"
           MESSAGE=":x: *빌드 실패!* :rotating_light: \n<@${{ env.SLACK_USER_1 }}> <@${{ env.SLACK_USER_2 }}>\n 배포 개복치가 스트레스를 이기지 못하고 빌드 단계에서 무너졌습니다... :skull: :warning: 로그를 확인하고 다시 살려주세요! ⚠️"
         else
-          CHANNEL="#your-channel-dev"
-          MESSAGE=":x: *dev 빌드 실패!* :rotating_light: \n<@${{ env.SLACK_USER_1 }}> <@${{ env.SLACK_USER_2 }}>\n dev 환경에서 빌드에 실패했습니다. 확인 부탁드립니다!"
+          CHANNEL="#your-channel-development"
+          MESSAGE=":x: *development 빌드 실패!* :rotating_light: \n<@${{ env.SLACK_USER_1 }}> <@${{ env.SLACK_USER_2 }}>\n development 환경에서 빌드에 실패했습니다. 확인 부탁드립니다!"
         fi
         curl -X POST -H 'Content-type: application/json' --data "{
           \"channel\": \"$CHANNEL\",
@@ -50,7 +52,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     env:
-      EC2_USER: ${{ secrets.EC2_USER }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_DEPLOY_WEB_HOOK }}
       SLACK_USER_1: 'U07FB0CTK8V'
       SLACK_USER_2: 'U07F5U2HV1C'
@@ -59,14 +60,17 @@ jobs:
     - name: Check out code
       uses: actions/checkout@v4
       
-    - name: Set EC2 host based on branch
+    - name: Set EC2 host and user based on branch
       run: |
         if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
           export EC2_HOST=${{ secrets.EC2_REACT_HOST }}
+          export EC2_USER=ubuntu
         else
           export EC2_HOST=${{ secrets.EC2_REACT_HOST_DEV }}
+          export EC2_USER=root
         fi
         echo "Using EC2_HOST: $EC2_HOST"
+        echo "Using EC2_USER: $EC2_USER"
       
     - name: Add SSH key to agent
       run: |
@@ -94,8 +98,8 @@ jobs:
           CHANNEL="#your-channel-main"
           MESSAGE=":white_check_mark: *배포 성공!* :tada: :rocket: \n<@${{ env.SLACK_USER_1 }}> <@${{ env.SLACK_USER_2 }}> 배포 개복치가 오늘도 무사히 배포를 완료했습니다! 🎉 오늘의 배포는 성공적입니다! 🐟 :rocket:"
         else
-          CHANNEL="#your-channel-dev"
-          MESSAGE=":white_check_mark: *dev 배포 성공!* :tada: \n<@${{ env.SLACK_USER_1 }}> <@${{ env.SLACK_USER_2 }}> dev 환경에서 배포가 완료되었습니다! :rocket:"
+          CHANNEL="#your-channel-development"
+          MESSAGE=":white_check_mark: *development 배포 성공!* :tada: \n<@${{ env.SLACK_USER_1 }}> <@${{ env.SLACK_USER_2 }}> development 환경에서 배포가 완료되었습니다! :rocket:"
         fi
         curl -X POST -H 'Content-type: application/json' --data "{
           \"channel\": \"$CHANNEL\",
@@ -111,8 +115,8 @@ jobs:
           CHANNEL="#your-channel-main"
           MESSAGE=":x: *배포 실패!* :rotating_light: \n<@${{ env.SLACK_USER_1 }}> <@${{ env.SLACK_USER_2 }}>\n 배포 개복치가 스트레스를 이기지 못하고 꾀꼬닥했습니다... :skull: :warning: 로그를 확인하고 다시 살려주세요! ⚠️"
         else
-          CHANNEL="#your-channel-dev"
-          MESSAGE=":x: *dev 배포 실패!* :rotating_light: \n<@${{ env.SLACK_USER_1 }}> <@${{ env.SLACK_USER_2 }}>\n dev 환경에서 배포에 실패했습니다. 확인 부탁드립니다!"
+          CHANNEL="#your-channel-development"
+          MESSAGE=":x: *development 배포 실패!* :rotating_light: \n<@${{ env.SLACK_USER_1 }}> <@${{ env.SLACK_USER_2 }}>\n development 환경에서 배포에 실패했습니다. 확인 부탁드립니다!"
         fi
         curl -X POST -H 'Content-type: application/json' --data "{
           \"channel\": \"$CHANNEL\",
