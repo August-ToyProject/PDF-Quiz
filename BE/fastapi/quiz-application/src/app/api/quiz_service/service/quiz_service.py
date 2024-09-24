@@ -37,11 +37,8 @@ async def generate_quiz(request: QuizRequest):
             num_keywords=5
         )
 
-        # Step 2: 키워드를 기반으로 자연스러운 쿼리 생성
-        keyword_sentence = create_natural_query_from_keywords(keywords)
-
         # 검색 수행 (자연어 기반 쿼리로 검색)
-        docs = vector_store.similarity_search(keyword_sentence, k=min(request.num_questions * 10, 10))
+        docs = vector_store.similarity_search(f"{subject} 관련이 있는 내용을 포함하는 문서를 찾고 싶습니다.", k=min(request.num_questions * 10, 10))
 
         # 재검색한 문서들을 기반으로 retriever 업데이트
         retriever = KiwiBM25Retriever.from_documents(docs)
@@ -63,10 +60,3 @@ async def generate_quiz(request: QuizRequest):
         return quiz
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"퀴즈 생성 중 오류 발생: {str(e)}")
-
-def create_natural_query_from_keywords(keywords):
-    # 2차원 배열을 평탄화하여 1차원 리스트로 변환
-    flattened_keywords = [keyword for group in keywords for keyword in group]
-    # 모든 키워드를 문장에 포함
-    query = f"이 문서는 {', '.join(flattened_keywords)} 등의 주제와 관련이 있습니다. 이러한 내용을 포함하는 문서를 찾고 싶습니다."
-    return query
