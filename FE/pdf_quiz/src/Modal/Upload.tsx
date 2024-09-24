@@ -22,8 +22,6 @@ interface ModalProps {
 export default function Upload({
   showModal,
   closeModal,
-  width = "700px",
-  height = "440px",
 }: ModalProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   //드래그 active 여부
@@ -53,6 +51,17 @@ export default function Upload({
     setTimeLimitMinute,
     isQuizDataComplete,
   } = useQuizContext();
+
+  const [snackbarVisible, setSnackbarVisible] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState<string>("");
+
+  const showSnackbar = (message: string) => {
+    setSnackbarMessage(message);
+    setSnackbarVisible(true);
+    setTimeout(() => {
+      setSnackbarVisible(false);
+    }, 3000);
+  };
 
   const navigate = useNavigate();
 
@@ -121,6 +130,7 @@ export default function Upload({
     const file = event.target.files?.[0];
     if (file) {
       setSelectedFile(file);
+      showSnackbar("PDF업로드 버튼을 선택하시면 선택 칸이 활성화됩니다!"); 
     }
   };
   //PDF 파일 선택 후 버튼 클릭시 선택지 활성화
@@ -128,6 +138,7 @@ export default function Upload({
     if (selectedFile) {
       formData.append("file", selectedFile);
       console.log(formData);
+      showSnackbar("PDF 파일이 선택되었습니다!"); 
       setIsLoading(true);
     } else {
       setErrors("Please select a file first.");
@@ -160,20 +171,22 @@ export default function Upload({
         setPath(indexPath); // indexPath를 state에 저장
         console.log("indexPath:", indexPath);
       } else if (response.status === 400) {
-        const result = await response.json();
-        setUploadMessage(result.message);
-        setErrors("Upload failed: Invalid file format.");
-        console.log(errors, result);
+          const result = await response.json();
+          setUploadMessage(result.message);
+          setErrors("Upload failed: Invalid file format.");
+          console.log(errors, result);
       } else {
-        const result = await response.json();
-        setUploadMessage(result.message);
-        setErrors("Upload failed: Server error.");
-        console.log("Upload failed with status:", response.status, result);
+          const result = await response.json();
+          setUploadMessage(result.message);
+          setErrors("Upload failed: Server error.");
+          console.log("Upload failed with status:", response.status, result);
       }
     } catch (error) {
-      setUploadMessage("An error occurred while uploading the file.");
-      setErrors("Network error occurred.");
-      console.error(errors);
+        // setUploadMessage("An error occurred while uploading the file.");
+        alert("잘못된 형식의 PDF파일입니다.");
+        setErrors("Network error occurred.");
+        setIsLoading(false);
+        console.error(errors);
     }
   };
 
@@ -282,21 +295,25 @@ export default function Upload({
   return (
     <div className="font-body fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div
-        className="flex flex-row bg-white p-4 rounded-lg"
-        style={{ width, height }}
+        className="flex flex-col items-center bg-customBlue rounded-xl w-[80vw] h-auto border-2 border-blue-600 lg:w-[25vw] lg:p-2 sm:w-[40vw]"
       >
-        <div className=" flex flex-1 flex-col items-start justify-start items-center space-x-2">
-          <div className="flex mb-2 w-full">
-            <h2 className="font-body text-xl font-bold mb-2">PDF Upload</h2>
+        <div className=" flex flex-col items-center w-full">
+          <div className="flex justify-between items-center mb-2 p-2 w-full">
+            <h2 className="font-body text-base lg:text-xl font-bold">PDF Upload</h2>
+            <img
+              src={closeIcon}
+              alt="Close"
+              onClick={closeModal}
+              className="w-[3vw] h-[3vw] sm:w-[2vw] sm:h-[2vw] lg:w-[1vw] lg:h-[1vw]"
+            />
           </div>
           <div
-            className={`w-[320px] h-[320px] rounded-lg flex flex-col items-center justify-center border-2 border-blue-600
+            className={`w-[70vw] h-[38vh] rounded-lg flex flex-col items-center justify-center border-2 border-blue-600 bg-customWhite border-dashed lg:w-[20vw] lg:h-[18vw] sm:w-[35vw] sm:h-[30vw]
             ${
               isActive
                 ? "bg-slate-200 border-3 border-dashed"
                 : "bg-white border-solid"
             }`}
-            // style={{ width: boxSize, height: boxSize }}
             onDragStart={handleDragStart}
             onDragLeave={handleDragEnd}
             onDragOver={handleDragOver}
@@ -334,7 +351,7 @@ export default function Upload({
           </div>
           <button
             id="PDFUploadButton"
-            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded"
+            className="mt-4 bg-blue-600 text-white rounded-full w-[70vw] lg:w-[20vw] sm:w-[35vw]"
             data-tooltip-id="PDFUpload"
             onClick={handlePDFUploadClick}
           >
@@ -346,36 +363,28 @@ export default function Upload({
             content="PDF 파일 업로드 후 버튼을 클릭하셔야 선택 칸이 활성화됩니다!"
             place="bottom"
           />
-        </div>
-        <div className="relative flex flex-1 flex-col bg-white rounded-lg">
-          <img
-            src={closeIcon}
-            alt="Close"
-            onClick={closeModal}
-            className="cursor-pointer absolute top-3 right-2"
-            style={{ width: "16px", height: "16px", marginTop: "-8px" }}
-          />
           <div 
-            className="flex flex-col mt-16 ml-8 space-y-5" 
+            className="flex flex-col my-4 space-y-4" 
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
           >
-            {/* 주제 */}
-            <div className="flex items-center">
-              <span className="mr-2 font-bold">시험지 제목</span>
+          <div className="flex flex-col items-center sm:mx-[4vw]">
+            {/* 제목 */}
+            <div className="w-full flex items-center justify-between mb-2 mx-2">
+              <span className="text-sm font-bold lg:text-md">시험지 제목</span>
               <input
                 type="text"
                 value={title}
-                className="w-[12rem] p-3 border border-gray-300 rounded"
+                className="w-[10rem] p-3 border border-gray-400 rounded-lg lg:w-[9rem] xl:w-[12rem]"
                 onChange={(e) => setTitle(e.target.value)}
                 disabled={isSelectDisabled}
               />
             </div>
             {/* 난이도 */}
-            <div className="flex items-center">
-              <span className="mr-7 font-bold">난이도</span>
+            <div className="w-full flex items-center justify-between mb-2 mx-2">
+              <span className="text-sm font-bold lg:text-md">난이도</span>
               <select
-                className="p-2 border border-gray-300 rounded ml-4 "
+                className="w-[10rem] p-2 border border-gray-300 rounded-lg lg:w-[9rem] xl:w-[12rem]"
                 value={difficulty}
                 onChange={(e) => setDifficulty(e.target.value)}
                 disabled={isSelectDisabled}
@@ -386,10 +395,10 @@ export default function Upload({
               </select>
             </div>
             {/* 시험 문제 수 / 선지 수 선택 */}
-            <div className="flex items-center">
-              <span className="mr-6 font-bold">시험 문제</span>
+            <div className="w-full flex items-center justify-between mb-2 mx-2">
+              <span className="text-sm font-bold lg:text-md">시험 문제</span>
               <select
-                className="p-2 border border-gray-300 rounded"
+                className="w-[10rem] p-2 border border-gray-300 rounded-lg lg:w-[9rem] xl:w-[12rem]"
                 value={quizCount}
                 onChange={(e) => setQuizCount(parseInt(e.target.value))}
                 disabled={isSelectDisabled}
@@ -406,75 +415,64 @@ export default function Upload({
                 <option value="50">50</option>
               </select>
             </div>
-            {/* <div>
-              <span className="mr-2 font-bold">선지 개수</span>
-              <select
-                className="p-2 border border-gray-300 rounded"
-                value={optionCount}
-                onChange={(e) => setOptionCount(parseInt(e.target.value))}
-                disabled={isSelectDisabled}
-              >
-                <option value="4">4</option>
-                <option value="5">5</option>
-              </select>
-            </div> */}
             {/* 제한 시간 선택 */}
-            <div className="flex items-center">
-              <span className="mr-6 font-bold">제한 시간</span>
-              <select
-                className="p-2 border border-gray-300 rounded"
-                value={timeLimitHour}
-                onChange={(e) => setTimeLimitHour(parseInt(e.target.value))}
-                disabled={isSelectDisabled}
-              >
-                <option value="0">0</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-                <option value="9">9</option>
-                <option value="10">10</option>
-              </select>
-              <span className="ml-2 mr-2">시간</span>
-              <select
-                className="p-2 border border-gray-300 rounded"
-                value={timeLimitMinute}
-                onChange={(e) => setTimeLimitMinute(parseInt(e.target.value))}
-                disabled={isSelectDisabled}
-              >
-                <option value="0">0</option>
-                <option value="5">5</option>
-                <option value="10">10</option>
-                <option value="15">15</option>
-                <option value="20">20</option>
-                <option value="25">25</option>
-                <option value="30">30</option>
-                <option value="35">35</option>
-                <option value="40">40</option>
-                <option value="45">45</option>
-                <option value="50">50</option>
-                <option value="55">55</option>
-              </select>
-              <span className="ml-2 mr-2">분</span>
+            <div className="w-full flex items-center justify-between mb-2">
+              <span className="text-sm font-bold lg:text-md">제한 시간</span>
+              <div className="w-[10rem] lg:w-[9rem] xl:w-[12rem]">
+                <select
+                  className="w-[12.3vw] p-2 border border-gray-300 rounded-lg lg:w-[3.6vw] 2xl:w-[3.3vw] sm:w-[5.5vw]"
+                  value={timeLimitHour}
+                  onChange={(e) => setTimeLimitHour(parseInt(e.target.value))}
+                  disabled={isSelectDisabled}
+                >
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+                <span className="mr-2 lg:ml-1">시간</span>
+                <select
+                  className="w-[12.3vw] p-2 border border-gray-300 rounded-lg lg:w-[3.6vw] 2xl:w-[3.3vw] sm:w-[5.5vw]"
+                  value={timeLimitMinute}
+                  onChange={(e) => setTimeLimitMinute(parseInt(e.target.value))}
+                  disabled={isSelectDisabled}
+                >
+                  <option value="0">0</option>
+                  <option value="5">5</option>
+                  <option value="10">10</option>
+                  <option value="15">15</option>
+                  <option value="20">20</option>
+                  <option value="25">25</option>
+                  <option value="30">30</option>
+                  <option value="35">35</option>
+                  <option value="40">40</option>
+                  <option value="45">45</option>
+                  <option value="50">50</option>
+                  <option value="55">55</option>
+                </select>
+                <span className="">분</span>
+              </div>
             </div>
             {/* 완료 버튼 */}
-            <div className="absolute w-full bottom-0">
-              <button
-                className="w-3/4 mt-auto px-4 py-2 bg-blue-600 text-white rounded"
-                onClick={handleGenerateClick}
-              >
-                문제 생성하기
-              </button>
-            </div>
+            <button
+              className="bg-blue-600 w-[70vw] mt-1 text-white rounded-full lg:w-[20vw] lg:mt-3 sm:w-[35vw]"
+              onClick={handleGenerateClick}
+            >
+              문제 생성하기
+            </button>
           </div>
+        </div>
         </div>
         {uploadMessage && (
           <div className="mt-4 text-center">
             <p>{uploadMessage}</p>
+          </div>
+        )}
+        {snackbarVisible && (
+          <div className="fixed bottom-4 right-4 bg-orange-600 text-white font-bold p-4 rounded-lg shadow-md">
+            {snackbarMessage}
           </div>
         )}
       </div>
