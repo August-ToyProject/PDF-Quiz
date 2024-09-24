@@ -11,6 +11,10 @@ export default {
         '30': '7.5rem',
         '19': '4.75rem',
       },
+      colors: {
+        customBlue: '#E0EAFF',
+        customWhite: '#F8FAFF',
+      },
     },
     keyframes: {
       'color-change': {
