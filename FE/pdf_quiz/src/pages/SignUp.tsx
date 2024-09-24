@@ -23,9 +23,11 @@ export default function SignUp() {
     confirmPassword: "",
   });
 
-  const [errors, setErrors] = useState<Partial<InputData> & { agreement?: string }>({});
+  const [errors, setErrors] = useState<
+    Partial<InputData> & { agreement?: string }
+  >({});
   const [showAgreementModal, SetShowAgreementModal] = useState(false);
-  const [agreementChecked, setAgreementChecked] = useState(false); 
+  const [agreementChecked, setAgreementChecked] = useState(false);
   const navigate = useNavigate();
 
   // 입력 필드
@@ -129,7 +131,7 @@ export default function SignUp() {
       await signupUser(requestData);
       setErrors({});
       console.log("회원가입이 성공적으로 완료되었습니다.");
-      navigate("/"); // 회원가입 성공 후 로그인 페이지로 이동
+      navigate("/login"); // 회원가입 성공 후 로그인 페이지로 이동
     } catch (error) {
       console.error("네트워크 오류:", error);
     }
@@ -137,7 +139,7 @@ export default function SignUp() {
 
   //로그인 버튼 누르면 회원가입 페이지로 이동
   const navigateToLogin = () => {
-    navigate("/");
+    navigate("/login");
   };
 
   return (
@@ -183,25 +185,25 @@ export default function SignUp() {
         ))}
         <div className="col-span-2 flex flex-col justify-center items-center">
           <div className="flex items-center space-x-4">
-            <input 
-              type="checkbox" 
-              className="form-checkbox h-5 w-5 text-blue-600" 
+            <input
+              type="checkbox"
+              className="form-checkbox h-5 w-5 text-blue-600"
               checked={agreementChecked}
               onChange={() => setAgreementChecked(!agreementChecked)}
             />
-            <div className="font-bold text-base text-red-600">[필수]개인정보 수집/이용 동의</div>
-            <button 
+            <div className="font-bold text-base text-red-600">
+              [필수]개인정보 수집/이용 동의
+            </div>
+            <button
               type="button"
               className="font-bold text-sm text-gray-400 p-1 bg-transparent"
               onClick={() => SetShowAgreementModal(true)}
             >
-                약관보기
+              약관보기
             </button>
           </div>
           {errors.agreement && (
-            <div className="text-red-500 text-xs mt-1">
-              {errors.agreement}
-            </div>
+            <div className="text-red-500 text-xs mt-1">{errors.agreement}</div>
           )}
           <button
             type="submit"
