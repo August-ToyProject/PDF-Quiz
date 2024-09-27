@@ -142,10 +142,10 @@ export default function SignUp() {
     }
   };
 
-  //로그인 버튼 누르면 회원가입 페이지로 이동
-  const navigateToLogin = () => {
-    navigate("/login");
-  };
+  // //로그인 버튼 누르면 회원가입 페이지로 이동
+  // const navigateToLogin = () => {
+  //   navigate("/login");
+  // };
 
   return (
     <div className="w-full flex flex-col justify-center items-center">
