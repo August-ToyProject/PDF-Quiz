@@ -22,6 +22,8 @@ export default function ListAnswer() {
     const [quizCount, setQuizCount] = useState<number>(0); // 퀴즈 개수
     const [setTime, setSetTime] = useState<number>(0); // 총 시간
     const [spentTime, setSpentTime] = useState<number>(0);
+    const [selectedNotes, setSelectedNotes] = useState<boolean[]>([]); // 오답노트 선택 상태
+    const [selectAll, setSelectAll] = useState<boolean>(false); // 전체 선택 상태
     const location = useLocation();
     const navigate = useNavigate();
     const { examId } = location.state as LocationState || {};
@@ -52,6 +54,8 @@ export default function ListAnswer() {
                     setSetTime(data.setTime);
                     setSpentTime(data.spentTime);
 
+                    setSelectedNotes(new Array(processedQuizResults.length).fill(false));
+
                     if (userAnswers.length === 0) console.log("User answers are empty");
                     if (setTime === 0) console.log("SetTime is empty");
                     console.log('User setTime:' , setTime)
@@ -63,6 +67,29 @@ export default function ListAnswer() {
             loadQuizData();
         }
     }, [examId]);
+
+    // 전체 선택 체크박스 클릭 핸들러
+    const handleSelectAll = () => {
+        if (quizData.length > 0) {  // quizData가 로드된 후에만 처리
+        const newSelectAll = !selectAll;
+        setSelectAll(newSelectAll);
+        setSelectedNotes(new Array(quizData.length).fill(newSelectAll)); // 모든 오답노트 체크박스 선택/해제
+    }
+    };
+
+    // 각 오답노트 체크박스 클릭 핸들러
+    const handleNoteSelect = (index: number) => {
+        const updatedSelectedNotes = [...selectedNotes];
+        updatedSelectedNotes[index] = !updatedSelectedNotes[index];
+        setSelectedNotes(updatedSelectedNotes);
+
+        // 전체 선택 상태를 체크박스 상태에 맞춰 업데이트
+        if (updatedSelectedNotes.every((selected) => selected)) {
+            setSelectAll(true);
+        } else {
+            setSelectAll(false);
+        }
+    };
 
     const handleExitClick = () => {navigate("/mypage");}
 
@@ -92,6 +119,19 @@ export default function ListAnswer() {
             <div className="flex justify-center my-5 text-gray-400 font-bold text-xl">
                 {quizTitle}
             </div>
+            <div className="flex justify-center">
+                <div className="flex items-center justify-end mb-2 w-3/4">
+                <div className="text-sm text-gray-400 mr-2">
+                    전체선택
+                </div>
+                <input 
+                    type="checkbox" 
+                    className="form-checkbox h-4 w-4 text-blue-600 border-gray-200" 
+                    checked={selectAll}
+                    onChange={handleSelectAll}
+                />
+                </div>
+            </div>
             <div className="flex justify-center h-full">
                 <div className="w-3/4 flex flex-col">
                     <div className="h-3/4 border-t-2 border-b-2 border-gray-300 overflow-y-auto">
@@ -102,18 +142,18 @@ export default function ListAnswer() {
                             const isCorrect = userAnswerKey === correctAnswerKey;
                             return (
                                 <div key={index}>
-                                    <div className="flex items-center h-10 bg-gray-50 border-t-2 border-b-2 border-gray-300">
-                                    <div
-                                        className={`flex items-center justify-center flex-grow-0 min-w-[5vw] h-full border-r-2 border-b-1 border-gray-300 font-bold text-gray-100
-                                        ${isCorrect ? "bg-green-400" : "bg-red-400"}`}
-                                    >
-                                        문제 {index + 1}
-                                    </div>
-                                        <div className="flex-grow ml-4 font-bold">
+                                    <div className="flex items-stretch min-h-10 bg-gray-50 border-t-2 border-b-2 border-gray-300">
+                                        <div
+                                            className={`flex items-center justify-center min-w-[10vw] border-r-2 border-b-1 border-gray-300 font-bold text-gray-100 p-2 sm:min-w-[3vw]
+                                            ${isCorrect ? "bg-green-400" : "bg-red-400"}`}
+                                        >
+                                            {String(index + 1).padStart(2, '0')}
+                                        </div>
+                                        <div className="flex-grow ml-4 font-bold p-2">
                                             {data.question}
                                         </div>
                                     </div>
-                                    <div className="ml-2 mt-2 font-bold flex justify-between">
+                                    <div className="ml-2 mt-2 font-bold flex flex-col sm:flex-row sm:justify-between">
                                         <div className="flex flex-col">
                                             {Object.entries(data.options).map(
                                                 ([key, value], optionIndex) => {
@@ -136,7 +176,7 @@ export default function ListAnswer() {
                                                 }
                                             )}
                                         </div>
-                                        <div className="text-xs text-orange-400 mr-4 my-2">
+                                        <div className="text-xs text-orange-400 mr-6 mt-3 sm:my-2">
                                             난이도 : {data.difficulty}
                                         </div>
                                     </div>
@@ -144,8 +184,19 @@ export default function ListAnswer() {
                                         <div className="flex justify-start ml-2 mt-2 font-bold text-green-600">
                                             정답 : {correctAnswerKey}
                                         </div>
+                                        <div className="flex items-center justify-end pr-4">
+                                            <div className="text-sm text-gray-400 mr-2">
+                                                오답노트
+                                            </div>
+                                            <input 
+                                                type="checkbox" 
+                                                className="form-checkbox h-4 w-4 text-blue-600 border-gray-200 sm:mr-2" 
+                                                checked={selectedNotes[index]}
+                                                onChange={() => handleNoteSelect(index)}
+                                            />
+                                        </div>
                                     </div>
-                                    <div className="border border-yellow-200 rounded h-[8vh] bg-yellow-50 mt-2 mb-4">
+                                    <div className="border border-yellow-200 rounded py-1 sm:py-2 bg-yellow-50 mt-2 mb-4">
                                         <div className="m-2 text-xs font-bold">
                                             설명 : {data.description}
                                         </div>
@@ -163,7 +214,7 @@ export default function ListAnswer() {
                             {formattedSpentTime.seconds}
                         </div>
                     </div>
-                    <div className="flex justify-end mt-4">
+                    <div className="flex justify-center mt-4">
                         <button
                             className="bg-gray-100 border-2 border-blue-600 text-blue-600 text-m font-bold rounded-full py-2 px-7 mr-2"
                             onClick={handleExitClick}
