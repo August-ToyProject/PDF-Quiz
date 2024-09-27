@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import ServiceName from "../assets/Logo.svg";
 import ServiceLogo from "../assets/ServiceLogo.png";
 import GoogleLogo from "../assets/Google.png";
+import Header from "../components/Header";
 
 const apiUrl = import.meta.env.VITE_NGROK_URL;
 const clientId = import.meta.env.VITE_GOOGLE_AUTH_CLIENT_ID;
@@ -113,29 +114,48 @@ const Login = () => {
   };
 
   return (
-    <div className="w-full h-screen grid grid-cols-3">
-      <div className="col-span-1 bg-blue-600 flex flex-col gap-7 justify-center items-center">
-        <img src={ServiceName} alt="logo" className="w-60" />
-        <img src={ServiceLogo} alt="pdf" className="w-60" />
-      </div>
-      <div className="col-span-2 h-screen  flex flex-col justify-center items-center bg-white">
-        <div className="font-title text-5xl text-blue-600 font-black mb-8 tracking-wide">
-          Login
+    <div className="min-h-screen">
+      <Header />
+
+      <div className="flex-grow grid grid-cols-2 sm:grid-cols-3">
+        <div className=" overflow-x-hidden hidden col-span-1 bg-blue-600 sm:flex flex-col gap-7 justify-center items-center">
+          <img src={ServiceName} alt="logo" className="w-60" />
+          <img src={ServiceLogo} alt="pdf" className="w-60" />
         </div>
-        <form
-          className="w-4/5 flex flex-col gap-4 max-w-2xl"
-          onSubmit={handleLogin}
-        >
-          <label className="w-full flex flex-row justify-center gap-2 items-center">
-            <input
-              type="text"
-              className="w-full p-3 border border-gray-300 rounded"
-              name="id"
-              value={id}
-              placeholder="아이디"
-              onChange={handleChange}
-            />
-          </label>
+        <div className="col-span-2 h-screen flex flex-col justify-center items-center bg-white">
+          <div className="font-title text-4xl sm:text-5xl text-blue-600 font-black mb-8 tracking-wide">
+            Login
+          </div>
+          <div className="w-full flex flex-col justify-center space-y-4 items-center">
+            <button
+              className="p-2 w-24 bg-blue-600 text-white font-black rounded"
+              type="submit"
+            >
+              로그인
+            </button>
+            <button
+              className="w-60 flex flex-row justify-center space-x-2"
+              onClick={GoogleLogin}
+            >
+              <img src={GoogleLogo} alt="google" className="w-6 h-6" />
+              <div>Sign in with Google</div>
+            </button>
+          </div>
+          <form
+            className="w-4/5 flex flex-col gap-4 max-w-2xl"
+            onSubmit={handleLogin}
+          >
+            <label className="w-full flex flex-row justify-center gap-2 items-center">
+              <input
+                type="text"
+                className="w-full p-3 border border-gray-300 rounded-full"
+                name="id"
+                value={id}
+                placeholder="아이디"
+                onChange={handleChange}
+              />
+            </label>
+          </form>
 
           {errors.id && (
             <p className="text-red-500 text-sm">아이디를 입력해주세요</p>
@@ -144,7 +164,7 @@ const Login = () => {
           <label className="w-full flex flex-row justify-center gap-2 items-center">
             <input
               type="password"
-              className="w-full p-3 border border-gray-300 rounded"
+              className="w-full p-3 border border-gray-300 rounded-full"
               name="password"
               value={password}
               placeholder="비밀번호"
@@ -164,22 +184,15 @@ const Login = () => {
               회원가입
             </a>
           </div>
-          <div className="w-full flex flex-col justify-center space-y-4 items-center">
+          <div className="w-full flex justify-center">
             <button
-              className="p-2 w-24 bg-blue-600 text-white font-black rounded"
+              className="w-36 p-2 bg-blue-600 text-white font-black rounded-full"
               type="submit"
             >
               로그인
             </button>
-            <button
-              className="w-60 flex flex-row justify-center space-x-2"
-              onClick={GoogleLogin}
-            >
-              <img src={GoogleLogo} alt="google" className="w-6 h-6" />
-              <div>Sign in with Google</div>
-            </button>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   );
