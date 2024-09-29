@@ -210,11 +210,11 @@ export default function Upload({
           console.log("Upload failed with status:", response.status, result);
       }
     } catch (error) {
-        // setUploadMessage("An error occurred while uploading the file.");
-        alert("잘못된 형식의 PDF파일입니다.");
-        setErrors("Network error occurred.");
-        setIsLoading(false);
-        console.error(errors);
+      // setUploadMessage("An error occurred while uploading the file.");
+      alert("잘못된 형식의 PDF파일입니다.");
+      setErrors("Network error occurred.");
+      setIsLoading(false);
+      console.error(errors);
     }
   };
 
