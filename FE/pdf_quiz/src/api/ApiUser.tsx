@@ -35,6 +35,13 @@ export const signupUser = async (requestData: {
     })
 }
 
+// 아이디 중복 확인
+export const idCheck = async () => {
+    return apiRequest('', {
+        
+    })
+}
+
 // 내 정보 확인
 export const infoUser = async () => {
     return apiRequest(`/info`, {

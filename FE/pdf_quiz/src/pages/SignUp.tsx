@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { signupUser } from "../api/ApiUser";
 import AgreementModal from "../Modal/agreementModal";
+import Header from "../components/Header";
 
 interface InputData {
   name: string;
@@ -32,7 +33,11 @@ export default function SignUp() {
 
   // 입력 필드
   const fields = [
-    { label: "이름", placeholder: "name", key: "name", marginRight: "10rem" },
+    { label: "이름", 
+      placeholder: "name",
+      key: "name", 
+      marginRight: "10rem" 
+    },
     {
       label: "이메일",
       placeholder: "e-mail",
@@ -137,45 +142,50 @@ export default function SignUp() {
     }
   };
 
-  //로그인 버튼 누르면 회원가입 페이지로 이동
-  const navigateToLogin = () => {
-    navigate("/login");
-  };
+  // //로그인 버튼 누르면 회원가입 페이지로 이동
+  // const navigateToLogin = () => {
+  //   navigate("/login");
+  // };
 
   return (
-    <div className="h-screen w-full flex flex-col justify-center items-center bg-white">
-      <button
-        className="font-title text-2xl absolute top-2 right-4 p-2 text-blue-600 font-black bg-transparent border-dashed"
-        onClick={navigateToLogin}
-      >
-        Login
-      </button>
-      <div className="font-title text-5xl text-blue-600 font-black mb-8 tracking-wide">
+    <div className="w-full flex flex-col justify-center items-center">
+      <Header/>
+      <div className="font-title text-3xl text-blue-600 font-black mb-8 tracking-wide mt-[6vh] lg:mt-[12vh] lg:text-5xl">
         SignUp
       </div>
       <form
         onSubmit={handleSubmit}
-        className="grid grid-cols-2 gap-5 w-full max-w-2xl"
+        className="flex flex-col gap-2 w-full max-w-2xl lg:grid lg:grid-cols-2 lg:gap-5 mt-10"
       >
         {fields.map((field, index) => (
-          <div key={index} className="flex flex-col items-start">
-            <div
-              className="text-sm text-stone-400 font-black mb-1"
-              style={{ marginRight: field.marginRight }}
-            >
-              {field.label}
+          <div key={index} className="flex flex-col items-start mx-[15vw] lg:mx-[0vw]">
+            <div className="flex items-center w-full border border-gray-300 rounded-full">
+              <input
+                type={
+                  field.key === "password" || field.key === "confirmPassword"
+                    ? "password"
+                    : "text"
+                }
+                name={field.key}
+                placeholder={field.label}
+                value={inputData[field.key as keyof InputData] || ""}
+                onChange={handleChange}
+                className="flex-grow p-2 rounded-full"
+              />
+              {/* 이메일 필드일 때 버튼 렌더링 */}
+              {field.key === "email" && (
+                <button
+                  type="button"
+                  className="text-sm text-blue-600 bg-gray-100 font-bold border-1 border-blue-600 px-4 py-1 mr-2 rounded-full"
+                  onClick={() => {
+                    // 이메일 인증 로직 추가
+                    console.log("인증 버튼 클릭됨");
+                  }}
+                >
+                  인증
+                </button>
+              )}
             </div>
-            <input
-              type={
-                field.key === "password" || field.key === "confirmPassword"
-                  ? "password"
-                  : "text"
-              }
-              name={field.key}
-              value={inputData[field.key as keyof InputData] || ""}
-              onChange={handleChange}
-              className="mb-4 p-2 border border-gray-300 rounded-xl w-full"
-            />
             {errors[field.key as keyof InputData] && (
               <div className="text-red-500 text-xs mt-1">
                 {errors[field.key as keyof InputData]}
@@ -207,7 +217,7 @@ export default function SignUp() {
           )}
           <button
             type="submit"
-            className="p-3 bg-blue-600 text-white border font-black rounded-tr-lg mt-4"
+            className="p-3 bg-blue-600 text-white border font-black rounded-full w-[70vw] sm:w-[35vw] lg:w-[15vw] my-4"
           >
             회원가입
           </button>

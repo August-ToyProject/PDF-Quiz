@@ -2,9 +2,12 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ServiceName from "../assets/Logo.svg";
 import ServiceLogo from "../assets/ServiceLogo.png";
+import GoogleLogo from "../assets/Google.png";
 import Header from "../components/Header";
 
 const apiUrl = import.meta.env.VITE_NGROK_URL;
+const clientId = import.meta.env.VITE_GOOGLE_AUTH_CLIENT_ID;
+const redirectUri = import.meta.env.VITE_GOOGLE_AUTH_REDIRECT_URI;
 
 interface loginData {
   id: string;
@@ -75,6 +78,14 @@ const Login = () => {
     }
   };
 
+  const GoogleLogin = () => {
+    window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?
+		client_id=${clientId}
+		&redirect_uri=${redirectUri}
+		&response_type=code
+		&scope=email profile`;
+  };
+
   //아이디, 비밀번호 입력값 업데이트
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -115,6 +126,7 @@ const Login = () => {
           <div className="font-title text-4xl sm:text-5xl text-blue-600 font-black mb-8 tracking-wide">
             Login
           </div>
+          <div className="w-full flex flex-col justify-center space-y-4 items-center"></div>
           <form
             className="w-4/5 flex flex-col gap-4 max-w-2xl"
             onSubmit={handleLogin}
@@ -160,7 +172,7 @@ const Login = () => {
                 회원가입
               </a>
             </div>
-            <div className="w-full flex justify-center">
+            <div className="flex items-cetner justify-center">
               <button
                 className="w-36 p-2 bg-blue-600 text-white font-black rounded-full"
                 type="submit"
@@ -169,6 +181,15 @@ const Login = () => {
               </button>
             </div>
           </form>
+          <div className="w-full flex flex-col items-center justify-center mt-5">
+            <button
+              className="w-60 flex flex-row justify-center space-x-2"
+              onClick={GoogleLogin}
+            >
+              <img src={GoogleLogo} alt="google" className="w-6 h-6" />
+              <div>Sign in with Google</div>
+            </button>
+          </div>
         </div>
       </div>
     </div>
