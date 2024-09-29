@@ -360,29 +360,30 @@ export default function TempPage() {
             <Header/>
             <div className="lg:flex lg:flex-row h-full">
                 {/* 좌측 옵션 */}
-                <div className="flex flex-col lg:mx-[3vw] lg:my-[16vh] lg:min-h-full lg:w-[15vw] mx-[6vw]">
-                    <div className="mt-2 lg:p-4 border-2 border-gray-300 rounded-lg h-[21vh] flex flex-col lg:items-center lg:w-[14vw] lg:h-[40vh]">
+                <div className="flex flex-col lg:min-h-full lg:w-72 2xl:w-80">
+                  <div className="flex justify-center lg:justify-end items-center h-1/2 w-full">
+                    <div className="mt-8 lg:p-4 bg-gray-50 border border-gray-200 rounded-lg w-full mx-6 flex flex-col lg:items-center lg:w-3/4 2xl:w-2/3">
                         <div className="flex flex-row lg:flex-col items-center">
-                            <div className="w-[14vh] h-[15vh] rounded-full border-2 border-gray-300 my-[3vh] mx-[6vw]">
+                            <div className="w-24 h-24 rounded-full border-2 border-gray-300 my-4 mx-6 lg:w-32 lg:h-32 2xl:w-40 2xl:h-40">
                                 <img
                                     src={ServiceLogo}
                                     alt="Service Logo"
-                                    className="w-[14vh] h-[15vh] object-cover"
+                                    className="w-24 h-24 object-cover lg:w-32 lg:h-32 2xl:w-40 2xl:h-40"
                                 />
                             </div>
-                            <div className="flex flex-col mt-[2vh]">
-                                <div className="font-body font-bold text-center lg:text-[1.5vw] mb-[2vh]">
+                            <div className="flex flex-col space-y-3">
+                                <div className="font-body font-bold lg:text-center text-lg lg:text-xl lg:mb-4">
                                     {user?.nickname || "닉네임"}
                                 </div>
-                                <div className="flex justify-center space-x-2">
+                                <div className="flex justify-center space-x-3 lg:mt-10">
                                     <button
-                                        className="font-body px-1 h-[5vh] bg-gray-50 border border-gray-300 text-gray-500 rounded-md flex items-center justify-center lg:w-[6vw] lg:h-[3.5vh] lg:text-[1.2vw]"
+                                        className="font-body px-1 bg-gray-50 border border-gray-300 text-gray-500 rounded-md flex items-center justify-center h-7 w-20 lg:h-7 lg:text-md"
                                         onClick={handleInfo}
                                     >
                                         내 정보
                                     </button>
                                     <button
-                                        className="font-body px-1 h-[5vh] bg-gray-50 border border-gray-300 text-gray-500 rounded-md flex items-center justify-center lg:w-[6vw] lg:h-[3.5vh] lg:text-[1.2vw]"
+                                        className="font-body px-1 bg-gray-50 border border-gray-300 text-gray-500 rounded-md flex items-center justify-center w-20 h-7 lg:text-md"
                                         onClick={handleLogout}
                                     >
                                         로그아웃
@@ -391,30 +392,31 @@ export default function TempPage() {
                             </div>
                         </div>
                     </div>
+                  </div>
                 </div>
-                    <div className="my-[3vh] mx-[6vw] flex flex-col lg:mx-[5vw] lg:my-[7vh]">
-                        <div className="flex lg:flex-row flex-col">
-                            <div className="flex flex-col w-full jsutify-center items-center lg:mt-[5vh]">
-                                <div className="w-auto text-4xl font-bold mt-5 md:mt-10 hidden lg:block">
-                                    PDF만 올리면 쉽게
-                                </div>
-                                <div className="w-auto text-3xl xl:text-4xl font-bold mt-5 hidden lg:block">
-                                    나만의 시험지를 만들 수 있다니, 대박!
-                                </div>
-                                <div className="w-auto text-lg mt-3 xl:text-2xl font-medium hidden lg:block">
-                                    다양한 형식의 퀴즈도 알아서 관리하고,
-                                </div>
-                                <div className="w-auto text-lg mt-3 xl:text-2xl font-medium hidden lg:block">
-                                    내가 만든 퀴즈로 공부하는 재미는 두 배가 될 거예요!
-                                </div>
-                                <div className="flex justify-center mt-[2vh] w-full">
-                                    <button className="bg-blue-600 font-black text-white font-bold rounded-full w-full shadow-md shadow-gray-400 lg:mt-[2vh] lg:text-[1.6vw] lg:p-2 lg:w-[21.92vw] lg:h-[7.16vh]" onClick={openModal}>
-                                        PDF Upload
-                                    </button>
-                                </div>
-                            </div>
-                            <img src={center_image} alt="중앙이미지" className="lg:w-[30vw] lg:h-[45vh] hidden lg:block" />
+                  <div className="my-[3vh] mx-[6vw] flex flex-col lg:mr-[5vw] lg:my-[7vh]">
+                    <div className="flex lg:flex-row flex-col">
+                      <div className="flex flex-col w-full jsutify-center items-center lg:mt-[5vh]">
+                        <div className="w-auto text-4xl font-bold mt-5 md:mt-10 hidden lg:block">
+                            PDF만 올리면 쉽게
                         </div>
+                        <div className="w-auto text-3xl xl:text-4xl font-bold mt-5 hidden lg:block">
+                            나만의 시험지를 만들 수 있다니, 대박!
+                        </div>
+                        <div className="w-auto text-lg mt-3 xl:text-2xl font-medium hidden lg:block">
+                            다양한 형식의 퀴즈도 알아서 관리하고,
+                        </div>
+                        <div className="w-auto text-lg mt-3 xl:text-2xl font-medium hidden lg:block">
+                            내가 만든 퀴즈로 공부하는 재미는 두 배가 될 거예요!
+                        </div>
+                        <div className="flex justify-center mt-[2vh] w-full">
+                            <button className="bg-blue-600 font-black text-white font-bold rounded-full w-full shadow-md shadow-gray-400 lg:mt-[2vh] lg:text-[1.6vw] lg:p-2 lg:w-72 lg:h-16" onClick={openModal}>
+                                PDF Upload
+                            </button>
+                        </div>
+                    </div>
+                    <img src={center_image} alt="중앙이미지" className="lg:w-[30vw] lg:h-[45vh] hidden lg:block" />
+                  </div>
                         <div className="flex flex-col lg:h-[45vh] lg:mt-[5vh] mt-[2vh] w-full">
                             <div className="flex justify-between items-center border-b-2 border-gray-300 border-dashed">
                                 <div className="text-gray-400 lg:text-[2vw] text-[5vw] font-bold">
