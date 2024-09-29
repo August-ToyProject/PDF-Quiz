@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
+import ReactDOM from "react-dom";
 import { useNavigate } from "react-router-dom";
 import pdfLogo from "../assets/DragFile.png";
 import closeIcon from "../assets/X.png";
@@ -19,6 +20,18 @@ interface ModalProps {
   boxSize?: string;
 }
 
+const Snackbar = ({ message, visible }: { message: string, visible: boolean }) => {
+  if (!visible) return null;
+
+  // React Portal로 스낵바를 body에 렌더링
+  return ReactDOM.createPortal(
+    <div className="fixed bottom-4 right-4 bg-orange-600 text-white font-bold p-4 rounded-lg shadow-md z-50">
+      {message}
+    </div>,
+    document.body // body에 렌더링되도록 함
+  );
+};
+
 export default function Upload({
   showModal,
   closeModal,
@@ -35,6 +48,9 @@ export default function Upload({
 
   const [path, setPath] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const [isVisible, setIsVisible] = useState(false);
+  
 
   const {
     title,
@@ -80,6 +96,18 @@ export default function Upload({
       setPath("");
     }
   }, [showModal, path, title]);
+
+  useEffect(() => {
+    if (showModal) {
+      setTimeout(() => setIsVisible(true), 10);
+    } else {
+      setIsVisible(false);
+    }
+  }, [showModal]);
+
+  if (!showModal && !isVisible) {
+    return null;
+  }
 
   const navigateToQuiz = () => {
     navigate("/quiz");
@@ -182,11 +210,11 @@ export default function Upload({
           console.log("Upload failed with status:", response.status, result);
       }
     } catch (error) {
-        // setUploadMessage("An error occurred while uploading the file.");
-        alert("잘못된 형식의 PDF파일입니다.");
-        setErrors("Network error occurred.");
-        setIsLoading(false);
-        console.error(errors);
+      // setUploadMessage("An error occurred while uploading the file.");
+      alert("잘못된 형식의 PDF파일입니다.");
+      setErrors("Network error occurred.");
+      setIsLoading(false);
+      console.error(errors);
     }
   };
 
@@ -293,9 +321,15 @@ export default function Upload({
   }
 
   return (
-    <div className="font-body fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div
+      className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300 ease-in-out ${
+        isVisible ? "opacity-100" : "opacity-0"
+      }`}
+    >
       <div
-        className="flex flex-col items-center bg-customBlue rounded-xl w-[80vw] h-auto border-2 border-blue-600 lg:w-[25vw] lg:p-2 sm:w-[40vw]"
+        className={`flex flex-col items-center bg-customBlue rounded-xl w-[80vw] h-auto border-2 border-blue-600 lg:w-[25vw] lg:p-2 sm:w-[40vw] transition-transform duration-300 ease-in-out ${
+          isVisible ? "translate-y-0" : "translate-y-10"
+        }`}
       >
         <div className=" flex flex-col items-center w-full">
           <div className="flex justify-between items-center mb-2 p-2 w-full">
@@ -470,11 +504,7 @@ export default function Upload({
             <p>{uploadMessage}</p>
           </div>
         )}
-        {snackbarVisible && (
-          <div className="fixed bottom-4 right-4 bg-orange-600 text-white font-bold p-4 rounded-lg shadow-md">
-            {snackbarMessage}
-          </div>
-        )}
+        <Snackbar message={snackbarMessage} visible={snackbarVisible} />
       </div>
     </div>
   );
