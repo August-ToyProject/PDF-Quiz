@@ -172,14 +172,14 @@ const Login = () => {
                 회원가입
               </a>
             </div>
-          </form>
-          <div className="w-full flex flex-col items-center justify-center mt-10 space-y-3">
             <button
               className="w-36 p-2 bg-blue-600 text-white font-black rounded-full"
               type="submit"
             >
               로그인
             </button>
+          </form>
+          <div className="w-full flex flex-col items-center justify-center mt-10 space-y-3">
             <button
               className="w-60 flex flex-row justify-center space-x-2"
               onClick={GoogleLogin}
