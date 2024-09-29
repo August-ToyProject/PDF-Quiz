@@ -2,12 +2,12 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ServiceName from "../assets/Logo.svg";
 import ServiceLogo from "../assets/ServiceLogo.png";
-import GoogleLogo from "../assets/Google.png";
+// import GoogleLogo from "../assets/Google.png";
 import Header from "../components/Header";
 
 const apiUrl = import.meta.env.VITE_NGROK_URL;
-const clientId = import.meta.env.VITE_GOOGLE_AUTH_CLIENT_ID;
-const redirectUri = import.meta.env.VITE_GOOGLE_AUTH_REDIRECT_URI;
+// const clientId = import.meta.env.VITE_GOOGLE_AUTH_CLIENT_ID;
+// const redirectUri = import.meta.env.VITE_GOOGLE_AUTH_REDIRECT_URI;
 
 interface loginData {
   id: string;
@@ -78,13 +78,13 @@ const Login = () => {
     }
   };
 
-  const GoogleLogin = () => {
-    window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?
-		client_id=${clientId}
-		&redirect_uri=${redirectUri}
-		&response_type=code
-		&scope=email profile`;
-  };
+  // const GoogleLogin = () => {
+  //   window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?
+  // 	client_id=${clientId}
+  // 	&redirect_uri=${redirectUri}
+  // 	&response_type=code
+  // 	&scope=email profile`;
+  // };
 
   //아이디, 비밀번호 입력값 업데이트
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
