@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       EC2_HOST: ${{ secrets.EC2_FASTAPI_HOST }}
-      EC2_USER: ${{ secrets.EC2_USER }}
+      EC2_USER: 'root'
       SSH_KEY: ${{ secrets.EC2_SSH_REACT_KEY }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_DEPLOY_WEB_HOOK }}
       SLACK_USER: 'U07F90W5TKN'
