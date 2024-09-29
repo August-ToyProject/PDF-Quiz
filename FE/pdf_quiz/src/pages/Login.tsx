@@ -181,7 +181,7 @@ const Login = () => {
               </button>
             </div>
           </form>
-          <div className="w-full flex flex-col items-center justify-center mt-5">
+          {/* <div className="w-full flex flex-col items-center justify-center mt-5">
             <button
               className="w-60 flex flex-row justify-center space-x-2"
               onClick={GoogleLogin}
@@ -189,7 +189,7 @@ const Login = () => {
               <img src={GoogleLogo} alt="google" className="w-6 h-6" />
               <div>Sign in with Google</div>
             </button>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
