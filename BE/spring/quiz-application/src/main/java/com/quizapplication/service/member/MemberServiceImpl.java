@@ -115,9 +115,19 @@ public class MemberServiceImpl implements MemberService {
         if (!checkPassword(signupDto.getPassword(), signupDto.getPasswordConfirm())) {
             throw new PasswordMismatchException();
         }
+//        Member member = SignupDto.toEntity(signupDto);
 
-        Member savedMember = memberRepository.save(SignupDto.toEntity(signupDto));
-        savedMember.passwordEncoding(passwordEncoder);
+//        member.passwordEncoding(passwordEncoder);
+        Member savedMember = memberRepository.save(
+                Member.builder()
+                        .userId(signupDto.getUserId())
+                        .username(signupDto.getUsername())
+                        .nickname(signupDto.getNickname())
+                        .email(signupDto.getEmail())
+                        .role(ROLE_USER)
+                        .password(passwordEncoder.encode(signupDto.getPassword()))
+                        .build()
+        );
         return MemberResponse.of(savedMember);
     }
 
