@@ -40,14 +40,20 @@ const Header = () => {
         >
           Home
         </button>
-        <button
-          className={`font-header font-bold text-sm lg:text-lg bg-transparent ${
-            clicked ? "text-blue-500" : "text-black" // clicked가 true일 때 색상 변경
-          }`}
-          onClick={HandleClicked}
+        <a
+          href="https://junyong1111.notion.site/QuizGen-10d8821add1580938780d33e889994ea?pvs=4"
+          target="_blank"
+          rel="noopener noreferrer"
         >
-          Help
-        </button>
+          <button
+            className={`font-header font-bold text-sm lg:text-lg bg-transparent ${
+              clicked ? "text-blue-500" : "text-black" // clicked가 true일 때 색상 변경
+            }`}
+            onClick={HandleClicked}
+          >
+            Help
+          </button>
+        </a>
         <button
           className="font-header text-m bg-blue-600 text-sm lg:text-lg text-white font-bold rounded-full px-5 py-2"
           onClick={NavigateToLogin}
