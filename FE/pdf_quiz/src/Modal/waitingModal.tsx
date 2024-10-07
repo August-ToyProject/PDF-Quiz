@@ -24,7 +24,13 @@ const WaitingModal: React.FC<ImageModalProps> = ({ showModal, closeModal }) => {
 
     const handleNextImage = () => {
         setCurrentImageIndex((prevIndex) =>
-        prevIndex === images.length - 1 ? 0 : prevIndex + 1
+            prevIndex === images.length - 1 ? 0 : prevIndex + 1
+        );
+    };
+
+    const handlePrevImage = () => {
+        setCurrentImageIndex((prevIndex) =>
+            prevIndex === 0 ? images.length - 1 : prevIndex - 1
         );
     };
 
@@ -32,8 +38,8 @@ const WaitingModal: React.FC<ImageModalProps> = ({ showModal, closeModal }) => {
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-2xl shadow-lg w-full max-w-md">
-                <div className="rounded-t-2xl items-center mb-4 h-32 bg-blue-500">
+            <div className="bg-white rounded-2xl shadow-lg w-full max-w-80 md:max-w-xl">
+                <div className="rounded-t-2xl flex flex-col items-center mb-4 h-24 md:h-48 bg-blue-500">
                     <div className='w-full flex justify-end'>
                         <button
                             className="flex justify-end text-white focus:outline-none bg-transparent"
@@ -43,7 +49,7 @@ const WaitingModal: React.FC<ImageModalProps> = ({ showModal, closeModal }) => {
                         </button>
                     </div>
                     <div className='w-full flex justify-center'>
-                        <div className="text-xl font-semibold text-white p-4">
+                        <div className="text-md md:text-xl font-semibold text-white md:mt-6 md:p-4">
                             {texts[currentImageIndex]}
                         </div>
                     </div>
@@ -56,6 +62,13 @@ const WaitingModal: React.FC<ImageModalProps> = ({ showModal, closeModal }) => {
                     />
                 </div>
                 <div className="flex justify-between mx-8 my-4">
+                    <button
+                        className={`bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 ${currentImageIndex === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        onClick={handlePrevImage}
+                        disabled={currentImageIndex === 0}
+                    >
+                        이전
+                    </button>
                     <p>
                         {currentImageIndex + 1} / {images.length}
                     </p>
