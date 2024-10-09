@@ -497,7 +497,7 @@ export default function TempPage() {
                                         </button>
                                     </div>
                                 </div>
-                                <div className="flex flex-wrap gap-4 mt-[2vh] overflow-y-auto h-[30vh] lg: justify-center">
+                                <div className="flex flex-wrap gap-4 mt-[2vh] overflow-y-auto h-[30vh] lg:justify-start">
                                 {[...folders, ...filteredQuizzes]
                                     .filter((item) =>
                                     "name" in item
