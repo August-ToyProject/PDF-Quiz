@@ -36,6 +36,9 @@ dependencies {
 	implementation 'com.fasterxml.jackson.module:jackson-module-jakarta-xmlbind-annotations'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
+	// 메일
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+
     // oauth2
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 

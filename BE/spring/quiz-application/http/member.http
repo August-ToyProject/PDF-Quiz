@@ -1,16 +1,21 @@
 ### 회원가입
-POST localhost:8080/api/v1/sign-up
+POST localhost:8888/api/v1/sign-up
 Content-Type: application/json
 
 {
-  "userId": "kyun9151",
-  "email": "kyun9151@gmail.com",
+  "userId": "kyun9152123",
+  "email": "cbw60881@gmail.com",
   "username": "김명균",
-  "nickname": "hodumaru",
+  "nickname": "hodumaru1233",
   "password": "12345678",
   "passwordConfirm": "12345678"
 }
 
+### 이메일 인증번호 보내기
+POST localhost:8888/api/v1/emails/verification-requests?email=cbw60881@gmail.com
+
+### 이메일 인증
+GET localhost:8888/api/v1/emails/verify-code?email=cbw60881@gmail.com&code=XrbQuKDrYUNsYsOlKpxosGXt
 
 ### 로그인
 POST localhost:8080/api/v1/login

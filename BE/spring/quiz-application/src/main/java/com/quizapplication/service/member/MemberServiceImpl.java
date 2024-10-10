@@ -3,6 +3,7 @@ package com.quizapplication.service.member;
 import static com.quizapplication.domain.Role.*;
 
 import com.quizapplication.config.jwt.TokenProvider;
+import com.quizapplication.config.mail.MailService;
 import com.quizapplication.config.redis.RedisService;
 import com.quizapplication.config.security.SecurityUtil;
 import com.quizapplication.domain.Member;
@@ -15,6 +16,7 @@ import com.quizapplication.dto.request.EditUserInfoDto;
 import com.quizapplication.dto.request.ResetPwdRequest;
 import com.quizapplication.dto.request.SignupDto;
 import com.quizapplication.dto.request.folder.FolderCreateRequest;
+import com.quizapplication.dto.response.EmailVerificationResponse;
 import com.quizapplication.dto.response.FolderResponse;
 import com.quizapplication.dto.response.MemberResponse;
 import com.quizapplication.dto.response.UserIdResponse;
@@ -30,7 +32,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,6 +50,21 @@ public class MemberServiceImpl implements MemberService {
     private final FolderRepository folderRepository;
     private final QuizRepository quizRepository;
     private final PasswordEncoder passwordEncoder;
+    private final MailService mailService;
+
+    @Value("${mail.expiration}")
+    private long authCodeExpirationMills;
+
+    @Value("${mail.length}")
+    private int length;
+
+    @Value("${mail.chars}")
+    private String characters;
+
+    @Value("${mail.numbers}")
+    private String numbers;
+
+    private static final String AUTH_CODE_PREFIX = "AuthCode ";
 
 //    @PostConstruct
 //    public void init() {
@@ -115,9 +135,19 @@ public class MemberServiceImpl implements MemberService {
         if (!checkPassword(signupDto.getPassword(), signupDto.getPasswordConfirm())) {
             throw new PasswordMismatchException();
         }
+//        Member member = SignupDto.toEntity(signupDto);
 
-        Member savedMember = memberRepository.save(SignupDto.toEntity(signupDto));
-        savedMember.passwordEncoding(passwordEncoder);
+//        member.passwordEncoding(passwordEncoder);
+        Member savedMember = memberRepository.save(
+                Member.builder()
+                        .userId(signupDto.getUserId())
+                        .username(signupDto.getUsername())
+                        .nickname(signupDto.getNickname())
+                        .email(signupDto.getEmail())
+                        .role(ROLE_USER)
+                        .password(passwordEncoder.encode(signupDto.getPassword()))
+                        .build()
+        );
         return MemberResponse.of(savedMember);
     }
 
@@ -163,6 +193,26 @@ public class MemberServiceImpl implements MemberService {
 
         Member member = memberRepository.findByEmail(email);
         member.updatePassword(passwordEncoder, request.getPassword());
+    }
+
+    @Override
+    public void sendCode(String email) {
+        String title = "이메일 인증 번호";
+        String authCode = createCode();
+
+        mailService.sendEmail(email, title, authCode);
+
+        redisService.setValues(AUTH_CODE_PREFIX + email, authCode, Duration.ofMillis(authCodeExpirationMills));
+    }
+
+    @Override
+    public EmailVerificationResponse verifyCode(String email, String code) {
+        if (checkCode(email, code)) {
+            Member findMember = memberRepository.findByEmail(email);
+//            findMember.updateRole(ROLE_USER);
+            return EmailVerificationResponse.of(true);
+        }
+        return EmailVerificationResponse.of(false);
     }
 
     @Override
@@ -219,5 +269,28 @@ public class MemberServiceImpl implements MemberService {
 
     private boolean checkPassword(String password, String passwordConfirm) {
         return password.equals(passwordConfirm);
+    }
+
+    private boolean checkCode(String email, String code) {
+        return code.equals(redisService.getValues(AUTH_CODE_PREFIX + email));
+    }
+
+    // 인증번호 생성로직
+    private String createCode() {
+        StringBuilder sb = new StringBuilder(length); // 7
+        StringBuilder sbNumber = new StringBuilder(length);
+        Random random = new Random();
+
+        for (int i = 0; i < length; i++) {
+            int index = random.nextInt(characters.length()); // 인덱스 뽑고
+            sb.append(characters.charAt(index)); // 문자열 인덱스 랜덤으로 가져오기
+        }
+
+        for (int i = 0; i < length; i++) {
+            int index = random.nextInt(characters.length()); // 인덱스 뽑고
+            sb.append(characters.charAt(index)); // 문자열 인덱스 랜덤으로 가져오기
+        }
+
+        return sb.toString();
     }
 }
