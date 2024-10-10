@@ -4,6 +4,7 @@ import com.quizapplication.dto.request.EditUserInfoDto;
 import com.quizapplication.dto.request.ResetPwdRequest;
 import com.quizapplication.dto.request.SignupDto;
 import com.quizapplication.dto.request.folder.FolderCreateRequest;
+import com.quizapplication.dto.response.EmailVerificationResponse;
 import com.quizapplication.dto.response.FolderResponse;
 import com.quizapplication.dto.response.MemberResponse;
 import com.quizapplication.dto.response.UserIdResponse;
@@ -103,4 +104,16 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.OK).body(memberService.updateFolder(folderId, request));
     }
 
+
+    @PostMapping("/emails/verification-requests")
+    public ResponseEntity sendEmail(@RequestParam("email") String email) {
+        memberService.sendCode(email);
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @GetMapping("/emails/verify-code")
+    public EmailVerificationResponse verifyCode(@RequestParam("email") String email,
+                                                @RequestParam("code") String code) {
+        return memberService.verifyCode(email, code);
+    }
 }
