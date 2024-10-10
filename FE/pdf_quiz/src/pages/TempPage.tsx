@@ -410,7 +410,9 @@ export default function TempPage() {
                             내가 만든 퀴즈로 공부하는 재미는 두 배가 될 거예요!
                         </div>
                         <div className="flex justify-center mt-[2vh] w-full">
-                            <button className="bg-blue-600 font-black text-white font-bold rounded-full w-full shadow-md shadow-gray-400 lg:mt-[2vh] lg:text-[1.6vw] lg:p-2 lg:w-72 lg:h-16" onClick={openModal}>
+                            <button 
+                              className="bg-blue-600 font-black text-white font-bold rounded-full w-full shadow-md shadow-gray-400 lg:mt-[2vh] lg:text-[1.6vw] lg:p-2 lg:w-72 lg:h-16" 
+                              onClick={openModal}>
                                 PDF Upload
                             </button>
                         </div>
@@ -495,7 +497,7 @@ export default function TempPage() {
                                         </button>
                                     </div>
                                 </div>
-                                <div className="flex flex-wrap gap-4 mt-[2vh] overflow-y-auto h-[30vh] lg: justify-center">
+                                <div className="flex flex-wrap gap-4 mt-[2vh] overflow-y-auto h-[30vh] lg:justify-start">
                                 {[...folders, ...filteredQuizzes]
                                     .filter((item) =>
                                     "name" in item
