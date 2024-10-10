@@ -34,12 +34,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
@@ -135,24 +137,25 @@ public class MemberServiceImpl implements MemberService {
         if (!checkPassword(signupDto.getPassword(), signupDto.getPasswordConfirm())) {
             throw new PasswordMismatchException();
         }
-//        Member member = SignupDto.toEntity(signupDto);
 
-//        member.passwordEncoding(passwordEncoder);
-        Member savedMember = memberRepository.save(
-                Member.builder()
-                        .userId(signupDto.getUserId())
-                        .username(signupDto.getUsername())
-                        .nickname(signupDto.getNickname())
-                        .email(signupDto.getEmail())
-                        .role(ROLE_USER)
-                        .password(passwordEncoder.encode(signupDto.getPassword()))
-                        .build()
-        );
+        Member savedMember = memberRepository.save(SignupDto.toEntity(signupDto));
+        savedMember.passwordEncoding(passwordEncoder);
+//        Member savedMember = memberRepository.save(
+//                Member.builder()
+//                        .userId(signupDto.getUserId())
+//                        .username(signupDto.getUsername())
+//                        .nickname(signupDto.getNickname())
+//                        .email(signupDto.getEmail())
+//                        .role(ROLE_USER)
+//                        .password(passwordEncoder.encode(signupDto.getPassword()))
+//                        .build()
+//        );
         return MemberResponse.of(savedMember);
     }
 
     @Override
     public MemberResponse info() {
+        log.info(SecurityUtil.getCurrentMemberEmail());
         return MemberResponse.of(memberRepository.findByEmail(SecurityUtil.getCurrentMemberEmail()));
     }
 

@@ -12,10 +12,12 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @Slf4j
 @RequiredArgsConstructor
+@Component
 public class JwtFilter extends OncePerRequestFilter {
 
     private final TokenProvider tokenProvider;
@@ -28,13 +30,12 @@ public class JwtFilter extends OncePerRequestFilter {
             "/favicon.ico",
             "/api/v1/find-user", "/api/v1/find-pwd",
             "/actuator/health",
-            "/actuator/info",
-            "/");
+            "/actuator/info");
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-
+        log.info("Request URL: {}", request.getServletPath());
         if (shouldNotFilter(request)) {
             filterChain.doFilter(request, response);
             return;
@@ -50,7 +51,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
 
         String accessToken = tokenProvider.resolveAccessToken(request);
-
+        log.info("accessToken: {}", accessToken);
         if (!isLogout(accessToken)) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("Token has been logged out");
