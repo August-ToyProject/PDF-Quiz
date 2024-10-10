@@ -104,13 +104,14 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.OK).body(memberService.updateFolder(folderId, request));
     }
 
-
+    @Operation(summary = "이메일 인증번호 보내기", description = "이메일을 받아 이메일 보내기")
     @PostMapping("/emails/verification-requests")
     public ResponseEntity sendEmail(@RequestParam("email") String email) {
         memberService.sendCode(email);
         return new ResponseEntity(HttpStatus.OK);
     }
 
+    @Operation(summary = "이메일 인증번호 인증", description = "이메일, 인증번호를 받아 이메일 보내기")
     @GetMapping("/emails/verify-code")
     public EmailVerificationResponse verifyCode(@RequestParam("email") String email,
                                                 @RequestParam("code") String code) {
