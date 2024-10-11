@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+    font-family: 'LaundryGothicOTF';
+    src: url('/src/assets/fonts/LaundryGothicOTF.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+  
+
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -49,6 +57,10 @@ h1 {
   line-height: 1.1;
 }
 
+.font-laundry {
+    font-family: 'LaundryGothicOTF', sans-serif;
+}
+
 button {
   border-radius: 8px;
   border: 1px solid transparent;
@@ -60,12 +72,16 @@ button {
   cursor: pointer;
   transition: border-color 0.25s;
 }
-button:hover {
-  border-color: #646cff;
+button:not(.outline-visible):focus,
+button:not(.outline-visible):hover {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: transparent !important;
 }
 button:focus,
 button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+    outline: none;
+    border-color: transparent;
 }
 
 @media (prefers-color-scheme: light) {

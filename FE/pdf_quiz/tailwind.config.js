@@ -6,6 +6,8 @@ export default {
       fontFamily: {
         title: ["SUSE", "sans-serif"],
         body: ["Nanum Gothic", "sans-serif"],
+        baloo: ['Baloo Tammudu', 'cursive'],
+        laundry: ['LaundryGothicOTF', 'sans-serif'],
       },
       margin: {
         '30': '7.5rem',

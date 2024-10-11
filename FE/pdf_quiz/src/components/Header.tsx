@@ -22,7 +22,8 @@ const Header = () => {
   };
 
   return (
-    <div className="w-full h-[60px] border-b-2 border-gray-300 relative flex items-center px-3">
+    // <div className="w-full h-[60px] border-b-2 border-gray-300 relative flex items-center px-3">
+    <div className="w-full h-[60px] relative flex items-center px-3"> 
       <img
         src={BlueLogo}
         alt="Quizgen"

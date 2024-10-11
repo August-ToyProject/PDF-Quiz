@@ -35,6 +35,29 @@ export const signupUser = async (requestData: {
     })
 }
 
+// 이메일 인증
+export const emailAuth = async (requestData: {
+    email: string;
+}) => {
+    return apiRequest(`/emails/verification-requests?email=${requestData.email}`, {
+        method: 'POST',
+        // body: JSON.stringify(requestData),
+        // headers: {'Content-Type': 'application/json'},
+    })
+}
+
+// 이메일 인증번호 확인
+export const emailAuthCheck = async (requestData: {
+    email: string;
+    emailCheck: string;
+}) => {
+    return apiRequest(`/emails/verify-code?email=${requestData.email}&code=${requestData.emailCheck}`, {
+        method: 'GET',
+        // body: JSON.stringify(requestData),
+        // headers: {'Content-Type': 'application/json'},
+    })
+}
+
 // 아이디 중복 확인
 export const idCheck = async () => {
     return apiRequest('', {
