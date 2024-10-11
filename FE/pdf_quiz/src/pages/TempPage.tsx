@@ -15,7 +15,7 @@ import {
 } from "../api/ApiFolder";
 import ActionModal from "../Modal/actionModal";
 import folderImage from "../assets/folder2.png";
-import ServiceLogo from "../assets/ServiceLogo.png";
+import profileImage from "../assets/profileImage.png"
 import Header from "../components/Header";
 
 export interface ListQuiz {
@@ -362,28 +362,28 @@ export default function TempPage() {
                 {/* 좌측 옵션 */}
                 <div className="flex flex-col lg:min-h-full lg:w-72 2xl:w-80">
                   <div className="flex justify-center lg:justify-end items-center h-1/2 w-full">
-                    <div className="mt-8 lg:p-4 bg-gray-50 border border-gray-200 rounded-lg w-full mx-6 flex flex-col lg:items-center lg:w-3/4 2xl:w-2/3">
+                    <div className="mt-8 lg:p-4 bg-gray-50 border-2 border-gray-200 rounded-md w-full mx-6 flex flex-col lg:items-center lg:w-3/4 2xl:w-2/3">
                         <div className="flex flex-row lg:flex-col items-center">
-                            <div className="w-24 h-24 rounded-full border-2 border-gray-300 my-4 mx-6 lg:w-32 lg:h-32 2xl:w-40 2xl:h-40">
-                                <img
-                                    src={ServiceLogo}
-                                    alt="Service Logo"
-                                    className="w-24 h-24 object-cover lg:w-32 lg:h-32 2xl:w-40 2xl:h-40"
-                                />
-                            </div>
+                        <div className="w-24 h-24 rounded-full border-2 border-gray-300 bg-transparent my-4 mx-6 lg:w-32 lg:h-32 2xl:w-40 2xl:h-40 overflow-hidden">
+                            <img
+                                src={profileImage}
+                                alt="profileImage"
+                                className="w-full h-full object-cover"
+                            />
+                        </div>
                             <div className="flex flex-col space-y-3">
                                 <div className="font-body font-bold lg:text-center text-lg lg:text-xl lg:mb-4">
                                     {user?.nickname || "닉네임"}
                                 </div>
                                 <div className="flex justify-center space-x-3 lg:mt-10">
                                     <button
-                                        className="font-body px-1 bg-gray-50 border border-gray-300 text-gray-500 rounded-md flex items-center justify-center h-7 w-20 lg:h-7 lg:text-md"
+                                        className="outline-visible font-body px-1 bg-gray-50 border border-gray-300 text-gray-500 rounded-md flex items-center justify-center h-7 w-20 lg:h-7 lg:text-md"
                                         onClick={handleInfo}
                                     >
                                         내 정보
                                     </button>
                                     <button
-                                        className="font-body px-1 bg-gray-50 border border-gray-300 text-gray-500 rounded-md flex items-center justify-center w-20 h-7 lg:text-md"
+                                        className="outline-visible font-body px-1 bg-gray-50 border border-gray-300 text-gray-500 rounded-md flex items-center justify-center w-20 h-7 lg:text-md"
                                         onClick={handleLogout}
                                     >
                                         로그아웃
@@ -411,7 +411,7 @@ export default function TempPage() {
                         </div>
                         <div className="flex justify-center mt-[2vh] w-full">
                             <button 
-                              className="bg-blue-600 font-black text-white font-bold rounded-full w-full shadow-md shadow-gray-400 lg:mt-[2vh] lg:text-[1.6vw] lg:p-2 lg:w-72 lg:h-16" 
+                              className="flex justify-center font-baloo bg-blue-600 font-black text-white rounded-full w-full shadow-md shadow-gray-400 text-xl lg:mt-[2vh] lg:text-3xl lg:w-72 lg:h-16" 
                               onClick={openModal}>
                                 PDF Upload
                             </button>
@@ -421,17 +421,17 @@ export default function TempPage() {
                   </div>
                         <div className="flex flex-col lg:h-[45vh] lg:mt-[5vh] mt-[2vh] w-full">
                             <div className="flex justify-between items-center border-b-2 border-gray-300 border-dashed">
-                                <div className="text-gray-400 lg:text-[2vw] text-[5vw] font-bold">
+                                <div className="text-gray-500 font-baloo lg:text-[2vw] text-[5vw] font-bold">
                                     Quiz List
                                 </div>
                                 <button
                                     onClick={toggleDropdown}
-                                    className="focus:outline-none bg-transparent focus:outline-none focus:border-none p-1 lg:hidden"
+                                    className="focus:outline-none bg-transparent p-1 lg:hidden"
                                 >
                                     {showDropdown ? (
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
-                                            className="h-5 w-5 text-gray-400 font-bold focus:outline-none focus:border-none"
+                                            className="h-5 w-5 text-gray-400 font-bold"
                                             fill="none"
                                             viewBox="0 0 24 24"
                                             stroke="currentColor"
@@ -446,7 +446,7 @@ export default function TempPage() {
                                     ) : (
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
-                                            className="h-5 w-5 text-gray-400 font-bold focus:outline-none focus:border-none"
+                                            className="h-5 w-5 text-gray-400 font-bold"
                                             fill="none"
                                             viewBox="0 0 24 24"
                                             stroke="currentColor"
@@ -477,22 +477,22 @@ export default function TempPage() {
                                         />
                                     </div>
                                     <div className="flex lg:items-center">
-                                        <button className="lg:text-[1.2vw] text-[3vw] text-gray-500 font-bold bg-transparent lg:p-[0.5vw] focus:outline-none focus:border-none" onClick={() => setShowFolderModal(true)}>
+                                        <button className="lg:text-[1vw] text-[3vw] text-gray-500 font-bold bg-transparent lg:p-[0.5vw]" onClick={() => setShowFolderModal(true)}>
                                             폴더추가
                                         </button>
-                                        <button className="lg:text-[1.2vw] text-[3vw] text-gray-500 font-bold bg-transparent lg:p-[0.5vw] focus:outline-none focus:border-none" onClick={() => openActionModal("move")}>
+                                        <button className="lg:text-[1vw] text-[3vw] text-gray-500 font-bold bg-transparent lg:p-[0.5vw]" onClick={() => openActionModal("move")}>
                                             이동
                                         </button>
-                                        <button className="lg:text-[1.2vw] text-[3vw] text-gray-500 font-bold bg-transparent lg:p-[0.5vw] focus:outline-none focus:border-none" onClick={() => openActionModal("edit")}>
+                                        <button className="lg:text-[1vw] text-[3vw] text-gray-500 font-bold bg-transparent lg:p-[0.5vw]" onClick={() => openActionModal("edit")}>
                                             수정
                                         </button>
-                                        <button className="lg:text-[1.2vw] text-[3vw] text-gray-500 font-bold bg-transparent lg:p-[0.5vw] focus:outline-none focus:border-none" onClick={() => openActionModal("delete")}>
+                                        <button className="lg:text-[1vw] text-[3vw] text-gray-500 font-bold bg-transparent lg:p-[0.5vw]" onClick={() => openActionModal("delete")}>
                                             삭제
                                         </button>
-                                        <button className="lg:text-[1.2vw] text-[3vw] text-gray-500 font-bold bg-transparent lg:p-[0.5vw] focus:outline-none focus:border-none" onClick={handleResetClick}>
+                                        <button className="lg:text-[1vw] text-[3vw] text-gray-500 font-bold bg-transparent lg:p-[0.5vw]" onClick={handleResetClick}>
                                             뒤로
                                         </button>
-                                        <button className="lg:text-[1.2vw] text-[3vw] text-gray-500 font-bold bg-transparent lg:p-[0.5vw] focus:outline-none focus:border-none">
+                                        <button className="lg:text-[1vw] text-[3vw] text-gray-500 font-bold bg-transparent lg:p-[0.5vw]">
                                             도움말
                                         </button>
                                     </div>
@@ -570,7 +570,7 @@ export default function TempPage() {
                             )}
                         </div>
                         <div className="flex flex-col my-[5vh] w-full lg:h-[30vh] lg:my-[5vh]">
-                            <div className="text-gray-400 text-[5vw] font-bold border-b-2 border-gray-300 border-dashed lg:text-[2vw]">
+                            <div className="text-gray-500 text-[5vw] font-baloo font-bold border-b-2 border-gray-300 border-dashed lg:text-[2vw]">
                                 Calender
                             </div>
                             {/* 캘린더 */}
