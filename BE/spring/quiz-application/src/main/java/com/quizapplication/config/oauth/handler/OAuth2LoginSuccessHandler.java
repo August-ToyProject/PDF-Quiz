@@ -43,7 +43,8 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
 
             // 이미 가입된 회원의 경우 바로 토큰 발급해주면 된다.
-            TokenDto tokenDto = tokenProvider.generateToken(authentication);
+//            TokenDto tokenDto = tokenProvider.generateToken(authentication);
+            TokenDto tokenDto = tokenProvider.generateTokenDtoOAuth(oAuth2User.getEmail(), authorities);
             tokenProvider.setAccessToken(response, tokenDto.getAccessToken());
 
             long accessTokenExpirationMillis = tokenProvider.getAccessTokenExpirationMillis();
