@@ -5,6 +5,9 @@ import com.quizapplication.config.jwt.TokenProvider;
 //import com.quizapplication.config.oauth.handler.OAuth2LoginFailureHandler;
 //import com.quizapplication.config.oauth.handler.OAuth2LoginSuccessHandler;
 //import com.quizapplication.config.oauth.service.CustomOAuth2MemberService;
+import com.quizapplication.config.oauth.handler.OAuth2LoginFailureHandler;
+import com.quizapplication.config.oauth.handler.OAuth2LoginSuccessHandler;
+import com.quizapplication.config.oauth.service.CustomOAuth2MemberService;
 import com.quizapplication.config.redis.RedisService;
 import com.quizapplication.config.security.handler.LoginFailureHandler;
 import com.quizapplication.config.security.handler.LoginSuccessHandler;
@@ -35,9 +38,9 @@ public class SecurityConfig {
 
     private final TokenProvider tokenProvider;
     private final RedisService redisService;
-//    private final CustomOAuth2MemberService oAuth2MemberService;
-//    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
-//    private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
+    private final CustomOAuth2MemberService oAuth2MemberService;
+    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+    private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -52,10 +55,10 @@ public class SecurityConfig {
 //                        .requestMatchers("/api/v1/login").permitAll() // 특정 경로는 인증 없이 접근 허용
 //                        .anyRequest().authenticated())
                 .cors(cors -> cors.configurationSource(getCorsConfiguration()))
-//                .oauth2Login((oauth2) -> oauth2.userInfoEndpoint(
-//                                userInfoEndpointConfig -> userInfoEndpointConfig.userService(oAuth2MemberService))
-//                        .successHandler(oAuth2LoginSuccessHandler)
-//                        .failureHandler(oAuth2LoginFailureHandler))
+                .oauth2Login((oauth2) -> oauth2.userInfoEndpoint(
+                                userInfoEndpointConfig -> userInfoEndpointConfig.userService(oAuth2MemberService))
+                        .successHandler(oAuth2LoginSuccessHandler)
+                        .failureHandler(oAuth2LoginFailureHandler))
                 .with(new CustomFilterConfigurer(), Customizer.withDefaults());
 //        http.addFilterBefore(new JwtFilter(tokenProvider, redisService), CustomAuthenticationFilter.class);
         return http.build();
@@ -93,7 +96,7 @@ public class SecurityConfig {
             customAuthenticationFilter.setAuthenticationSuccessHandler(new LoginSuccessHandler());
             customAuthenticationFilter.setAuthenticationFailureHandler(new LoginFailureHandler());
             builder.addFilter(customAuthenticationFilter)
-                    .addFilterBefore(new JwtFilter(tokenProvider, redisService), UsernamePasswordAuthenticationFilter.class);
+                    .addFilterBefore(new JwtFilter(tokenProvider, redisService), CustomAuthenticationFilter.class);
         }
     }
 

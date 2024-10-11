@@ -47,6 +47,27 @@ public class TokenProvider {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
+    public TokenDto generateTokenDtoOAuth(String email, String authorities) {
+
+        long now = (new Date()).getTime();
+
+        Date accessTokenExpiresIn = new Date(now + accessTokenExpirationMillis);
+
+        // Access Token 생성
+        String accessToken = Jwts.builder()
+                .setSubject(email)
+                .claim(AUTHORITIES_KEY, authorities)
+                .setExpiration(accessTokenExpiresIn)
+                .signWith(key, SignatureAlgorithm.HS512)
+                .compact();
+
+        return TokenDto.builder()
+                .grantType(BEARER_TYPE)
+                .accessToken(accessToken)
+                .accessTokenExpiresIn(accessTokenExpiresIn.getTime())
+                .build();
+    }
+
     // 토큰 생성 메소드
     public TokenDto generateToken(Authentication authentication) {
 

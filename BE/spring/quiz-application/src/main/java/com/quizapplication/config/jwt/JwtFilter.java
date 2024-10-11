@@ -30,7 +30,7 @@ public class JwtFilter extends OncePerRequestFilter {
             "/favicon.ico",
             "/api/v1/find-user", "/api/v1/find-pwd",
             "/actuator/health",
-            "/actuator/info");
+            "/actuator/info", "/oauth2");
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)

@@ -27,9 +27,9 @@ Content-Type: application/json
 }
 
 ### 유저 개인정보
-GET localhost:8888/api/v1/info
+GET localhost:8080/api/v1/info
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjMkBnbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9VU0VSIiwiZXhwIjoxNzI4NTYxMDMwfQ.memc261KnJ9HBcgZ2ltyx-emavWLf_-GdOxEc-vD4PGE1l5bVuscyqw5tx_bPCuzGVvKY8Nhs1BCXml-I1IHQQ
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJreXVuOTE1MUBnbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9VU0VSIiwiZXhwIjoxNzI4NjYzMTE3fQ.CXOu-RLHiBIMqDavuyX24uH-4b8nXUiHebXQ0IUXgzWDqceCgwI9kVOHUFCUOcn2oXbeepFJSUZ1Ih5eSl3zHw
 
 ### 유저 정보 수정
 PUT localhost:8080/api/v1/info
