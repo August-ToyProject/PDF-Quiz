@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { signupUser } from "../api/ApiUser";
+import { signupUser, emailAuth, emailAuthCheck } from "../api/ApiUser";
 import AgreementModal from "../Modal/agreementModal";
 import Header from "../components/Header";
 
 interface InputData {
   name: string;
   email: string;
+  emailCheck: string;
   nickname: string;
   id: string;
   password: string;
@@ -18,6 +19,7 @@ export default function SignUp() {
   const [inputData, setInputData] = useState<InputData>({
     name: "",
     email: "",
+    emailCheck: "",
     nickname: "",
     id: "",
     password: "",
@@ -29,6 +31,8 @@ export default function SignUp() {
   >({});
   const [showAgreementModal, SetShowAgreementModal] = useState(false);
   const [agreementChecked, setAgreementChecked] = useState(false);
+  const [emailSent, setEmailSent] = useState(false); 
+  const [emailCheck, setEmailCheck] = useState(false); 
   const navigate = useNavigate();
 
   // 입력 필드
@@ -40,8 +44,14 @@ export default function SignUp() {
     },
     {
       label: "이메일",
-      placeholder: "e-mail",
+      placeholder: "email",
       key: "email",
+      marginRight: "9.5rem",
+    },
+    {
+      label: "이메일 인증 확인",
+      placeholder: "emailCheck",
+      key: "emailCheck",
       marginRight: "9.5rem",
     },
     {
@@ -114,9 +124,72 @@ export default function SignUp() {
     return inputError;
   };
 
+  // 이메일 인증 요청
+  const handleEmailAuth = async () => {
+    const validationErrors = validate();
+  
+    // 유효성 검사에서 이메일에 오류가 있으면 인증 요청을 보내지 않음
+  if (validationErrors.email) {
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      email: validationErrors.email,
+    }));
+    return;
+  }
+    const requestData = {
+      email: inputData.email,
+    };
+    try {
+      await emailAuth(requestData); 
+      setEmailSent(true); 
+      alert("인증 코드가 이메일로 전송되었습니다.");
+    } catch (error) {
+      console.error("이메일 인증 오류:", error);
+      alert("이메일 인증에 실패했습니다. 다시 시도해주세요.");
+    }
+  };
+
+  // 이메일 인증 확인 요청
+  const handleEmailAuthCheck = async () => {
+    const requestData = {
+      email: inputData.email,
+      emailCheck: inputData.emailCheck,
+    };
+    // console.log(requestData.email, requestData.emailCheck);
+
+    if (!inputData.emailCheck) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        emailCheck: "인증 코드를 입력하세요.",
+      }));
+      return;
+    }
+
+    try {
+      const response = await emailAuthCheck(requestData);
+      console.log(response);
+      if (response.result === true) {
+        setEmailCheck(true);
+        alert("이메일 인증이 성공적으로 완료되었습니다.");
+      } else {
+        setEmailCheck(false);
+        alert("인증 번호가 올바르지 않습니다. 다시 확인해주세요.");
+      }
+    }catch (error) {
+      console.error("이메일 인증 확인 오류:", error);
+      alert("이메일 인증에 실패했습니다. 인증 번호를 다시 확인해주세요.");
+    }
+  };
+
   // 데이터 통신
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!emailCheck) {
+      alert("이메일 인증이 완료되지 않았습니다. 인증을 완료해주세요.");
+      return;
+    }
+
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
@@ -126,6 +199,7 @@ export default function SignUp() {
     const requestData = {
       userId: inputData.id,
       email: inputData.email,
+      emailCheck: inputData.emailCheck,
       username: inputData.name,
       nickname: inputData.nickname,
       password: inputData.password,
@@ -142,11 +216,6 @@ export default function SignUp() {
     }
   };
 
-  // //로그인 버튼 누르면 회원가입 페이지로 이동
-  // const navigateToLogin = () => {
-  //   navigate("/login");
-  // };
-
   return (
     <div className="w-full flex flex-col justify-center items-center">
       <Header/>
@@ -155,10 +224,13 @@ export default function SignUp() {
       </div>
       <form
         onSubmit={handleSubmit}
-        className="flex flex-col gap-2 w-full max-w-2xl lg:grid lg:grid-cols-2 lg:gap-5 mt-10"
+        className="flex flex-col gap-2 w-full max-w-2xl mt-10 md:max-w-xl lg:max-w-sm"
       >
         {fields.map((field, index) => (
           <div key={index} className="flex flex-col items-start mx-[15vw] lg:mx-[0vw]">
+             <label htmlFor={field.key} className="text-sm text-gray-400 font-bold mb-1 ml-2">
+              {field.label}
+            </label>
             <div className="flex items-center w-full border border-gray-300 rounded-full">
               <input
                 type={
@@ -167,7 +239,6 @@ export default function SignUp() {
                     : "text"
                 }
                 name={field.key}
-                placeholder={field.label}
                 value={inputData[field.key as keyof InputData] || ""}
                 onChange={handleChange}
                 className="flex-grow p-2 rounded-full"
@@ -176,15 +247,34 @@ export default function SignUp() {
               {field.key === "email" && (
                 <button
                   type="button"
-                  className="text-sm text-blue-600 bg-gray-100 font-bold border-1 border-blue-600 px-4 py-1 mr-2 rounded-full"
-                  onClick={() => {
-                    // 이메일 인증 로직 추가
-                    console.log("인증 버튼 클릭됨");
-                  }}
+                  className={`text-sm font-bold border-2 border-blue-600 px-4 md:py-1 md:mr-2 rounded-full ${emailSent ? "bg-blue-600 text-white" : "text-blue-600 bg-gray-100"}`}
+                  onClick={handleEmailAuth}
                 >
-                  인증
+                  {emailSent ? "재전송" : "인증"}
                 </button>
               )}
+              {/* 이메일 인증 필드일 때 버튼 렌더링 */}
+              {field.key === "emailCheck" && (
+                <button
+                  type="button"
+                  className={`text-sm font-bold border-2 border-blue-600 px-4 md:py-1 md:mr-2 rounded-full ${emailCheck ? "bg-blue-600 text-white" : "text-blue-600 bg-gray-100"}`}
+                  onClick={handleEmailAuthCheck}
+                >
+                  {emailCheck ? "완료" : "확인"}
+                </button>
+              )}
+              {/* 아이디 필드일 때 버튼 렌더링 */}
+              {/* {field.key === "id" && (
+                <button
+                  type="button"
+                  className="text-sm text-blue-600 bg-gray-100 font-bold border-2 border-blue-600 px-4 md:py-1 md:mr-2 rounded-full"
+                  onClick={() => {
+                    console.log("아이디 중복 확인 버튼 클릭됨");
+                  }}
+                >
+                  완료
+                </button>
+              )} */}
             </div>
             {errors[field.key as keyof InputData] && (
               <div className="text-red-500 text-xs mt-1">
