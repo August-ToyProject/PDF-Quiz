@@ -28,13 +28,6 @@ const Header = () => {
         alt="Quizgen"
         className="w-24 lg:w-36 lg:h-14 lg:ml-5"
       />
-      <a
-        href="/oauth2/authorization/google"
-        className="btn btn-sm btn-success active"
-        role="button"
-      >
-        Google Login
-      </a>
       {/* lg:ml-0 lg:relative lg:left-auto lg:transform-none absolute left-1/2 transform -translate-x-1/2 lg:static" */}
 
       {/* 작은 화면일 경우 (반응형) */}
