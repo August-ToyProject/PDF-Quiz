@@ -50,7 +50,7 @@
                 long accessTokenExpirationMillis = tokenProvider.getAccessTokenExpirationMillis();
                 redisService.setValues(oAuth2User.getEmail(), tokenDto.getAccessToken(),
                         Duration.ofMillis(accessTokenExpirationMillis));
-                response.sendRedirect("http://localhost:5173/mypage");
+                response.sendRedirect("http://localhost:5173/mypage?token=" + tokenDto.getAccessToken());
 
             } catch (Exception e) {
                 throw e;

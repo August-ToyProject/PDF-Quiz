@@ -1,10 +1,10 @@
 ### 회원가입
-POST localhost:8888/api/v1/sign-up
+POST localhost:8080/api/v1/sign-up
 Content-Type: application/json
 
 {
   "userId": "hollys9152",
-  "email": "c2@gmail.com",
+  "email": "kyun9153@gmail.com",
   "username": "김명균",
   "nickname": "1ahodumaru12233",
   "password": "a12345678",
@@ -18,18 +18,18 @@ POST localhost:8888/api/v1/emails/verification-requests?email=cbw60881@gmail.com
 GET localhost:8888/api/v1/emails/verify-code?email=cbw60881@gmail.com&code=XrbQuKDrYUNsYsOlKpxosGXt
 
 ### 로그인
-POST localhost:8888/api/v1/login
+POST 223.130.130.88/api/v1/login
 Content-Type: application/json
 
 {
-  "userId": "hollys9152",
-  "password": "a12345678"
+  "userId": "user84363",
+  "password": "12345678"
 }
 
 ### 유저 개인정보
 GET localhost:8080/api/v1/info
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJreXVuOTE1MUBnbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9VU0VSIiwiZXhwIjoxNzI4NjYzMTE3fQ.CXOu-RLHiBIMqDavuyX24uH-4b8nXUiHebXQ0IUXgzWDqceCgwI9kVOHUFCUOcn2oXbeepFJSUZ1Ih5eSl3zHw
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJreXVuOTE1MUBnbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9VU0VSIiwiZXhwIjoxNzI4ODg5NjAzfQ.UCGdmgxgufDoBjcRkFG9F8D2hLI-6CTfQyPRDKr9RwU0MYf3kvJBXXHrxTi6ooXrnQ2oihGVGuCfFLkIUK75Aw
 
 ### 유저 정보 수정
 PUT localhost:8080/api/v1/info
@@ -63,7 +63,7 @@ Content-Type: application/json
 ### 전체 폴더정보
 GET localhost:8080/api/v1/folders
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJreXVuOTE1MUBnbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9VU0VSIiwiZXhwIjoxNzI1MjU0NzM1fQ.EwGxT6Pi5nT9mAO9FIY3lqoo3irVFekH9u8nahNbAzk4K6HetAQGnABj3N7fkgHiGAg15CoX-QEajiIb-BoqAA
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJreXVuOTE1MUBnbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9VU0VSIiwiZXhwIjoxNzI4ODg5NjAzfQ.UCGdmgxgufDoBjcRkFG9F8D2hLI-6CTfQyPRDKr9RwU0MYf3kvJBXXHrxTi6ooXrnQ2oihGVGuCfFLkIUK75Aw
 
 ### 폴더 정보
 GET localhost:8080/api/v1/folder-info?folderId=2
