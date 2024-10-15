@@ -216,7 +216,7 @@ export default function MyPage() {
         />
         {/* 작은 화면일 경우 (반응형) */}
         <div className="flex lg:hidden my-4 items-center space-x-4 ml-auto p-2 pl-4 border-2 rounded-full">
-          <div className="font-body font-bold">
+          <div className="font-body font-bold" style={{ fontSize: "x-small" }}>
             {user?.nickname || "닉네임"} 님
           </div>
           <button
@@ -251,7 +251,7 @@ export default function MyPage() {
           <div className="mt-2 p-4 border border-gray-300 rounded-lg h-24">
             <div
               className="font-body font-bold text-center"
-              style={{ fontSize: "x-small" }}
+              style={{ fontSize: "small" }}
             >
               {user?.nickname || "닉네임"}
             </div>
