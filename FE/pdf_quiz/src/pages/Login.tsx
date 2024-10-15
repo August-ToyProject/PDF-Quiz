@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ServiceName from "../assets/Logo.svg";
 import ServiceLogo from "../assets/ServiceLogo.png";
-// import GoogleLogo from "../assets/Google.png";
+import GoogleLogo from "../assets/Google.png";
 import Header from "../components/Header";
 
 const apiUrl = import.meta.env.VITE_NGROK_URL;
@@ -78,13 +78,9 @@ const Login = () => {
     }
   };
 
-  // const GoogleLogin = () => {
-  //   window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?
-  // 	client_id=${clientId}
-  // 	&redirect_uri=${redirectUri}
-  // 	&response_type=code
-  // 	&scope=email profile`;
-  // };
+  const GoogleLogin = () => {
+    window.location.href = `${apiUrl}/oauth2/authorization/google`;
+  };
 
   //아이디, 비밀번호 입력값 업데이트
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -181,7 +177,7 @@ const Login = () => {
               </button>
             </div>
           </form>
-          {/* <div className="w-full flex flex-col items-center justify-center mt-5">
+          <div className="w-full flex flex-col items-center justify-center mt-5">
             <button
               className="w-60 flex flex-row justify-center space-x-2"
               onClick={GoogleLogin}
@@ -189,7 +185,7 @@ const Login = () => {
               <img src={GoogleLogo} alt="google" className="w-6 h-6" />
               <div>Sign in with Google</div>
             </button>
-          </div> */}
+          </div>
         </div>
       </div>
     </div>
