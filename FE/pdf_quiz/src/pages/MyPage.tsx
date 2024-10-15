@@ -516,7 +516,7 @@ export default function MyPage() {
                                                 <div className="hidden lg:block absolute top-0 right-0 mt-1 mr-1">
                                                     <img src={star_gray} alt="즐겨찾기x" className="w-[1.2vw] h-[1.2vw]" />
                                                 </div>
-                                                <div className="text-left font-bold text-sm lg:text-[1vw] bg-transparent lg:ml-[1.2vw] lg:mt-[1vh] text-ellipsis w-[140px] lg:w-[100px] xl:w-[170px]">
+                                                <div className="text-left font-bold text-sm lg:text-[1vw] bg-transparent lg:ml-[1.2vw] lg:mt-[1vh] text-ellipsis w-[140px] lg:w-[100px] xl:w-[150px]">
                                                     {item.name}
                                                 </div>
                                             </button>
@@ -531,7 +531,7 @@ export default function MyPage() {
                                                     <img src={star_gray} alt="즐겨찾기x" className="w-[1.2vw] h-[1.2vw]" />
                                                 </div>
                                                 <div className="flex flex-row items-center justify-between w-full lg:items-start lg:flex-col lg:mt-[1vh]">
-                                                    <div className="text-left font-bold text-sm lg:text-[1vw] bg-transparent lg:ml-[1.2vw] text-ellipsis w-[140px] lg:w-[100px] xl:w-[170px]]">
+                                                    <div className="text-left font-bold text-sm lg:text-[1vw] bg-transparent lg:ml-[1.2vw] text-ellipsis w-[140px] lg:w-[100px] xl:w-[150px]]">
                                                         {item.title}
                                                     </div>
                                                     <div className=" flex flex-row justify-end text-gray-500 text-sm lg:mt-7 lg:text-[1vw] lg:justify-between lg:mx-[1.2vw]">
