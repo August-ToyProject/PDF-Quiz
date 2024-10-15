@@ -497,7 +497,7 @@ export default function MyPage() {
                                         </button>
                                     </div>
                                 </div>
-                                <div className="flex flex-wrap gap-4 mt-[2vh] overflow-y-auto h-[30vh] lg:mx-7 lg:justify-start lg:px-16">
+                                <div className="flex flex-wrap gap-4 mt-[2vh] overflow-y-auto h-[30vh] lg:mx-7 lg:justify-start lg:px-10">
                                 {[...folders, ...filteredQuizzes]
                                     .filter((item) =>
                                     "name" in item
