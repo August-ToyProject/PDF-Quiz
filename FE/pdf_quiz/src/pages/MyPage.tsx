@@ -497,7 +497,7 @@ export default function MyPage() {
                                         </button>
                                     </div>
                                 </div>
-                                <div className="flex flex-wrap gap-4 mt-[2vh] overflow-y-auto h-[30vh] lg:mx-7 lg:justify-start">
+                                <div className="flex flex-wrap gap-4 mt-[2vh] overflow-y-auto h-[30vh] lg:mx-7 lg:justify-start lg:px-16">
                                 {[...folders, ...filteredQuizzes]
                                     .filter((item) =>
                                     "name" in item
@@ -510,13 +510,13 @@ export default function MyPage() {
                                         !selectedFolder && (
                                             <button
                                                 key={item.id}
-                                                className="relative flex items-center border w-full mx-[6vw] h-[5vh] border-gray-300 rounded-lg bg-blue-100 lg:items-start lg:flex-col lg:p-2 lg:mx-[0vw] lg:w-[14vw] lg:h-20"
+                                                className="relative flex items-center border w-full mx-[6vw] h-[5vh] border-gray-300 rounded-lg bg-blue-100 lg:items-start lg:flex-col lg:p-2 lg:mx-[0vw] lg:w-[14vw] lg:h-24"
                                                 onClick={() => handleFolderClick(item.id)}
                                             >
                                                 <div className="hidden lg:block absolute top-0 right-0 mt-1 mr-1">
                                                     <img src={star_gray} alt="즐겨찾기x" className="w-[1.2vw] h-[1.2vw]" />
                                                 </div>
-                                                <div className="text-left font-bold text-sm lg:text-[1vw] bg-transparent lg:ml-[1.2vw] lg:mt-[1vh]">
+                                                <div className="text-left font-bold text-sm lg:text-[1vw] bg-transparent lg:ml-[1.2vw] lg:mt-[1vh] text-ellipsis w-[140px] lg:w-[100px] xl:w-[170px]">
                                                     {item.name}
                                                 </div>
                                             </button>
@@ -524,19 +524,19 @@ export default function MyPage() {
                                             // 퀴즈 버튼
                                             <button
                                                 key={item.id}
-                                                className="relative flex flex-row items-center border border-gray-300 rounded-lg bg-white mx-[6vw] w-full h-[5vh] lg:flex-col lg:mx-[0vw] lg:p-1 lg:w-[16vw] lg:h-20"
+                                                className="relative flex flex-row items-center border border-gray-300 rounded-lg bg-white mx-[6vw] w-full h-[5vh] lg:items-start lg:flex-col lg:mx-[0vw] lg:p-1 lg:w-[14vw] lg:h-24"
                                                 onClick={() => navigate("/listAnswer", { state: { examId: item.id } })}
                                             >
                                                 <div className="hidden lg:block absolute top-0 right-0 mt-1 mr-1">
                                                     <img src={star_gray} alt="즐겨찾기x" className="w-[1.2vw] h-[1.2vw]" />
                                                 </div>
                                                 <div className="flex flex-row items-center justify-between w-full lg:items-start lg:flex-col lg:mt-[1vh]">
-                                                    <div className="text-left font-bold text-sm lg:text-[1vw] bg-transparent lg:mb-[1vh] lg:ml-[1.2vw]">
+                                                    <div className="text-left font-bold text-sm lg:text-[1vw] bg-transparent lg:ml-[1.2vw] text-ellipsis w-[140px] lg:w-[100px] xl:w-[170px]]">
                                                         {item.title}
                                                     </div>
-                                                    <div className=" flex flex-row justify-end text-gray-500 text-sm xl:mt-2 lg:text-[1vw] lg:justify-between lg:mx-[1.2vw]">
+                                                    <div className=" flex flex-row justify-end text-gray-500 text-sm lg:mt-7 lg:text-[1vw] lg:justify-between lg:mx-[1.2vw]">
                                                         <div className="lg:mr-[1vw]">{formatDate(item.examDate)}</div>
-                                                        <div className="ml-[1vw] hidden lg:block">19/25</div>
+                                                        <div className="xl:ml-[1vw] hidden lg:block">19/25</div>
                                                     </div>
                                                 </div>
                                             </button>

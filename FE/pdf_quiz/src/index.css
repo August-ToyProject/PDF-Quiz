@@ -121,3 +121,9 @@ button:focus-visible {
     color: #000000;
   }
 }
+
+.text-ellipsis {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
