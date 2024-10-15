@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Folder, ListQuiz } from "../pages/TempPage";
+import { Folder, ListQuiz } from "../pages/MyPage";
 import { deleteFolder, updateFolderName } from "../api/ApiFolder";
 import { deleteQuiz, moveQuizToFolder } from "../api/ApiQuiz";
 // import start_yellow from "../assets/Star_yellow.png"
