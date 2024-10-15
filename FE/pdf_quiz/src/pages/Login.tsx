@@ -79,7 +79,7 @@ const Login = () => {
   };
 
   const GoogleLogin = () => {
-    window.location.href = `${apiUrl}/oauth2/authorization/google`;
+    window.location.href = `https://quizgen.site/oauth2/authorization/google`;
   };
 
   //아이디, 비밀번호 입력값 업데이트
