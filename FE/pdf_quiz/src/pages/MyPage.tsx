@@ -417,7 +417,7 @@ export default function MyPage() {
                             </button>
                         </div>
                     </div>
-                    <img src={center_image} alt="중앙이미지" className="lg:w-[30vw] lg:h-[30vh]  xl:w-[30vw] xl:h-[45vh] hidden lg:block" />
+                    <img src={center_image} alt="중앙이미지" className="lg:w-[30vw] lg:h-[30vh] xl:w-[30vw] xl:h-[45vh] hidden lg:block" />
                   </div>
                         <div className="flex flex-col lg:h-[45vh] lg:mt-[5vh] mt-[2vh] w-full">
                             <div className="flex justify-between items-center border-b-2 border-gray-300 border-dashed">
@@ -510,7 +510,7 @@ export default function MyPage() {
                                         !selectedFolder && (
                                             <button
                                                 key={item.id}
-                                                className="relative flex items-center border w-full mx-[6vw] h-[5vh] border-gray-300 rounded-lg bg-blue-100 lg:items-start lg:flex-col lg:p-2 lg:mx-[0vw] lg:w-[16vw] lg:h-20"
+                                                className="relative flex items-center border w-full mx-[6vw] h-[5vh] border-gray-300 rounded-lg bg-blue-100 lg:items-start lg:flex-col lg:p-2 lg:mx-[0vw] lg:w-[14vw] lg:h-20"
                                                 onClick={() => handleFolderClick(item.id)}
                                             >
                                                 <div className="hidden lg:block absolute top-0 right-0 mt-1 mr-1">
