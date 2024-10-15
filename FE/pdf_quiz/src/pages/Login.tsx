@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import ServiceName from "../assets/Logo.svg";
 import ServiceLogo from "../assets/ServiceLogo.png";
 import GoogleLogo from "../assets/Google.png";
-import NaverLogo from "../assets/Naver.png";
+// import NaverLogo from "../assets/Naver.png";
 import Header from "../components/Header";
 
 const apiUrl = import.meta.env.VITE_NGROK_URL;
@@ -81,9 +81,9 @@ const Login = () => {
     window.location.href = `https://quizgen.site/oauth2/authorization/google`;
   };
 
-  const NaverLogin = () => {
-    window.location.href = `https://quizgen.site/oauth2/authorization/naver`;
-  };
+  // const NaverLogin = () => {
+  //   window.location.href = `https://quizgen.site/oauth2/authorization/naver`;
+  // };
 
   //아이디, 비밀번호 입력값 업데이트
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -189,7 +189,7 @@ const Login = () => {
               <div>Sign in with Google</div>
             </button>
           </div>
-          <div className="w-full flex flex-col items-center justify-center mt-5">
+          {/* <div className="w-full flex flex-col items-center justify-center mt-5">
             <button
               className="w-60 h-12 flex flex-row items-center justify-center space-x-2 bg-naverGreen"
               onClick={NaverLogin}
@@ -199,7 +199,7 @@ const Login = () => {
                 네이버로 로그인하기
               </div>
             </button>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
