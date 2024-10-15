@@ -12,7 +12,6 @@ import ListAnswer from "./pages/ListAnswer.tsx";
 import TempPage from "./pages/TempPage.tsx";
 import MainPage from "./pages/MainPage.tsx";
 import { LoginProvider } from "./context/LoginContext.tsx";
-import GoogleRedirect from "./pages/GoogleRedirect.tsx";
 
 function App() {
   return (
@@ -22,11 +21,6 @@ function App() {
           <Routes>
             <Route path="/" element={<MainPage />} />
             <Route path="/login" element={<Login />} />
-            <Route
-              path="/login/oauth2/code/google"
-              element={<GoogleRedirect />}
-            />
-
             <Route path="/signup" element={<SignUp />} />
             <Route path="/mypage" element={<MyPage />} />
             <Route path="/quiz" element={<Quiz />} />

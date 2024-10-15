@@ -57,6 +57,18 @@ export default function MyPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const token = new URL(window.location.href).searchParams.get("token");
+    if (token) {
+      console.log("accesstoken", token);
+      localStorage.setItem("accesstoken", token);
+    } else {
+      console.log("No token found");
+      alert("로그인에 실패했습니다. 다시 시도해주세요.");
+      navigate("/login");
+    }
+  }, []);
+
+  useEffect(() => {
     const fetchData = async () => {
       try {
         // 유저 닉네임 가져오기
@@ -362,10 +374,16 @@ export default function MyPage() {
         {/* 캘린더 */}
         <div className="relative max-w-xl flex-grow justify-center w-full overflow-hidden mx-auto lg:pr-4 lg:mr-6">
           <div className="flex justify-between">
-            <div className="text-blue-600 text-lg mb-2 font-black xs:ml-24">캘린더</div>
+            <div className="text-blue-600 text-lg mb-2 font-black xs:ml-24">
+              캘린더
+            </div>
             <div className="flex justfy-between">
-              <div className="text-blue-600 text-sm mt-2 font-black xs:ml-24 mr-4">현재: 0</div>
-              <div className="text-blue-600 text-sm mt-2 font-black xs:ml-24 mr-4">최대: 0</div>
+              <div className="text-blue-600 text-sm mt-2 font-black xs:ml-24 mr-4">
+                현재: 0
+              </div>
+              <div className="text-blue-600 text-sm mt-2 font-black xs:ml-24 mr-4">
+                최대: 0
+              </div>
             </div>
           </div>
           <div
@@ -373,10 +391,11 @@ export default function MyPage() {
             style={{ height: "12rem" }}
           >
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="absolute inset-0 w-full h-full">
-              </div>
+              <div className="absolute inset-0 w-full h-full"></div>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <div className="text-red-600 text-2xl font-bold mt-2 z-40">준비중</div>
+                <div className="text-red-600 text-2xl font-bold mt-2 z-40">
+                  준비중
+                </div>
               </div>
             </div>
             <div className="flex justify-between mb-2">
@@ -400,9 +419,10 @@ export default function MyPage() {
             </div>
           </div>
           {/* 광고 배너 */}
-          <div className="text-blue-600 text-lg font-black xs:ml-24">컨텐츠 준비중</div>
-          <div className="mt-2 p-4 border border-gray-300 rounded-lg bg-gray-50 overflow-y-auto h-80 flex-grow">
+          <div className="text-blue-600 text-lg font-black xs:ml-24">
+            컨텐츠 준비중
           </div>
+          <div className="mt-2 p-4 border border-gray-300 rounded-lg bg-gray-50 overflow-y-auto h-80 flex-grow"></div>
         </div>
       </div>
       <Upload showModal={showModal} closeModal={closeModal} />
