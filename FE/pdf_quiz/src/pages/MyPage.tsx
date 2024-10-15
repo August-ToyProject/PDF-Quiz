@@ -249,10 +249,13 @@ export default function MyPage() {
             마이프로필
           </div>
           <div className="mt-2 p-4 border border-gray-300 rounded-lg h-24">
-            <div className="font-body font-bold text-center">
+            <div
+              className="font-body font-bold text-center"
+              style={{ fontSize: "x-small" }}
+            >
               {user?.nickname || "닉네임"}
             </div>
-            <div className="flex justify-center space-x-4 mt-4">
+            <div className="flex justify-center space-x-4 mt-2">
               <button
                 className="font-body px-2 py-1 bg-gray-50 border border-gray-300 text-xs text-gray-500 rounded-lg"
                 onClick={handleInfo}
