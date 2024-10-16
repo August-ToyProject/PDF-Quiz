@@ -2,12 +2,11 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ServiceName from "../assets/Logo.svg";
 import ServiceLogo from "../assets/ServiceLogo.png";
-// import GoogleLogo from "../assets/Google.png";
+import GoogleLogo from "../assets/Google.png";
+// import NaverLogo from "../assets/Naver.png";
 import Header from "../components/Header";
 
 const apiUrl = import.meta.env.VITE_NGROK_URL;
-// const clientId = import.meta.env.VITE_GOOGLE_AUTH_CLIENT_ID;
-// const redirectUri = import.meta.env.VITE_GOOGLE_AUTH_REDIRECT_URI;
 
 interface loginData {
   id: string;
@@ -78,12 +77,12 @@ const Login = () => {
     }
   };
 
-  // const GoogleLogin = () => {
-  //   window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?
-  // 	client_id=${clientId}
-  // 	&redirect_uri=${redirectUri}
-  // 	&response_type=code
-  // 	&scope=email profile`;
+  const GoogleLogin = () => {
+    window.location.href = `https://quizgen.site/oauth2/authorization/google`;
+  };
+
+  // const NaverLogin = () => {
+  //   window.location.href = `https://quizgen.site/oauth2/authorization/naver`;
   // };
 
   //아이디, 비밀번호 입력값 업데이트
@@ -181,13 +180,24 @@ const Login = () => {
               </button>
             </div>
           </form>
-          {/* <div className="w-full flex flex-col items-center justify-center mt-5">
+          <div className="w-full flex flex-col items-center justify-center mt-5">
             <button
-              className="w-60 flex flex-row justify-center space-x-2"
+              className="w-60 h-12 flex flex-row justify-center space-x-2"
               onClick={GoogleLogin}
             >
               <img src={GoogleLogo} alt="google" className="w-6 h-6" />
               <div>Sign in with Google</div>
+            </button>
+          </div>
+          {/* <div className="w-full flex flex-col items-center justify-center mt-5">
+            <button
+              className="w-60 h-12 flex flex-row items-center justify-center space-x-2 bg-naverGreen"
+              onClick={NaverLogin}
+            >
+              <img src={NaverLogo} alt="naver" className="w-10 h-10" />
+              <div className="font-body font-bold text-white">
+                네이버로 로그인하기
+              </div>
             </button>
           </div> */}
         </div>

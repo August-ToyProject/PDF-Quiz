@@ -10,22 +10,23 @@ export default {
         laundry: ['LaundryGothicOTF', 'sans-serif'],
       },
       margin: {
-        '30': '7.5rem',
-        '19': '4.75rem',
+        30: "7.5rem",
+        19: "4.75rem",
       },
       colors: {
-        customBlue: '#E0EAFF',
-        customWhite: '#F8FAFF',
+        customBlue: "#E0EAFF",
+        customWhite: "#F8FAFF",
+        naverGreen: "#03C75A",
       },
     },
     keyframes: {
-      'color-change': {
-          '0%, 100%': { backgroundColor: '#2563EB' }, // 파란색 (blue-700)
-          '50%': { backgroundColor: '#60A5FA' }, // 더 밝은 파란색 (blue-500)
+      "color-change": {
+        "0%, 100%": { backgroundColor: "#2563EB" }, // 파란색 (blue-700)
+        "50%": { backgroundColor: "#60A5FA" }, // 더 밝은 파란색 (blue-500)
       },
     },
     animation: {
-      'color-change': 'color-change 1s infinite',
+      "color-change": "color-change 1s infinite",
     },
   },
   plugins: [],
