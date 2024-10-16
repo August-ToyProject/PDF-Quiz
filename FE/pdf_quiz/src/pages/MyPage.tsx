@@ -427,7 +427,7 @@ export default function MyPage() {
                 </div>
                 <div className="flex justify-center mt-[2vh] w-full">
                   <button
-                    className="flex justify-center font-baloo bg-blue-600 font-black text-white rounded-full w-full shadow-md shadow-gray-400 text-xl lg:mt-[2vh] lg:text-3xl lg:w-72 lg:h-16"
+                    className="flex justify-center font-title bg-blue-600 font-black text-white rounded-full w-full shadow-md shadow-gray-400 text-xl lg:mt-[2vh] lg:text-3xl lg:w-72 lg:h-18"
                     onClick={openModal}
                   >
                     PDF Upload
@@ -442,7 +442,7 @@ export default function MyPage() {
             </div>
             <div className="flex flex-col lg:h-[45vh] lg:mt-[5vh] mt-[2vh] w-full">
               <div className="flex justify-between items-center border-b-2 border-gray-300 border-dashed">
-                <div className="text-gray-500 font-baloo lg:text-[2vw] text-[5vw] font-bold">
+                <div className="text-gray-500 font-title lg:text-[2vw] text-[5vw] font-bold">
                   Quiz List
                 </div>
                 <button
@@ -533,7 +533,7 @@ export default function MyPage() {
                     </button>
                   </div>
                 </div>
-                <div className="flex flex-wrap gap-4 mt-[2vh] overflow-y-auto h-[30vh] lg:mx-7 lg:justify-start lg:px-10">
+                <div className="flex flex-wrap gap-4 mt-[2vh] overflow-y-auto max-h-[30vh] lg:h-[30vh] lg:mx-7 lg:justify-start lg:px-10">
                   {[...folders, ...filteredQuizzes]
                     .filter((item) =>
                       "name" in item
@@ -639,7 +639,7 @@ export default function MyPage() {
               )}
             </div>
             <div className="flex flex-col my-[5vh] w-full lg:h-[30vh] lg:my-[5vh]">
-              <div className="text-gray-500 text-[5vw] font-baloo font-bold border-b-2 border-gray-300 border-dashed lg:text-[2vw]">
+              <div className="text-gray-500 text-[5vw] font-title font-bold border-b-2 border-gray-300 border-dashed lg:text-[2vw]">
                 Calender
               </div>
               {/* 캘린더 */}
