@@ -3,9 +3,9 @@ import { useNavigate } from "react-router-dom";
 
 function GoogleRedirect() {
   const navigate = useNavigate();
-  const token = new URL(window.location.href).searchParams.get("token");
-
+  
   useEffect(() => {
+    const token = new URL(window.location.href).searchParams.get("token");
     if (token) {
       console.log("accesstoken", token);
       localStorage.setItem("accesstoken", token);
@@ -15,7 +15,7 @@ function GoogleRedirect() {
       alert("로그인에 실패했습니다. 다시 시도해주세요.");
       navigate("/login");
     }
-  }, [token, navigate]);
+  }, [ navigate]);
 
   return (
     <div>
