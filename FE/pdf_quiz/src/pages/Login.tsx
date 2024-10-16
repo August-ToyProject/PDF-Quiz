@@ -5,6 +5,7 @@ import ServiceLogo from "../assets/ServiceLogo.png";
 import GoogleLogo from "../assets/Google.png";
 import KakaoLoginBtn from "../assets/KakaoLoginBtn.png";
 import Header from "../components/Header";
+import { useLoginContext } from "../context/LoginContext";
 
 const apiUrl = import.meta.env.VITE_NGROK_URL;
 
@@ -16,6 +17,8 @@ interface loginData {
 const Login = () => {
   const [id, setId] = useState<loginData["id"]>("");
   const [password, setPassword] = useState<loginData["password"]>("");
+
+  const { setIsLoggedIn } = useLoginContext();
 
   // inputData 에 id, password 저장(객체로 전달)
   const [inputData, setInputData] = useState<loginData>({
@@ -67,6 +70,7 @@ const Login = () => {
         if (accessToken) {
           localStorage.setItem("accesstoken", accessToken);
           localStorage.setItem("loginType", "regular");
+          setIsLoggedIn(true);
           navigateToMyPage();
         } else {
           alert("아이디 또는 비밀번호가 틀렸습니다.");

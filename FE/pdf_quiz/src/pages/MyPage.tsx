@@ -17,6 +17,7 @@ import ActionModal from "../Modal/actionModal";
 import folderImage from "../assets/folder2.png";
 import profileImage from "../assets/profileImage.png";
 import Header from "../components/Header";
+import { useLoginContext } from "../context/LoginContext";
 
 export interface ListQuiz {
   id: number;
@@ -72,6 +73,8 @@ export default function MyPage() {
   const [newFolderName, setNewFolderName] = useState("");
   const [showFolderModal, setShowFolderModal] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
+
+  const { setIsLoggedIn } = useLoginContext();
 
   const openModal = () => setShowModal(true);
   const closeModal = () => setShowModal(false);
@@ -207,6 +210,7 @@ export default function MyPage() {
     try {
       await logoutUser();
       localStorage.removeItem("accesstoken");
+      setIsLoggedIn(false);
       console.log("로그아웃이 성공적으로 완료되었습니다.");
       navigate("/");
     } catch (error) {
