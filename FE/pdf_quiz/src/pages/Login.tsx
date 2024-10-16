@@ -2,9 +2,9 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ServiceName from "../assets/Logo.svg";
 import ServiceLogo from "../assets/ServiceLogo.png";
-import GoogleLogo from "../assets/Google.png";
-// import NaverLogo from "../assets/Naver.png";
 import Header from "../components/Header";
+import GoogleLogo from "../assets/GoogleLogo.png";
+import KakaoLoginBtn from "../assets/KakaoLoginBtn.png";
 
 const apiUrl = import.meta.env.VITE_NGROK_URL;
 
@@ -84,6 +84,10 @@ const Login = () => {
   // const NaverLogin = () => {
   //   window.location.href = `https://quizgen.site/oauth2/authorization/naver`;
   // };
+
+  const KakaoLogin = () => {
+    window.location.href = `https://quizgen.site/oauth2/authorization/kakao`;
+  };
 
   //아이디, 비밀번호 입력값 업데이트
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -180,13 +184,19 @@ const Login = () => {
               </button>
             </div>
           </form>
-          <div className="w-full flex flex-col items-center justify-center mt-5">
+          <div className="w-full flex flex-col items-center justify-center mt-5 space-y-3">
             <button
-              className="w-60 h-12 flex flex-row justify-center space-x-2"
+              className="w-48 h-11 flex flex-row items-center p-4 space-x-3"
               onClick={GoogleLogin}
             >
-              <img src={GoogleLogo} alt="google" className="w-6 h-6" />
-              <div>Sign in with Google</div>
+              <img src={GoogleLogo} alt="google" className="w-4 h-4 " />
+              <div className="text-sm roboto-regular">Sign In With Google</div>
+            </button>
+            <button
+              className="w-48 h-12 flex flex-row justify-center p-0"
+              onClick={KakaoLogin}
+            >
+              <img src={KakaoLoginBtn} alt="kakao" className="w-full h-full" />
             </button>
           </div>
           {/* <div className="w-full flex flex-col items-center justify-center mt-5">
