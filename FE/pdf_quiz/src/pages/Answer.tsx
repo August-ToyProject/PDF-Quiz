@@ -23,30 +23,30 @@ export default function Answer() {
   const handleExitClick = () => setIsExitModalOpen(true);
   const closeExitModal = () => setIsExitModalOpen(false);
 
-  const [selectedNotes, setSelectedNotes] = useState<boolean[]>([]); // 오답노트 선택 상태
-  const [selectAll, setSelectAll] = useState<boolean>(false); // 전체 선택 상태
+//   const [selectedNotes, setSelectedNotes] = useState<boolean[]>([]); // 오답노트 선택 상태
+//   const [selectAll, setSelectAll] = useState<boolean>(false); // 전체 선택 상태
 
-  const handleSelectAll = () => {
-    const newSelectAll = !selectAll;
-    setSelectAll(newSelectAll);
+//   const handleSelectAll = () => {
+//     const newSelectAll = !selectAll;
+//     setSelectAll(newSelectAll);
   
-    // 전체 선택/해제에 따라 모든 오답노트 체크박스 업데이트
-    setSelectedNotes(new Array(quizData.length).fill(newSelectAll));
-  };
+//     // 전체 선택/해제에 따라 모든 오답노트 체크박스 업데이트
+//     setSelectedNotes(new Array(quizData.length).fill(newSelectAll));
+//   };
   
 
-  const handleNoteSelect = (index: number) => {
-    const updatedSelectedNotes = [...selectedNotes];
-    updatedSelectedNotes[index] = !updatedSelectedNotes[index];
-    setSelectedNotes(updatedSelectedNotes);
+//   const handleNoteSelect = (index: number) => {
+//     const updatedSelectedNotes = [...selectedNotes];
+//     updatedSelectedNotes[index] = !updatedSelectedNotes[index];
+//     setSelectedNotes(updatedSelectedNotes);
   
-    // selectedNotes가 빈 배열이 아닌지 확인하고, 모든 체크박스가 선택된 경우에만 전체 선택을 true로 설정
-    if (updatedSelectedNotes.length === quizData.length && updatedSelectedNotes.every((selected) => selected)) {
-      setSelectAll(true);
-    } else {
-      setSelectAll(false);
-    }
-  };
+//     // selectedNotes가 빈 배열이 아닌지 확인하고, 모든 체크박스가 선택된 경우에만 전체 선택을 true로 설정
+//     if (updatedSelectedNotes.length === quizData.length && updatedSelectedNotes.every((selected) => selected)) {
+//       setSelectAll(true);
+//     } else {
+//       setSelectAll(false);
+//     }
+//   };
 
   const correctAnswersCount = quizData.reduce((cnt, item, index) => {
     const userAnswer = userAnswers[index]?.[0]; // 유저가 선택한 답안
@@ -79,7 +79,7 @@ export default function Answer() {
       <div className="flex justify-center my-5 text-gray-400 font-bold text-xl">
         {quizTitle}
       </div>
-      <div className="flex justify-center">
+      {/* <div className="flex justify-center">
         <div className="flex items-center justify-end mb-2 w-3/4">
           <div className="text-sm text-gray-400 mr-2">
             전체선택
@@ -91,7 +91,7 @@ export default function Answer() {
             onChange={handleSelectAll}
         />
         </div>
-      </div>
+      </div> */}
       <div className="flex justify-center h-full">
         <div className="w-3/4 flex flex-col">
           <div className="h-3/4 border-y-2 border-gray-300 overflow-y-auto">
@@ -135,7 +135,7 @@ export default function Answer() {
                     <div className="flex justify-start ml-2 mt-2 font-bold text-green-600">
                       정답 : {correctAnswerKey}
                     </div>
-                    <div className="flex items-center justify-end pr-4">
+                    {/* <div className="flex items-center justify-end pr-4">
                         <div className="text-sm text-gray-400 mr-2">
                           오답노트
                         </div>
@@ -145,7 +145,7 @@ export default function Answer() {
                           checked={selectedNotes[index]}
                           onChange={() => handleNoteSelect(index)}
                       />
-                    </div>
+                    </div> */}
                   </div>
                   <div className="border border-yellow-200 rounded py-1 sm:py-2 bg-yellow-50 mt-2 mb-4">
                     <div className="m-2 text-xs font-bold">

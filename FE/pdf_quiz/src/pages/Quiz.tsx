@@ -6,6 +6,7 @@ import SubmitCheck from "../Modal/Submit";
 import QuizData from "./QuizData";
 import { useQuizContext } from "../context/QuizContext";
 import UserAnswers from "../Hooks/userAnswers";
+import WaitingModal from "../Modal/waitingModal";
 
 const Quiz = () => {
   const [showModal, setShowModal] = useState(false); // 모달
@@ -25,6 +26,14 @@ const Quiz = () => {
   const { title, setElapsedTime } = useQuizContext();
 
   const [startTime] = useState(Date.now()); // 상태로 설정하지 않고 한 번만 설정되도록
+
+  const [showWaitingModal, setShowWaitingModal] = useState(true);
+  const closeWaitingModal = () => setShowWaitingModal(false); 
+  
+  // 설명 모달
+  useEffect(() => {
+    setShowWaitingModal(true); // 페이지 로드 시 모달 자동 표시 (이미 true로 설정했으므로 불필요)
+  }, []);
 
   useEffect(() => {
     // 매 초마다 경과 시간 계산
@@ -185,6 +194,7 @@ const Quiz = () => {
           </button>
         </div>
       </div>
+      <WaitingModal showModal={showWaitingModal} closeModal={closeWaitingModal} />
       <SubmitCheck
         showModal={showModal}
         closeModal={closeModal}

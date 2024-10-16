@@ -2,6 +2,9 @@ package com.quizapplication.config.security;
 
 import com.quizapplication.config.jwt.JwtFilter;
 import com.quizapplication.config.jwt.TokenProvider;
+//import com.quizapplication.config.oauth.handler.OAuth2LoginFailureHandler;
+//import com.quizapplication.config.oauth.handler.OAuth2LoginSuccessHandler;
+//import com.quizapplication.config.oauth.service.CustomOAuth2MemberService;
 import com.quizapplication.config.oauth.handler.OAuth2LoginFailureHandler;
 import com.quizapplication.config.oauth.handler.OAuth2LoginSuccessHandler;
 import com.quizapplication.config.oauth.service.CustomOAuth2MemberService;
@@ -23,6 +26,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -47,12 +51,16 @@ public class SecurityConfig {
                 .httpBasic((httpBasic) -> httpBasic.disable())
                 .headers((e) -> e.frameOptions((a) -> a.sameOrigin()))
                 .authorizeHttpRequests((requests) -> requests.anyRequest().permitAll())
+//                .authorizeHttpRequests(authRequests -> authRequests
+//                        .requestMatchers("/api/v1/login").permitAll() // 특정 경로는 인증 없이 접근 허용
+//                        .anyRequest().authenticated())
                 .cors(cors -> cors.configurationSource(getCorsConfiguration()))
                 .oauth2Login((oauth2) -> oauth2.userInfoEndpoint(
                                 userInfoEndpointConfig -> userInfoEndpointConfig.userService(oAuth2MemberService))
                         .successHandler(oAuth2LoginSuccessHandler)
                         .failureHandler(oAuth2LoginFailureHandler))
                 .with(new CustomFilterConfigurer(), Customizer.withDefaults());
+//        http.addFilterBefore(new JwtFilter(tokenProvider, redisService), CustomAuthenticationFilter.class);
         return http.build();
     }
 

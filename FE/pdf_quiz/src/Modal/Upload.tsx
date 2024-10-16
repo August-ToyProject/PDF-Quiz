@@ -505,6 +505,11 @@ export default function Upload({
           </div>
         )}
         <Snackbar message={snackbarMessage} visible={snackbarVisible} />
+        {/* {snackbarVisible && (
+          <div className="fixed bottom-4 right-4 bg-orange-600 text-white font-bold p-4 rounded-lg shadow-md">
+            {snackbarMessage}
+          </div>
+        )} */}
       </div>
     </div>
   );

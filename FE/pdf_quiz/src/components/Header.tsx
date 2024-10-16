@@ -1,10 +1,13 @@
 import BlueLogo from "../assets/Logo_blue.svg";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useLoginContext } from "../context/LoginContext";
+import { logoutUser } from "../api/ApiUser";
 
 const Header = () => {
   const [clicked, Setcliked] = useState(false);
   const navigate = useNavigate();
+  const { isLoggedIn, setIsLoggedIn } = useLoginContext();
 
   const NavigateToMain = () => {
     Setcliked(true);
@@ -21,8 +24,21 @@ const Header = () => {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      await logoutUser();
+      localStorage.removeItem("accesstoken");
+      setIsLoggedIn(false);
+      console.log("로그아웃이 성공적으로 완료되었습니다.");
+      navigate("/");
+    } catch (error) {
+      console.log("로그아웃 중 오류가 발생했습니다.", error);
+    }
+  };
+
   return (
-    <div className="w-full h-[60px] border-b-2 border-gray-300 relative flex items-center px-3">
+    // <div className="w-full h-[60px] border-b-2 border-gray-300 relative flex items-center px-3">
+    <div className="w-full h-[60px] relative flex items-center px-3">
       <img
         src={BlueLogo}
         alt="Quizgen"
@@ -54,12 +70,23 @@ const Header = () => {
             Help
           </button>
         </a>
-        <button
-          className="font-header text-m bg-blue-600 text-sm lg:text-lg text-white font-bold rounded-full px-5 py-2"
-          onClick={NavigateToLogin}
-        >
-          Login
-        </button>
+        {!isLoggedIn && (
+          <button
+            className="font-header text-m bg-blue-600 text-sm lg:text-lg text-white font-bold rounded-full px-5 py-2"
+            onClick={NavigateToLogin}
+          >
+            Login
+          </button>
+        )}
+
+        {isLoggedIn && (
+          <button
+            className="font-header text-m bg-blue-600 text-sm lg:text-lg text-white font-bold rounded-full px-5 py-2"
+            onClick={handleLogout}
+          >
+            Logout
+          </button>
+        )}
       </div>
     </div>
   );

@@ -2,24 +2,21 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ServiceName from "../assets/Logo.svg";
 import ServiceLogo from "../assets/ServiceLogo.png";
-import GoogleLogo from "../assets/Google.png";
-import KakaoLoginBtn from "../assets/KakaoLoginBtn.png";
+// import GoogleLogo from "../assets/Google.png";
 import Header from "../components/Header";
-import { useLoginContext } from "../context/LoginContext";
-
 
 const apiUrl = import.meta.env.VITE_NGROK_URL;
+// const clientId = import.meta.env.VITE_GOOGLE_AUTH_CLIENT_ID;
+// const redirectUri = import.meta.env.VITE_GOOGLE_AUTH_REDIRECT_URI;
 
 interface loginData {
   id: string;
   password: string;
 }
 
-const Login = () => {
+const NewLogin = () => {
   const [id, setId] = useState<loginData["id"]>("");
   const [password, setPassword] = useState<loginData["password"]>("");
-
-  const { setIsLoggedIn } = useLoginContext();
 
   // inputData 에 id, password 저장(객체로 전달)
   const [inputData, setInputData] = useState<loginData>({
@@ -43,67 +40,51 @@ const Login = () => {
   };
   //로그인 버튼 클릭시 실행
 
-  const handleRegularLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const validationErrors = validate();
     setErrors(validationErrors);
 
-    if (Object.keys(validationErrors).length === 0) {
-      const requestData = {
-        userId: inputData.id,
-        password: inputData.password,
-      };
+    const requestData = {
+      userId: inputData.id,
+      password: inputData.password,
+    };
 
-      try {
-        const response = await fetch(`${apiUrl}/login`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(requestData),
-        });
-        if (!response.ok) {
-          throw new Error("로그인에 실패했습니다");
-        }
-        const accessToken = response.headers
-          .get("Authorization")
-          ?.replace("Bearer ", "");
-        if (accessToken) {
-          localStorage.setItem("accesstoken", accessToken);
-          localStorage.setItem("loginType", "regular");
-          setIsLoggedIn(true);
-          navigateToMyPage();
-        } else {
-          alert("아이디 또는 비밀번호가 틀렸습니다.");
-          console.log(accessToken);
-        }
-      } catch (error) {
-        console.error("Error during login:", error);
-        alert("로그인 중 오류가 발생했습니다.");
+    try {
+      //URL 변경 예정
+      const response = await fetch(`${apiUrl}/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestData),
+      });
+      if (!response.ok) {
+        throw new Error("로그인에 실패했습니다");
       }
+      const accessToken = response.headers
+        .get("Authorization")
+        ?.replace("Bearer ", "");
+
+      //accesstoken 저장
+      if (accessToken) {
+        localStorage.setItem("accesstoken", accessToken);
+        navigateToMyPage();
+      } else {
+        alert("아이디 또는 비밀번호가 틀렸습니다.");
+      }
+    } catch (error) {
+      console.error("Error during login:, ", error);
     }
   };
 
-  const handleSocialLogin = (provider: string) => {
-    localStorage.setItem("loginType", "social");
-    window.location.href = `https://quizgen.site/oauth2/authorization/${provider}`;
-  };
-
   // const GoogleLogin = () => {
-  //   window.location.href = `https://quizgen.site/oauth2/authorization/google`;
+  //   window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?
+  // 	client_id=${clientId}
+  // 	&redirect_uri=${redirectUri}
+  // 	&response_type=code
+  // 	&scope=email profile`;
   // };
-
-  // // const NaverLogin = () => {
-  // //   window.location.href = `https://quizgen.site/oauth2/authorization/naver`;
-  // // };
-
-  // const KakaoLogin = () => {
-  //   window.location.href = `https://quizgen.site/oauth2/authorization/kakao`;
-  // };
-
-  const KakaoLogin = () => {
-    window.location.href = `https://quizgen.site/oauth2/authorization/kakao`;
-  };
 
   //아이디, 비밀번호 입력값 업데이트
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -137,8 +118,9 @@ const Login = () => {
       <Header />
 
       <div className="flex-grow grid grid-cols-2 sm:grid-cols-3">
-        <div className=" overflow-x-hidden hidden col-span-1 bg-blue-600 sm:flex flex-col gap-7 justify-center items-center">
+        <div className=" overflow-x-hidden hidden col-span-1 bg-blue-100 sm:flex flex-col gap-7 justify-center items-center rounded-xl ml-10 h-[88%]">
           <img src={ServiceName} alt="logo" className="w-60" />
+          <div className="text-4xl text-blue-600 font-black font-baloo">Welcome</div>
           <img src={ServiceLogo} alt="pdf" className="w-60" />
         </div>
         <div className="col-span-2 h-screen flex flex-col justify-center items-center bg-white">
@@ -147,10 +129,10 @@ const Login = () => {
           </div>
           <div className="w-full flex flex-col justify-center space-y-4 items-center"></div>
           <form
-            className="w-4/5 flex flex-col gap-4 max-w-2xl"
-            onSubmit={handleRegularLogin}
+            className="w-4/5 flex flex-col items-center gap-4 max-w-2xl"
+            onSubmit={handleLogin}
           >
-            <label className="w-full flex flex-row justify-center gap-2 items-center">
+            <label className="w-3/4 flex flex-row justify-center gap-2 items-center">
               <input
                 type="text"
                 className="w-full p-3 border border-gray-300 rounded-full"
@@ -165,7 +147,7 @@ const Login = () => {
               <p className="text-red-500 text-sm">아이디를 입력해주세요</p>
             )}
 
-            <label className="w-full flex flex-row justify-center gap-2 items-center">
+            <label className="w-3/4 flex flex-row justify-center gap-2 items-center">
               <input
                 type="password"
                 className="w-full p-3 border border-gray-300 rounded-full"
@@ -200,30 +182,13 @@ const Login = () => {
               </button>
             </div>
           </form>
-          <div className="w-full flex flex-col items-center justify-center mt-5 space-y-2">
-            <button
-              className="w-48 h-11 flex flex-row items-center p-4 space-x-3 "
-              onClick={() => handleSocialLogin("google")}
-            >
-              <img src={GoogleLogo} alt="google" className="w-4 h-4 " />
-              <div className="text-sm roboto-regular">Sign In With Google</div>
-            </button>
-            <button
-              className="w-48 h-12 flex flex-row justify-center p-0"
-              onClick={() => handleSocialLogin("kakao")}
-            >
-              <img src={KakaoLoginBtn} alt="kakao" className="w-full h-full" />
-            </button>
-          </div>
           {/* <div className="w-full flex flex-col items-center justify-center mt-5">
             <button
-              className="w-60 h-12 flex flex-row items-center justify-center space-x-2 bg-naverGreen"
-              onClick={NaverLogin}
+              className="w-60 flex flex-row justify-center space-x-2"
+              onClick={GoogleLogin}
             >
-              <img src={NaverLogo} alt="naver" className="w-10 h-10" />
-              <div className="font-body font-bold text-white">
-                네이버로 로그인하기
-              </div>
+              <img src={GoogleLogo} alt="google" className="w-6 h-6" />
+              <div>Sign in with Google</div>
             </button>
           </div> */}
         </div>
@@ -232,4 +197,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default NewLogin;
