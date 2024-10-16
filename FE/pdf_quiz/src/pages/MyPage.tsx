@@ -595,9 +595,9 @@ export default function MyPage() {
                               <div className="lg:mr-[1vw]">
                                 {formatDate(item.examDate)}
                               </div>
-                              <div className="xl:ml-[1vw] hidden lg:block">
+                              {/* <div className="xl:ml-[1vw] hidden lg:block">
                                 19/25
-                              </div>
+                              </div> */}
                             </div>
                           </div>
                         </button>
@@ -653,7 +653,8 @@ export default function MyPage() {
                     {selectedMonth !== null &&
                       createCalendarSquares(months[selectedMonth].days)}
                   </div>
-                  <div className="grid grid-cols-6 my-[4vh] bg-gray-100 rounded-lg p-2 lg:grid-cols-2 lg:my-[0vh] lg:p-0 lg:bg-white">
+                  {/* <div className="grid grid-cols-6 my-[4vh] bg-gray-100 rounded-lg p-2 lg:grid-cols-2 lg:my-[0vh] lg:p-0 lg:bg-white"> */}
+                  <div className="grid grid-cols-6 bg-gray-100 rounded-lg p-2 lg:grid-cols-2 lg:mr-[5vw] lg:p-0 lg:bg-white">
                     {months.map((month, index) => (
                       <button
                         key={index}
@@ -668,17 +669,17 @@ export default function MyPage() {
                       </button>
                     ))}
                   </div>
-                  <div className="flex flex-row justify-center lg:flex-col lg:justify-start lg:items-end lg:mr-[5vw]">
+                  {/* <div className="flex flex-row justify-center lg:flex-col lg:justify-start lg:items-end lg:mr-[5vw]">
                     <div className="text-blue-600 font-bold text-[4vw] mx-[3vw] lg:mx-[0vw] lg:text-[1vw] lg:text-gray-500">
                       TOTAL : 0
                     </div>
                     <div className="text-blue-600 font-bold text-[4vw] mx-[3vw] lg:mx-[0vw] lg:text-[1vw] lg:text-gray-500">
                       COUNT : 0
                     </div>
-                    {/* <div className="text-blue-600 font-bold text-[4vw] mx-[3vw] lg:mx-[0vw] lg:text-[1vw] lg:text-gray-500">
-                                            RANK : C
-                                        </div> */}
-                  </div>
+                    <div className="text-blue-600 font-bold text-[4vw] mx-[3vw] lg:mx-[0vw] lg:text-[1vw] lg:text-gray-500">
+                        RANK : C
+                    </div>
+                  </div> */}
                 </div>
               </div>
             </div>
