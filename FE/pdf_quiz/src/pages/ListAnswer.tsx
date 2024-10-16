@@ -22,8 +22,8 @@ export default function ListAnswer() {
     const [quizCount, setQuizCount] = useState<number>(0); // 퀴즈 개수
     const [setTime, setSetTime] = useState<number>(0); // 총 시간
     const [spentTime, setSpentTime] = useState<number>(0);
-    const [selectedNotes, setSelectedNotes] = useState<boolean[]>([]); // 오답노트 선택 상태
-    const [selectAll, setSelectAll] = useState<boolean>(false); // 전체 선택 상태
+    // const [selectedNotes, setSelectedNotes] = useState<boolean[]>([]); // 오답노트 선택 상태
+    // const [selectAll, setSelectAll] = useState<boolean>(false); // 전체 선택 상태
     const location = useLocation();
     const navigate = useNavigate();
     const { examId } = location.state as LocationState || {};
@@ -54,7 +54,7 @@ export default function ListAnswer() {
                     setSetTime(data.setTime);
                     setSpentTime(data.spentTime);
 
-                    setSelectedNotes(new Array(processedQuizResults.length).fill(false));
+                    // setSelectedNotes(new Array(processedQuizResults.length).fill(false));
 
                     if (userAnswers.length === 0) console.log("User answers are empty");
                     if (setTime === 0) console.log("SetTime is empty");
@@ -68,28 +68,28 @@ export default function ListAnswer() {
         }
     }, [examId]);
 
-    // 전체 선택 체크박스 클릭 핸들러
-    const handleSelectAll = () => {
-        if (quizData.length > 0) {  // quizData가 로드된 후에만 처리
-        const newSelectAll = !selectAll;
-        setSelectAll(newSelectAll);
-        setSelectedNotes(new Array(quizData.length).fill(newSelectAll)); // 모든 오답노트 체크박스 선택/해제
-    }
-    };
+    // // 전체 선택 체크박스 클릭 핸들러
+    // const handleSelectAll = () => {
+    //     if (quizData.length > 0) {  // quizData가 로드된 후에만 처리
+    //     const newSelectAll = !selectAll;
+    //     setSelectAll(newSelectAll);
+    //     setSelectedNotes(new Array(quizData.length).fill(newSelectAll)); // 모든 오답노트 체크박스 선택/해제
+    // }
+    // };
 
-    // 각 오답노트 체크박스 클릭 핸들러
-    const handleNoteSelect = (index: number) => {
-        const updatedSelectedNotes = [...selectedNotes];
-        updatedSelectedNotes[index] = !updatedSelectedNotes[index];
-        setSelectedNotes(updatedSelectedNotes);
+    // // 각 오답노트 체크박스 클릭 핸들러
+    // const handleNoteSelect = (index: number) => {
+    //     const updatedSelectedNotes = [...selectedNotes];
+    //     updatedSelectedNotes[index] = !updatedSelectedNotes[index];
+    //     setSelectedNotes(updatedSelectedNotes);
 
-        // 전체 선택 상태를 체크박스 상태에 맞춰 업데이트
-        if (updatedSelectedNotes.every((selected) => selected)) {
-            setSelectAll(true);
-        } else {
-            setSelectAll(false);
-        }
-    };
+    //     // 전체 선택 상태를 체크박스 상태에 맞춰 업데이트
+    //     if (updatedSelectedNotes.every((selected) => selected)) {
+    //         setSelectAll(true);
+    //     } else {
+    //         setSelectAll(false);
+    //     }
+    // };
 
     const handleExitClick = () => {navigate("/mypage");}
 
@@ -119,7 +119,7 @@ export default function ListAnswer() {
             <div className="flex justify-center my-5 text-gray-400 font-bold text-xl">
                 {quizTitle}
             </div>
-            <div className="flex justify-center">
+            {/* <div className="flex justify-center">
                 <div className="flex items-center justify-end mb-2 w-3/4">
                 <div className="text-sm text-gray-400 mr-2">
                     전체선택
@@ -131,7 +131,7 @@ export default function ListAnswer() {
                     onChange={handleSelectAll}
                 />
                 </div>
-            </div>
+            </div> */}
             <div className="flex justify-center h-full">
                 <div className="w-3/4 flex flex-col">
                     <div className="h-3/4 border-t-2 border-b-2 border-gray-300 overflow-y-auto">
@@ -184,7 +184,7 @@ export default function ListAnswer() {
                                         <div className="flex justify-start ml-2 mt-2 font-bold text-green-600">
                                             정답 : {correctAnswerKey}
                                         </div>
-                                        <div className="flex items-center justify-end pr-4">
+                                        {/* <div className="flex items-center justify-end pr-4">
                                             <div className="text-sm text-gray-400 mr-2">
                                                 오답노트
                                             </div>
@@ -194,7 +194,7 @@ export default function ListAnswer() {
                                                 checked={selectedNotes[index]}
                                                 onChange={() => handleNoteSelect(index)}
                                             />
-                                        </div>
+                                        </div> */}
                                     </div>
                                     <div className="border border-yellow-200 rounded py-1 sm:py-2 bg-yellow-50 mt-2 mb-4">
                                         <div className="m-2 text-xs font-bold">
