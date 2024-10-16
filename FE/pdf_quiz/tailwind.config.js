@@ -15,6 +15,7 @@ export default {
         customBlue: "#E0EAFF",
         customWhite: "#F8FAFF",
         naverGreen: "#03C75A",
+        kakaoYellow: "#FEE500",
       },
     },
     keyframes: {
