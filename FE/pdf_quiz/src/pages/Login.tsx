@@ -39,50 +39,61 @@ const Login = () => {
   };
   //로그인 버튼 클릭시 실행
 
-  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleRegularLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const validationErrors = validate();
     setErrors(validationErrors);
 
-    const requestData = {
-      userId: inputData.id,
-      password: inputData.password,
-    };
+    if (Object.keys(validationErrors).length === 0) {
+      const requestData = {
+        userId: inputData.id,
+        password: inputData.password,
+      };
 
-    try {
-      //URL 변경 예정
-      const response = await fetch(`${apiUrl}/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestData),
-      });
-      if (!response.ok) {
-        throw new Error("로그인에 실패했습니다");
+      try {
+        const response = await fetch(`${apiUrl}/login`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestData),
+        });
+        if (!response.ok) {
+          throw new Error("로그인에 실패했습니다");
+        }
+        const accessToken = response.headers
+          .get("Authorization")
+          ?.replace("Bearer ", "");
+        if (accessToken) {
+          localStorage.setItem("accesstoken", accessToken);
+          localStorage.setItem("loginType", "regular");
+          navigateToMyPage();
+        } else {
+          alert("아이디 또는 비밀번호가 틀렸습니다.");
+          console.log(accessToken);
+        }
+      } catch (error) {
+        console.error("Error during login:", error);
+        alert("로그인 중 오류가 발생했습니다.");
       }
-      const accessToken = response.headers
-        .get("Authorization")
-        ?.replace("Bearer ", "");
-
-      //accesstoken 저장
-      if (accessToken) {
-        localStorage.setItem("accesstoken", accessToken);
-        navigateToMyPage();
-      } else {
-        alert("아이디 또는 비밀번호가 틀렸습니다.");
-      }
-    } catch (error) {
-      console.error("Error during login:, ", error);
     }
   };
 
-  const GoogleLogin = () => {
-    window.location.href = `https://quizgen.site/oauth2/authorization/google`;
+  const handleSocialLogin = (provider: string) => {
+    localStorage.setItem("loginType", "social");
+    window.location.href = `https://quizgen.site/oauth2/authorization/${provider}`;
   };
 
-  // const NaverLogin = () => {
-  //   window.location.href = `https://quizgen.site/oauth2/authorization/naver`;
+  // const GoogleLogin = () => {
+  //   window.location.href = `https://quizgen.site/oauth2/authorization/google`;
+  // };
+
+  // // const NaverLogin = () => {
+  // //   window.location.href = `https://quizgen.site/oauth2/authorization/naver`;
+  // // };
+
+  // const KakaoLogin = () => {
+  //   window.location.href = `https://quizgen.site/oauth2/authorization/kakao`;
   // };
 
   //아이디, 비밀번호 입력값 업데이트
@@ -128,7 +139,7 @@ const Login = () => {
           <div className="w-full flex flex-col justify-center space-y-4 items-center"></div>
           <form
             className="w-4/5 flex flex-col gap-4 max-w-2xl"
-            onSubmit={handleLogin}
+            onSubmit={handleRegularLogin}
           >
             <label className="w-full flex flex-row justify-center gap-2 items-center">
               <input
@@ -182,11 +193,17 @@ const Login = () => {
           </form>
           <div className="w-full flex flex-col items-center justify-center mt-5">
             <button
-              className="w-60 h-12 flex flex-row justify-center space-x-2"
-              onClick={GoogleLogin}
+              className="w-48 h-11 flex flex-row items-center p-4 space-x-3"
+              onClick={() => handleSocialLogin("google")}
             >
-              <img src={GoogleLogo} alt="google" className="w-6 h-6" />
-              <div>Sign in with Google</div>
+              <img src={GoogleLogo} alt="google" className="w-4 h-4 " />
+              <div className="text-sm roboto-regular">Sign In With Google</div>
+            </button>
+            <button
+              className="w-48 h-12 flex flex-row justify-center p-0"
+              onClick={() => handleSocialLogin("kakao")}
+            >
+              <img src={KakaoLoginBtn} alt="kakao" className="w-full h-full" />
             </button>
           </div>
           {/* <div className="w-full flex flex-col items-center justify-center mt-5">
