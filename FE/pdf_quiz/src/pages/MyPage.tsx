@@ -7,6 +7,7 @@ import center_image from "../assets/center_image.png";
 // import star_yellow from "../assets/Star_yellow.png"
 import star_gray from "../assets/Star_gray.png";
 import Footer from "../components/footer";
+import Banner from "../assets/Banner2.png";
 import {
   createFolder,
   updateFolderName,
@@ -381,8 +382,8 @@ export default function MyPage() {
         <div className="lg:flex lg:flex-row h-full">
           {/* 좌측 옵션 */}
           <div className="flex flex-col lg:min-h-full lg:w-72 2xl:w-80">
-            <div className="flex justify-center lg:justify-end items-center h-1/2 w-full">
-              <div className="mt-8 lg:p-4 bg-gray-50 border-2 border-gray-200 rounded-md w-full mx-6 flex flex-col lg:items-center lg:w-3/4 2xl:w-2/3">
+            <div className="flex justify-center flex-col lg:justify-end items-center h-[60%] w-full">
+              <div className="mt-8 lg:p-4 bg-gray-50 border-2 border-gray-200 rounded-md w-[90%] mx-6 flex flex-col lg:items-center lg:w-3/4 2xl:w-2/3">
                 <div className="flex flex-row lg:flex-col items-center">
                   <div className="w-24 h-24 rounded-full border-2 border-gray-300 bg-transparent my-4 mx-6 lg:w-32 lg:h-32 2xl:w-40 2xl:h-40 overflow-hidden">
                     <img
@@ -412,6 +413,11 @@ export default function MyPage() {
                   </div>
                 </div>
               </div>
+              <div className="flex justify-center w-full items-center hidden xl:block">
+                <a href="https://forms.gle/jmuCNSTjQL52fek4A">
+                    <img src={Banner} alt="Banner" className="lg:w-3/4 2xl:w-2/3 mx-auto mt-4" />
+                </a>
+              </div> 
             </div>
           </div>
           <div className="my-[3vh] mx-[6vw] flex flex-col lg:mr-[5vw] lg:my-[7vh]">
