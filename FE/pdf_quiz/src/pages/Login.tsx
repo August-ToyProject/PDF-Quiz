@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import ServiceName from "../assets/Logo.svg";
 import ServiceLogo from "../assets/ServiceLogo.png";
 import GoogleLogo from "../assets/Google.png";
-// import NaverLogo from "../assets/Naver.png";
+import KakaoLoginBtn from "../assets/KakaoLoginBtn.png";
 import Header from "../components/Header";
 
 const apiUrl = import.meta.env.VITE_NGROK_URL;
@@ -191,9 +191,9 @@ const Login = () => {
               </button>
             </div>
           </form>
-          <div className="w-full flex flex-col items-center justify-center mt-5">
+          <div className="w-full flex flex-col items-center justify-center mt-5 space-y-2">
             <button
-              className="w-48 h-11 flex flex-row items-center p-4 space-x-3"
+              className="w-48 h-11 flex flex-row items-center p-4 space-x-3 "
               onClick={() => handleSocialLogin("google")}
             >
               <img src={GoogleLogo} alt="google" className="w-4 h-4 " />
