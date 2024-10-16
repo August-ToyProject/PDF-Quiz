@@ -532,9 +532,6 @@ export default function MyPage() {
                     >
                       뒤로
                     </button>
-                    <button className="lg:text-[1vw] text-[3vw] text-gray-500 font-bold bg-transparent lg:p-[0.5vw]">
-                      도움말
-                    </button>
                   </div>
                 </div>
                 <div className="flex flex-wrap gap-4 mt-[2vh] overflow-y-auto max-h-[30vh] lg:h-[30vh] lg:mx-7 lg:justify-start lg:px-10">
