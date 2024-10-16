@@ -72,7 +72,7 @@ button {
   cursor: pointer;
   transition: border-color 0.25s;
 }
-button:not(.outline-visible):focus,
+/* button:not(.outline-visible):focus,
 button:not(.outline-visible):hover {
   outline: none !important;
   box-shadow: none !important;
@@ -82,7 +82,7 @@ button:focus,
 button:focus-visible {
     outline: none;
     border-color: transparent;
-}
+} */
 
 @media (prefers-color-scheme: light) {
   :root {
@@ -122,11 +122,11 @@ button:focus-visible {
   }
 }
 
-.text-ellipsis {
+/* .text-ellipsis {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-}
+} */
 
 .roboto-regular {
   font-family: "Roboto", sans-serif;
