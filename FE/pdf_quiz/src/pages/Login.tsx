@@ -7,7 +7,6 @@ import KakaoLoginBtn from "../assets/KakaoLoginBtn.png";
 import Header from "../components/Header";
 import { useLoginContext } from "../context/LoginContext";
 
-
 const apiUrl = import.meta.env.VITE_NGROK_URL;
 
 interface loginData {
@@ -87,22 +86,6 @@ const Login = () => {
   const handleSocialLogin = (provider: string) => {
     localStorage.setItem("loginType", "social");
     window.location.href = `https://quizgen.site/oauth2/authorization/${provider}`;
-  };
-
-  // const GoogleLogin = () => {
-  //   window.location.href = `https://quizgen.site/oauth2/authorization/google`;
-  // };
-
-  // // const NaverLogin = () => {
-  // //   window.location.href = `https://quizgen.site/oauth2/authorization/naver`;
-  // // };
-
-  // const KakaoLogin = () => {
-  //   window.location.href = `https://quizgen.site/oauth2/authorization/kakao`;
-  // };
-
-  const KakaoLogin = () => {
-    window.location.href = `https://quizgen.site/oauth2/authorization/kakao`;
   };
 
   //아이디, 비밀번호 입력값 업데이트
