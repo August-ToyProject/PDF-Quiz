@@ -15,8 +15,8 @@ import { LoginProvider } from "./context/LoginContext.tsx";
 
 function App() {
   return (
-    <QuizProvider>
-      <LoginProvider>
+    <LoginProvider>
+      <QuizProvider>
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<MainPage />} />
@@ -32,8 +32,8 @@ function App() {
             <Route path="/temp" element={<TempPage />} />
           </Routes>
         </BrowserRouter>
-      </LoginProvider>
-    </QuizProvider>
+      </QuizProvider>
+    </LoginProvider>
   );
 }
 
