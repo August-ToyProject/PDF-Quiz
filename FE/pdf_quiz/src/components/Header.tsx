@@ -18,6 +18,10 @@ const Header = () => {
     navigate("/login");
   };
 
+  const NavigateToMyPage = () => {
+    navigate("/mypage");
+  };
+
   const HandleClicked = () => {
     if (clicked) {
       Setcliked(true);
@@ -79,6 +83,14 @@ const Header = () => {
           </button>
         )}
 
+        {isLoggedIn && (
+          <button
+            className="font-header font-bold text-sm lg:text-lg bg-transparent"
+            onClick={NavigateToMyPage}
+          >
+            My Page
+          </button>
+        )}
         {isLoggedIn && (
           <button
             className="font-header text-m bg-blue-600 text-sm lg:text-lg text-white font-bold rounded-full px-5 py-2"
