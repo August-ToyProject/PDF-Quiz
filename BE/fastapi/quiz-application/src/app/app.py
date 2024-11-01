@@ -2,7 +2,7 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.routing import APIRouter
 from fastapi.middleware.cors import CORSMiddleware
-from .urls import file_controller, quiz_controller
+from src.app.urls import file_controller, quiz_controller
 from dotenv import load_dotenv
 from langchain_teddynote import logging
 

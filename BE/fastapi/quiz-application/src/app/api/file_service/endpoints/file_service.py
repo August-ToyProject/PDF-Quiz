@@ -1,5 +1,5 @@
 import asyncpg
-from fastapi import APIRouter, File, UploadFile
+from fastapi import APIRouter, File, HTTPException, UploadFile
 from src.app.api.file_service.service.file_service import save_pdf_to_faiss
 from src.packages.decorators.logging_decorator import log_decorator
 from src.packages.decorators.processing_time import execution_time_decorator
@@ -23,4 +23,7 @@ async def health_check():
 async def pdf_upload(
     file: UploadFile = File(...),
 ):
-    return await save_pdf_to_faiss(file)
+    try:
+        return await save_pdf_to_faiss(file)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An error occurred while processing the file. Please try again later.")
