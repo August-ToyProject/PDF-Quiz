@@ -13,7 +13,8 @@ jobs:
     steps:
       - name: Send notification to Slack
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          #SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_URL: ${{ }} # 현재 테스트용
         run: |
           if [[ "${{ github.event_name }}" == "push" ]]; then
             if [[ "${{ github.event.head_commit.message }}" == *"Merge pull request"* ]]; then
