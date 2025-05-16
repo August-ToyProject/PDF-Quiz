@@ -1,0 +1,6 @@
+.DS_Store
+venv
+.env
+.vscode
+__pycache__
+faiss_indexes
