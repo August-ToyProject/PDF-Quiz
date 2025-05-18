@@ -63,12 +63,6 @@ Quiz-Gen를 통해 학생, 직장인, 자격증 준비생, 그리고 모든 학�
 
 
 
-## 🔎 시스템 구성도
-
-<div align="center">
-<img src="https://github.com/user-attachments/assets/a14930bd-8539-403d-b6ef-61700e0a5fa1"/>
-
-
 </div>
 
 ## 🔎 ERD
