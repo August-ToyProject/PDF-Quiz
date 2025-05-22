@@ -30,10 +30,10 @@ async def file_to_document(file: UploadFile) -> PyMuPDFLoader:
         return documents
     except Exception as e:
         raise Exception(f"{file_to_document.__name__} function raise exception about: {str(e)}")
-    
+
 async def chunk_text(
-    documents, 
-    chunk_size=512, 
+    documents,
+    chunk_size=512,
     overlap=200
     ) -> CharacterTextSplitter:
     try:
@@ -49,19 +49,19 @@ async def text_to_embedding() -> OpenAIEmbeddings:
         return embeddings
     except(Exception) as e:
         raise Exception(f"{text_to_embedding.__name__} function raise exception about :{str(e)}")
-    
+
 async def save_vector_to_faiss(docs, embeddings, filename):
     try:
         db = await FAISS.afrom_documents(docs, embeddings)
-        
+
         # 고유한 인덱스 경로 생성
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         index_name = f"{os.path.splitext(filename)[0]}_{timestamp}"
         index_path = os.path.join("faiss_indexes", index_name)
-        
+
         # 디렉토리가 존재하지 않으면 생성
         os.makedirs(os.path.dirname(index_path), exist_ok=True)
-        
+
         db.save_local(index_path)
         return index_path
     except Exception as e:

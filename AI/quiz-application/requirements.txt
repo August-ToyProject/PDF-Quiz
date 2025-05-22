@@ -37,3 +37,4 @@ asyncpg==0.29.0
 # Kafka
 kafka-python==2.0.2
 confluent-kafka==2.5.0
+aiokafka==0.12.0
